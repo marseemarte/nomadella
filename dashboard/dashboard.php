@@ -55,6 +55,7 @@ $comentarios = $pdo->query("
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="/nomadella/css/dashboard.css">
+
 </head>
 <body>
 
@@ -193,3 +194,4 @@ $comentarios = $pdo->query("
 
 </body>
 </html>
+

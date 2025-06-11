@@ -94,3 +94,16 @@ body {
   color: #3AB789;
   font-weight: bold;
 }
+
+.main-content {
+  margin-left: 260px;
+  padding: 40px 30px 30px 30px;
+  min-height: 100vh;
+  background: #FFF6F8;
+}
+
+.breadcrumb-item a {
+  text-decoration: none;
+  color: #750D37;
+
+}

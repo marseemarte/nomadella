@@ -1,38 +1,41 @@
 <style>
-.sidebar {
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 260px;
-  background: linear-gradient(180deg, #750D37 90%,#5CC7ED 120%);
-  color: #FFF6F8;
-  padding-top: 20px;
-  box-shadow: 2px 0 10px rgba(117,13,55,0.08);
-  z-index: 100;
-}
-.sidebar .nav-link {
-  color: #FFF6F8;
-  font-weight: 500;
-  padding: 12px 18px;
-  border-radius: 8px;
-  margin-bottom: 4px;
-  transition: background 0.2s, color 0.2s;
-}
+  .sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    background: linear-gradient(180deg, #750D37 90%, #5CC7ED 120%);
+    color: #FFF6F8;
+    padding-top: 20px;
+    box-shadow: 2px 0 10px rgba(117, 13, 55, 0.08);
+    z-index: 100;
+  }
 
-#active{
-     background: #6CE0B6;
-  color: #1A001C !important;
-}
+  .sidebar .nav-link {
+    color: #FFF6F8;
+    font-weight: 500;
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
 
-.sidebar .nav-link.active,
-.sidebar .nav-link:hover {
-  background: #6CE0B6;
-  color: #1A001C !important;
-}
-.sidebar hr {
-  margin: 18px 0 12px 0;
-}
+  #active {
+    background: #6CE0B6;
+    color: #1A001C !important;
+  }
+
+  .sidebar .nav-link.active,
+  .sidebar .nav-link:hover {
+    background: #6CE0B6;
+    color: #1A001C !important;
+  }
+
+  .sidebar hr {
+    margin: 18px 0 12px 0;
+  }
+  
 </style>
 
 <div class="sidebar d-flex flex-column justify-content-between">
@@ -43,25 +46,25 @@
       <small style="color:#6CE0B6;">Panel de Administración</small>
     </div>
     <nav class="nav flex-column">
-      <a class="nav-link px-4 py-2 " id="<?php if (!isset($_GET['active']) || $_GET['active'] == 1) echo 'active'; ?>" href="./dashboard.php?active=1">
+      <a class="nav-link px-4 py-2 " id="<?php if (!isset($_GET['active']) || $_GET['active'] == 1) echo 'active'; ?>" href="./dashboard.php">
         <i class="bi bi-house-door"></i> Dashboard
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 2) echo 'active'; ?>" href="./destinos.php?active=2">
+      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 2) echo 'active'; ?>" href="./destinos.php">
         <i class="bi bi-truck"></i> Proveedores
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 7) echo 'active'; ?>" href="./paquetes.php?active=3">
+      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 7) echo 'active'; ?>" href="./paquetes.php">
         <i class="bi bi-postcard"></i> Paquetes
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 3) echo 'active'; ?>" href="./reservas.php?active=3">
+      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 3) echo 'active'; ?>" href="./reservas.php">
         <i class="bi bi-cart"></i> Reservas
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 4) echo 'active'; ?>" href="./clientes.php?active=4">
+      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 4) echo 'active'; ?>" href="./clientes.php">
         <i class="bi bi-person"></i> Usuarios
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 5) echo 'active'; ?>" href="./reportes.php?active=5">
+      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 5) echo 'active'; ?>" href="./reportes.php">
         <i class="bi bi-bar-chart"></i> Finanzas
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 6) echo 'active'; ?>" href="./configuracion.php?active=6">
+      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 6) echo 'active'; ?>" href="./configuracion.php">
         <i class="bi bi-gear"></i> Configuración
       </a>
     </nav>
@@ -84,4 +87,3 @@
     </div>
   </div>
 </div>
-
