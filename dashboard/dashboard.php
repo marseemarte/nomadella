@@ -68,7 +68,7 @@ $comentarios = $pdo->query("
           <div class="card-body">
             <h6 class="card-title">Ventas Totales</h6>
             <h3>$<?= number_format($totalVentas, 2) ?></h3>
-            <small class=".c-success">+3.5% semanal</small>
+            <small class="c-success">+3.5% semanal</small>
           </div>
         </div>
       </div>
@@ -95,7 +95,7 @@ $comentarios = $pdo->query("
           <div class="card-body">
             <h6 class="card-title">Paquetes Activos</h6>
             <h3><?= $paquetes ?></h3>
-            <small>Actualizados hoy</small>
+            <small class="c-success">Actualizados hoy</small>
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@ $comentarios = $pdo->query("
           <div class="card-header">Top Destinos Reservados</div>
           <ul class="list-group list-group-flush">
             <?php foreach ($destinos as $d): ?>
-              <li class="list-group-item"><?= htmlspecialchars($d['destino']) ?> - <?= $d['reservas'] ?> reservas</li>
+              <li class="list-group-item"><?= htmlspecialchars($d['destino']) ?> -<i style="color: gray;"> <?= $d['reservas'] ?> reservas</i> </li>
             <?php endforeach; ?>
           </ul>
         </div>
