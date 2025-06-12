@@ -1,30 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nomadella - Paquetes Turísticos</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/index.css">
-  <!-- Glider.js CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glider-js@1/glider.min.css">
-</head>
-<body>
-  <header>
-    <div class="logo"><img class="logo_img" src="../img/nomadella_logo.png" alt=""></div>
-    <nav class="nav-center">
-    <ul>
-      <li><a href="#">Inicio</a></li>
-      <li><a href="#">Paquetes</a></li>
-      <li><a href="#">Contacto</a></li>
-    </ul>
-  </nav>
-    <div class="header-icons">
-      <span title="Usuario">👤</span>
-      <span title="Menú">☰</span>
-    </div>
-  </header>
 
+<?php
+include 'header.php';
+?>
   <div class="buscador">
     <input type="text" placeholder="Busca tu destino soñado...">
   </div>
@@ -35,78 +12,24 @@
     <div class="glider-contain">
       <button class="glider-prev">&#8592;</button>
       <div class="glider">
-        <div class="paquete-card">
-          <img class="paquete-img" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Paquete Playa">
-          <div class="paquete-body">
-            <div class="paquete-title">Playa Paraíso Cancún</div>
-            <div class="paquete-detalles">
-              5 días / 4 noches<br>
-              Salida desde CDMX
+        <?php
+          include 'conexion.php';
+          $sql = "SELECT * FROM paquetes_turisticos WHERE activo = 1 LIMIT 12";
+          $result = $conexion->query($sql);
+          while ($row = $result->fetch_assoc()):
+        ?>
+        
+          <div class="paquete-card">
+            <div class="paquete-body">
+              <div class="paquete-title"><?= htmlspecialchars($row['nombre']) ?></div>
+              <div class="paquete-detalles">
+                <?= htmlspecialchars($row['descripcion']) ?>
+              </div>
+              <div class="paquete-precio">$<?= number_format($row['precio_base'], 2) ?> USD</div>
+              <a href="./paquetes_info.php?id=<?= $row['id_paquete'] ?>"><button class="paquete-btn">Ver detalles</button></a>
             </div>
-            <div class="paquete-servicios">
-              <span class="paquete-servicio">🏨 Hotel 4*</span>
-              <span class="paquete-servicio">✈️ Vuelo incluido</span>
-              <span class="paquete-servicio">🍽️ Desayuno buffet</span>
-              <span class="paquete-servicio">🚗 Traslados aeropuerto</span>
-            </div>
-            <div class="paquete-precio">$12,990 USD</div>
-            <button class="paquete-btn">Ver detalles</button>
           </div>
-        </div>
-        <div class="paquete-card">
-          <img class="paquete-img" src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80" alt="Paquete Montaña">
-          <div class="paquete-body">
-            <div class="paquete-title">Aventura en la Sierra</div>
-            <div class="paquete-detalles">
-              4 días / 3 noches<br>
-              Salida desde Guadalajara
-            </div>
-            <div class="paquete-servicios">
-              <span class="paquete-servicio">🏕️ Cabaña premium</span>
-              <span class="paquete-servicio">🚌 Transporte terrestre</span>
-              <span class="paquete-servicio">🔥 Fogata y actividades</span>
-              <span class="paquete-servicio">🍳 Desayuno incluido</span>
-            </div>
-            <div class="paquete-precio">$8,500 USD</div>
-            <button class="paquete-btn">Ver detalles</button>
-          </div>
-        </div>
-        <div class="paquete-card">
-          <img class="paquete-img" src="https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=600&q=80" alt="Paquete Ciudad">
-          <div class="paquete-body">
-            <div class="paquete-title">Escapada Cultural CDMX</div>
-            <div class="paquete-detalles">
-              3 días / 2 noches<br>
-              Salida desde Monterrey
-            </div>
-            <div class="paquete-servicios">
-              <span class="paquete-servicio">🏨 Hotel céntrico</span>
-              <span class="paquete-servicio">✈️ Vuelo redondo</span>
-              <span class="paquete-servicio">🎟️ Tour museos</span>
-              <span class="paquete-servicio">🍽️ Desayuno</span>
-            </div>
-            <div class="paquete-precio">$7,200 USD</div>
-            <button class="paquete-btn">Ver detalles</button>
-          </div>
-        </div>
-        <div class="paquete-card">
-          <img class="paquete-img" src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=600&q=80" alt="Paquete Familiar">
-          <div class="paquete-body">
-            <div class="paquete-title">Diversión en Familia</div>
-            <div class="paquete-detalles">
-              6 días / 5 noches<br>
-              Salida desde Querétaro
-            </div>
-            <div class="paquete-servicios">
-              <span class="paquete-servicio">🏨 Resort familiar</span>
-              <span class="paquete-servicio">🚌 Transporte privado</span>
-              <span class="paquete-servicio">🎡 Acceso a parque</span>
-              <span class="paquete-servicio">🍔 Todo incluido</span>
-            </div>
-            <div class="paquete-precio">$15,800 USD</div>
-            <button class="paquete-btn">Ver detalles</button>
-          </div>
-        </div>
+        <?php endwhile; ?>
       </div>
       <button class="glider-next">&#8594;</button>
       <div role="tablist" class="glider-dots"></div>
@@ -188,15 +111,9 @@
 </section>
 
 
-  <footer>
-    <div>
-      <p>&copy; Nomadella 2025</p>
-    </div>
-    <div>
-      <p>Términos | Política | FAQ</p>
-    </div>
-  </footer>
-
+  <?php
+    include 'footer.php';
+    ?>
   <!-- Carrusel JS -->
   <script src="https://cdn.jsdelivr.net/npm/glider-js@1/glider.min.js"></script>
   <script>
