@@ -1,0 +1,126 @@
+body {
+    background-color: #FFF6F8;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.main-content {
+    margin-left: 260px;
+    padding: 40px 30px 30px 30px;
+    min-height: 100vh;
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+    color: #750D37;
+}
+
+/*sidebar*/
+
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    background: linear-gradient(180deg, #750D37 90%, #5CC7ED 120%);
+    color: #FFF6F8;
+    padding-top: 20px;
+    box-shadow: 2px 0 10px rgba(117, 13, 55, 0.08);
+    z-index: 100;
+}
+
+.sidebar .nav-link {
+    color: #FFF6F8;
+    font-weight: 500;
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    transition: background 0.2s, color 0.2s;
+}
+
+#active {
+    background: #6CE0B6;
+    color: #1A001C !important;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background: #6CE0B6;
+    color: #1A001C !important;
+}
+
+.sidebar hr {
+    margin: 18px 0 12px 0;
+}
+
+/*paquetes*/
+
+.card-paquete {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.btn-editar {
+    background-color: #750D37;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-etiquetas {
+    background-color: #5CC7ED;
+    color: #1A001C;
+    font-weight: bold;
+}
+
+.etiqueta {
+    background: #5CC7ED;
+    color: #1A001C;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin: 3px;
+    display: inline-block;
+    font-size: 0.85em;
+}
+
+/*clientes*/
+
+.table-responsive {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #0001;
+}
+
+.table thead.table-dark th {
+    background: #750D37 !important;
+    color: #FFF6F8 !important;
+}
+
+.btn-primary {
+    background: #6CE0B6 !important;
+    border: none;
+    color: #1A001C !important;
+    font-weight: bold;
+}
+
+.form-select,
+.form-control {
+    border-radius: 6px;
+}
+
+.pagination .page-link {
+    color: #750D37;
+}
+
+.pagination .page-item.active .page-link {
+    background: #6CE0B6;
+    color: #1A001C;
+    border: none;
+}
+
+.pagination .page-link:focus {
+    box-shadow: none;
+}

@@ -2,9 +2,57 @@
 <?php
 include 'header.php';
 ?>
-  <div class="buscador">
-    <input type="text" placeholder="Busca tu destino soñado...">
-  </div>
+<style>
+  .hero-section {
+  background: linear-gradient(90deg, #b84e6f 60%, #741d41 100%);
+  color: #fff;
+  text-align: center;
+  padding: 48px 0 36px 0;
+}
+.hero-section h1 {
+  font-size: 2.3em;
+  margin-bottom: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.buscador-form {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.buscador-form input[type="text"] {
+  flex: 1;
+  padding: 14px 16px;
+  border-radius: 8px 0 0 8px;
+  border: none;
+  font-size: 1.1em;
+  outline: none;
+}
+.buscador-form button {
+  background: #fff;
+  color: #b84e6f;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 0 8px 8px 0;
+  font-size: 1.1em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.buscador-form button:hover {
+  background: #b84e6f;
+  color: #fff;
+}
+</style>
+  <div class="hero-section">
+  <h1>Descubrí tu próximo destino</h1>
+  <form class="buscador-form" method="get" action="paquetes.php">
+    <input type="text" name="busqueda" placeholder="Busca tu destino soñado...">
+    <button type="submit">Buscar</button>
+  </form>
+</div>
 
   <!-- Carrusel de Paquetes Destacados -->
   <section class="paquetes-section">

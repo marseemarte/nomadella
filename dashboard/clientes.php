@@ -32,69 +32,13 @@ $result = $mysqli->query($sql);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        body {
-            background: #FFF6F8;
-            color: #1A001C;
-        }
-
-        .table-responsive {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px #0001;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            padding: 0.2em 0.8em;
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 30px 20px 20px 20px;
-        }
-
-        .table thead.table-dark th {
-            background: #750D37 !important;
-            color: #FFF6F8 !important;
-        }
-
-        .btn-primary {
-            background: #6CE0B6 !important;
-            border: none;
-            color: #1A001C !important;
-            font-weight: bold;
-        }
-
-        .form-select,
-        .form-control {
-            border-radius: 6px;
-        }
-
-        .pagination .page-link {
-            color: #750D37;
-        }
-
-        .pagination .page-item.active .page-link {
-            background: #6CE0B6;
-            color: #1A001C;
-            border: none;
-        }
-
-        .pagination .page-link:focus {
-            box-shadow: none;
-        }
-
-        .breadcrumb-item a {
-            text-decoration: none;
-            color: #750D37;
-        }
-    </style>
+    <link rel="stylesheet" href="/nomadella/css/apartados.css">
 </head>
 
 <body>
     <?php include 'sidebar.php'; ?>
 
-    <div class="content">
+    <div class="main-content">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
