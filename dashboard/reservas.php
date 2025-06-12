@@ -50,46 +50,55 @@ $reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre, 
             background-color: #FFF6F8;
             color: #1A001C;
         }
+
         .main-content {
             margin-left: 260px;
             padding: 40px 30px 30px 30px;
             min-height: 100vh;
         }
+
         .breadcrumb-item a {
             text-decoration: none;
             color: #750D37;
         }
+
         .btn-primary {
             background-color: #3AB789;
             border-color: #3AB789;
             font-weight: bold;
         }
+
         .btn-secondary {
             background-color: #5CC7ED;
             border-color: #5CC7ED;
             color: #1A001C;
             font-weight: bold;
         }
+
         .card {
             background: #fff;
             border: none;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(117,13,55,0.1);
+            box-shadow: 0 0 10px rgba(117, 13, 55, 0.1);
             padding: 20px;
         }
+
         .accordion-button {
             font-weight: 600;
             color: #1A001C;
             background-color: #F8F9FA;
         }
+
         .accordion-button:focus {
             box-shadow: none;
         }
+
         .accordion-item {
             border: 1px solid #DDD;
             border-radius: 10px;
             margin-bottom: 10px;
         }
+
         .table thead {
             background-color: #750D37;
             color: #FFF6F8;
@@ -99,57 +108,60 @@ $reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre, 
 
 <body>
 
-<?php include './sidebar.php' ?>
+    <?php include './sidebar.php' ?>
 
-<div class="main-content">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Gestión de Reservas</li>
-        </ol>
-    </nav>
+    <div class="main-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Gestión de Reservas</li>
+            </ol>
+        </nav>
 
-    <h2 class="mb-4">Gestión de Reservas</h2>
+        <h2 class="mb-4">Gestión de Reservas</h2>
 
-    <form class="d-flex mb-4" onsubmit="return false;">
-        <input type="text" id="busqueda-reserva" name="search" class="form-control me-2" placeholder="Buscar...">
-    </form>
+        <form class="d-flex mb-4" onsubmit="return false;">
+            <input type="text" id="busqueda-reserva" name="search" class="form-control me-2" placeholder="Buscar...">
+        </form>
 
-    <div class="accordion" id="reservasAccordion">
-        <!-- Aquí se cargan las reservas por AJAX -->
+        <div class="accordion" id="reservasAccordion">
+            <!-- Aquí se cargan las reservas por AJAX -->
+        </div>
+
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <?php for ($i = 1; $i <= $totalPages; $i++):
+                    $class = ($i == $page) ? 'active' : '';
+                    $params = array_merge($_GET, ['page' => $i]); ?>
+                    <li class="page-item <?= $class ?>">
+                        <a class="page-link" href="?<?= http_build_query($params) ?>"><?= $i ?></a>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+        </nav>
+
     </div>
 
-    <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-            <?php for ($i = 1; $i <= $totalPages; $i++): 
-                $class = ($i == $page) ? 'active' : '';
-                $params = array_merge($_GET, ['page' => $i]); ?>
-                <li class="page-item <?= $class ?>">
-                    <a class="page-link" href="?<?= http_build_query($params) ?>"><?= $i ?></a>
-                </li>
-            <?php endfor; ?>
-        </ul>
-    </nav>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-function cargarReservas(q) {
-    $.get('reservas_ajax.php', {search: q}, function(data) {
-        $('#reservasAccordion').html(data);
-    });
-}
-$(document).ready(function() {
-    cargarReservas('');
-    $('#busqueda-reserva').on('input', function() {
-        cargarReservas($(this).val());
-    });
-});
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function cargarReservas(q) {
+            $.get('reservas_ajax.php', {
+                search: q
+            }, function(data) {
+                $('#reservasAccordion').html(data);
+            });
+        }
+        $(document).ready(function() {
+            cargarReservas('');
+            $('#busqueda-reserva').on('input', function() {
+                cargarReservas($(this).val());
+            });
+        });
+    </script>
 
 </body>
+
 </html>
 
 <?php $conn->close(); ?>
