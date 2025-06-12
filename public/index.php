@@ -49,7 +49,7 @@
               <span class="paquete-servicio">🍽️ Desayuno buffet</span>
               <span class="paquete-servicio">🚗 Traslados aeropuerto</span>
             </div>
-            <div class="paquete-precio">$12,990 MXN</div>
+            <div class="paquete-precio">$12,990 USD</div>
             <button class="paquete-btn">Ver detalles</button>
           </div>
         </div>
@@ -67,7 +67,7 @@
               <span class="paquete-servicio">🔥 Fogata y actividades</span>
               <span class="paquete-servicio">🍳 Desayuno incluido</span>
             </div>
-            <div class="paquete-precio">$8,500 MXN</div>
+            <div class="paquete-precio">$8,500 USD</div>
             <button class="paquete-btn">Ver detalles</button>
           </div>
         </div>
@@ -85,7 +85,7 @@
               <span class="paquete-servicio">🎟️ Tour museos</span>
               <span class="paquete-servicio">🍽️ Desayuno</span>
             </div>
-            <div class="paquete-precio">$7,200 MXN</div>
+            <div class="paquete-precio">$7,200 USD</div>
             <button class="paquete-btn">Ver detalles</button>
           </div>
         </div>
@@ -103,7 +103,7 @@
               <span class="paquete-servicio">🎡 Acceso a parque</span>
               <span class="paquete-servicio">🍔 Todo incluido</span>
             </div>
-            <div class="paquete-precio">$15,800 MXN</div>
+            <div class="paquete-precio">$15,800 USD</div>
             <button class="paquete-btn">Ver detalles</button>
           </div>
         </div>
