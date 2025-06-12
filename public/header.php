@@ -40,7 +40,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         <div class="user-menu">
           <span title="Mi cuenta" style="cursor:pointer;font-size:1.3em;">👤▼</span>
           <div class="user-dropdown">
-            <a href="perfil.php">Mi perfil</a>
+            <a href="perfil/perfil.php">Mi perfil</a>
             <a href="carrito.php">Carrito</a>
             <a href="reservas.php">Mis reservas</a>
             <a href="logout.php" style="color:#b84e6f;">Cerrar sesión</a>
