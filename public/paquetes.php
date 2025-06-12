@@ -153,38 +153,13 @@ $etiquetas = $conexion->query("SELECT * FROM etiquetas ORDER BY nombre");
 </style>
 
 
-<div id="etiquetas-ajax"></div>
 
-<?php if($etiquetas_seleccionadas): ?>
-  <div class="etiquetas-seleccionadas">
-    <?php
-    $ids = implode(',', array_map('intval', $etiquetas_seleccionadas));
-    $sql_etq = $conexion->query("SELECT id_etiqueta, nombre FROM etiquetas WHERE id_etiqueta IN ($ids)");
-    while($et = $sql_etq->fetch_assoc()):
-    ?>
-      <span class="etiqueta-tag">
-        <?= htmlspecialchars($et['nombre']) ?>
-        <form method="get" style="display:inline;">
-          <?php
-          // Mantener otros filtros
-          foreach(['busqueda','precio_min','precio_max','tipo','destino'] as $f)
-            if(isset($_GET[$f])) echo '<input type="hidden" name="'.$f.'" value="'.htmlspecialchars($_GET[$f]).'">';
-          // Mantener las demás etiquetas menos esta
-          foreach($etiquetas_seleccionadas as $otro_etq)
-            if($otro_etq != $et['id_etiqueta'])
-              echo '<input type="hidden" name="etiquetas[]" value="'.htmlspecialchars($otro_etq).'">';
-          ?>
-          <button type="submit" class="remove-etq" title="Quitar etiqueta" tabindex="-1">&times;</button>
-        </form>
-      </span>
-    <?php endwhile; ?>
-  </div>
-<?php endif; ?>
+
+
 
 <div class="paquetes-container">
-    
-  <aside class="filtros-lateral">
-    <form method="get" id="form-filtros">
+  <form method="get" id="form-filtros" style="display:flex;gap:32px;max-width:1200px;margin:40px auto;">
+    <aside class="filtros-lateral">
       <h3>Filtros</h3>
       <label>Precio mínimo:</label>
       <input type="number" name="precio_min" min="0" step="10" value="<?=htmlspecialchars($precio_min)?>">
@@ -225,47 +200,32 @@ $etiquetas = $conexion->query("SELECT * FROM etiquetas ORDER BY nombre");
           <?php endwhile; ?>
         </div>
       </div>
-      <button type="submit" style="margin-top:14px;">Buscar</button>
-    </form>
-  </aside>
-  
-  <section class="paquetes-lista">
-    <div class="busqueda-bar">
-      <form style="display:flex;width:100%;" method="get" id="form-busqueda">
+    </aside>
+    <section class="paquetes-lista" style="flex:1;">
+      <div class="busqueda-bar">
         <input type="text" name="busqueda" placeholder="Buscar destino o paquete..." value="<?=htmlspecialchars($busqueda)?>">
-        <?php
-        // Mantener filtros al buscar
-        foreach(['precio_min','precio_max','tipo','destino'] as $f)
-          if(isset($_GET[$f])) echo '<input type="hidden" name="'.$f.'" value="'.htmlspecialchars($_GET[$f]).'">';
-        // Etiquetas seleccionadas
-        if ($etiquetas_seleccionadas) {
-          foreach($etiquetas_seleccionadas as $etq) {
-            echo '<input type="hidden" name="etiquetas[]" value="'.htmlspecialchars($etq).'">';
-          }
-        }
-        ?>
         <button type="submit">Buscar</button>
-      </form>
-    </div>
-    <div id="etiquetas-ajax"></div>
-    <?php if($result->num_rows): ?>
-      <?php while($row = $result->fetch_assoc()): ?>
-        <div class="paquete-card-lista">
-          <img class="paquete-img" src="<?= htmlspecialchars($row['imagen_destacada']) ?>" alt="Imagen paquete">
-          <div class="paquete-body">
-            <div class="paquete-title"><?= htmlspecialchars($row['nombre']) ?></div>
-            <div class="paquete-detalles"><?= htmlspecialchars($row['descripcion']) ?></div>
-            <div><b>Destino:</b> <?= htmlspecialchars($row['destino']) ?> | <b>Tipo:</b> <?= htmlspecialchars($row['tipo_paquete']) ?></div>
-            <div><b>Fechas:</b> <?= date('d/m/Y', strtotime($row['fecha_inicio'])) ?> al <?= date('d/m/Y', strtotime($row['fecha_fin'])) ?></div>
-            <div class="paquete-precio">$<?= number_format($row['precio_base'],2) ?> USD</div>
-            <a href="paquetes_info.php?id=<?= $row['id_paquete'] ?>"><button class="paquete-btn">Ver detalles</button></a>
+      </div>
+      <div id="etiquetas-ajax"></div>
+      <?php if($result->num_rows): ?>
+        <?php while($row = $result->fetch_assoc()): ?>
+          <div class="paquete-card-lista">
+            <img class="paquete-img" src="<?= htmlspecialchars($row['imagen_destacada']) ?>" alt="Imagen paquete">
+            <div class="paquete-body">
+              <div class="paquete-title"><?= htmlspecialchars($row['nombre']) ?></div>
+              <div class="paquete-detalles"><?= htmlspecialchars($row['descripcion']) ?></div>
+              <div><b>Destino:</b> <?= htmlspecialchars($row['destino']) ?> | <b>Tipo:</b> <?= htmlspecialchars($row['tipo_paquete']) ?></div>
+              <div><b>Fechas:</b> <?= date('d/m/Y', strtotime($row['fecha_inicio'])) ?> al <?= date('d/m/Y', strtotime($row['fecha_fin'])) ?></div>
+              <div class="paquete-precio">$<?= number_format($row['precio_base'],2) ?> USD</div>
+              <a href="paquetes_info.php?id=<?= $row['id_paquete'] ?>"><button class="paquete-btn">Ver detalles</button></a>
+            </div>
           </div>
-        </div>
-      <?php endwhile; ?>
-    <?php else: ?>
-      <p>No se encontraron paquetes con esos filtros.</p>
-    <?php endif; ?>
-  </section>
+        <?php endwhile; ?>
+      <?php else: ?>
+        <p>No se encontraron paquetes con esos filtros.</p>
+      <?php endif; ?>
+    </section>
+  </form>
 </div>
 <?php include 'footer.php'; ?>
 <script>
