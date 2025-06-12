@@ -210,7 +210,7 @@ $etiquetas = $conexion->query("SELECT * FROM etiquetas ORDER BY nombre");
       <?php if($result->num_rows): ?>
         <?php while($row = $result->fetch_assoc()): ?>
           <div class="paquete-card-lista">
-            <img class="paquete-img" src="<?= htmlspecialchars($row['imagen_destacada']) ?>" alt="Imagen paquete">
+           
             <div class="paquete-body">
               <div class="paquete-title"><?= htmlspecialchars($row['nombre']) ?></div>
               <div class="paquete-detalles"><?= htmlspecialchars($row['descripcion']) ?></div>
