@@ -27,7 +27,7 @@ $totalQuery = $conn->query("SELECT COUNT(*) as total
 $totalRows = $totalQuery->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
 
-$reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre AS cliente, pt.destino, oi.cantidad
+$reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre, u.apellido AS cliente, pt.destino, oi.cantidad
     FROM ordenes o
     JOIN usuarios u ON u.id_usuario = o.id_usuario
     JOIN orden_items oi ON oi.id_orden = o.id_orden
@@ -111,46 +111,13 @@ $reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre A
 
     <h2 class="mb-4">Gestión de Reservas</h2>
 
-    <form method="get" class="d-flex mb-4">
-        <input type="text" name="search" class="form-control me-2" placeholder="Buscar..." value="<?= htmlspecialchars($search) ?>">
-        <button class="btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
+    <form class="d-flex mb-4" onsubmit="return false;">
+        <input type="text" id="busqueda-reserva" name="search" class="form-control me-2" placeholder="Buscar...">
     </form>
 
-    <?php if ($reservas->num_rows > 0): ?>
-        <div class="accordion" id="reservasAccordion">
-            <?php foreach ($reservas as $r): ?>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading<?= $r['id_orden'] ?>">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $r['id_orden'] ?>">
-                            <i class="bi bi-airplane me-2"></i> Reserva #<?= $r['id_orden'] ?> - <?= htmlspecialchars($r['cliente']) ?> (<?= htmlspecialchars($r['destino']) ?>)
-                        </button>
-                    </h2>
-                    <div id="collapse<?= $r['id_orden'] ?>" class="accordion-collapse collapse" data-bs-parent="#reservasAccordion">
-                        <div class="accordion-body">
-                            <div><strong>Fecha:</strong> <?= date('d/m/Y', strtotime($r['fecha_orden'])) ?></div>
-                            <div><strong>Pasajeros:</strong> <?= $r['cantidad'] ?></div>
-                            <div><strong>Estado:</strong> <span class="text-danger fw-bold"><?= $r['estado'] ?></span></div>
-                            <hr>
-                            <div><strong>Tarifa detallada:</strong></div>
-                            <table class="table table-sm">
-                                <tr><td>+Transporte</td><td>---</td></tr>
-                                <tr><td>+Alojamiento</td><td>---</td></tr>
-                                <tr><td>+Autos</td><td>---</td></tr>
-                                <tr><td>+Excursiones</td><td>---</td></tr>
-                                <tr class="table-danger fw-bold"><td>Total</td><td>---</td></tr>
-                            </table>
-                            <div class="mt-3">
-                                <a href="editar_reserva.php?id=<?= $r['id_orden'] ?>" class="btn btn-sm btn-info"><i class="bi bi-pencil"></i> Editar</a>
-                                <a href="cancelar_reserva.php?id=<?= $r['id_orden'] ?>" class="btn btn-sm btn-danger"><i class="bi bi-x-circle"></i> Cancelar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    <?php else: ?>
-        <div class="alert alert-warning">No se encontraron reservas.</div>
-    <?php endif; ?>
+    <div class="accordion" id="reservasAccordion">
+        <!-- Aquí se cargan las reservas por AJAX -->
+    </div>
 
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
@@ -167,6 +134,20 @@ $reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre A
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function cargarReservas(q) {
+    $.get('reservas_ajax.php', {search: q}, function(data) {
+        $('#reservasAccordion').html(data);
+    });
+}
+$(document).ready(function() {
+    cargarReservas('');
+    $('#busqueda-reserva').on('input', function() {
+        cargarReservas($(this).val());
+    });
+});
+</script>
 
 </body>
 </html>
