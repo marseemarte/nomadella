@@ -418,3 +418,36 @@ body {
             .detalle-header {flex-direction: column;}
             .detalle-img {width: 100%; height: 180px;}
         }
+
+        .filtros-lateral {
+  width: 340px;
+  min-width: 260px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.etiquetas-lista {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.etiqueta-check {
+  display: flex;
+  align-items: center;
+  background: #f3e6ea;
+  color: #b84e6f;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.98em;
+  cursor: pointer;
+  border: none;
+  min-width: 0;
+  min-height: 0;
+  transition: background 0.2s, color 0.2s;
+  word-break: break-word;
+  font-weight: 500;
+  width: 100%;           /* Ocupa todo el ancho de la celda */
+  box-sizing: border-box; /* Importante para que no se desborde */
+  white-space: normal;    /* Permite salto de línea si es necesario */
+}
