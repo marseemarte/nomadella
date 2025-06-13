@@ -3,55 +3,46 @@ session_start();
 include '../conexion.php';
 
 if (!isset($_SESSION['usuario_id'])) {
-    echo "No logueado";
-    exit;
+    http_response_code(401);
+    exit('No autenticado');
 }
 
 $id_usuario = $_SESSION['usuario_id'];
-$id_producto = $_POST['id_paquete'] ?? null;
-$cantidad = $_POST['cantidad'] ?? 1;
-$precio_unitario = $_POST['precio'] ?? 0;
+$tipo_producto = $_POST['tipo_producto'];
+$id_producto = intval($_POST['id_producto']);
+$cantidad = intval($_POST['cantidad']);
 
-if (!$id_producto || $cantidad <= 0) {
-    echo "Datos inválidos";
-    exit;
-}
+if ($cantidad < 1) exit('Cantidad inválida');
 
-$sql_carrito = "SELECT id_carrito FROM carritos WHERE id_usuario = ? AND estado = 'activo'";
-$stmt = $conexion->prepare($sql_carrito);
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    $crear = $conexion->prepare("INSERT INTO carritos (id_usuario, estado) VALUES (?, 'activo')");
-    $crear->bind_param("i", $id_usuario);
-    $crear->execute();
-    $id_carrito = $crear->insert_id;
+// Buscar o crear carrito activo
+$res = $conexion->query("SELECT id_carrito FROM carritos WHERE id_usuario=$id_usuario AND estado='activo' ORDER BY id_carrito DESC LIMIT 1");
+if ($row = $res->fetch_assoc()) {
+    $id_carrito = $row['id_carrito'];
 } else {
-    $fila = $result->fetch_assoc();
-    $id_carrito = $fila['id_carrito'];
+    $conexion->query("INSERT INTO carritos (id_usuario, estado) VALUES ($id_usuario, 'activo')");
+    $id_carrito = $conexion->insert_id;
 }
 
-$check = $conexion->prepare("SELECT id_item, cantidad FROM carrito_items WHERE id_carrito = ? AND tipo_producto = 'paquete_turistico' AND id_producto = ?");
-$check->bind_param("ii", $id_carrito, $id_producto);
-$check->execute();
-$res = $check->get_result();
-
-if ($res->num_rows > 0) {
-    $item = $res->fetch_assoc();
-    $nueva_cantidad = $item['cantidad'] + $cantidad;
-    $nuevo_subtotal = $nueva_cantidad * $precio_unitario;
-
-    $update = $conexion->prepare("UPDATE carrito_items SET cantidad = ?, subtotal = ? WHERE id_item = ?");
-    $update->bind_param("idi", $nueva_cantidad, $nuevo_subtotal, $item['id_item']);
-    $update->execute();
+// Solo para paquetes turísticos
+if ($tipo_producto === 'paquete_turistico') {
+    $prod = $conexion->query("SELECT precio_base, cupo_disponible FROM paquetes_turisticos WHERE id_paquete=$id_producto AND activo=1")->fetch_assoc();
+    if (!$prod) exit('Paquete no encontrado');
+    if ($cantidad > $prod['cupo_disponible']) exit('No hay suficiente cupo');
+    $precio = $prod['precio_base'];
+    $subtotal = $precio * $cantidad;
 } else {
-    $subtotal = $cantidad * $precio_unitario;
-    $insert = $conexion->prepare("INSERT INTO carrito_items (id_carrito, tipo_producto, id_producto, cantidad, precio_unitario, subtotal) VALUES (?, 'paquete_turistico', ?, ?, ?, ?)");
-    $insert->bind_param("iiidd", $id_carrito, $id_producto, $cantidad, $precio_unitario, $subtotal);
-    $insert->execute();
+    exit('Tipo de producto no soportado');
 }
 
-echo "ok";
+// Ver si ya está en el carrito
+$res = $conexion->query("SELECT id_item, cantidad FROM carrito_items WHERE id_carrito=$id_carrito AND tipo_producto='$tipo_producto' AND id_producto=$id_producto");
+if ($row = $res->fetch_assoc()) {
+    $nueva_cantidad = $row['cantidad'] + $cantidad;
+    $nuevo_subtotal = $precio * $nueva_cantidad;
+    $conexion->query("UPDATE carrito_items SET cantidad=$nueva_cantidad, subtotal=$nuevo_subtotal WHERE id_item={$row['id_item']}");
+} else {
+    $conexion->query("INSERT INTO carrito_items (id_carrito, tipo_producto, id_producto, cantidad, precio_unitario, subtotal) VALUES ($id_carrito, '$tipo_producto', $id_producto, $cantidad, $precio, $subtotal)");
+}
+
+echo 'ok';
 ?>

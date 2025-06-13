@@ -64,6 +64,16 @@ $comentarios = $conexion->query("SELECT c.*, u.nombre FROM comentarios_paquetes 
                 <div><b>Tipo:</b> <?= htmlspecialchars($paquete['tipo_paquete']) ?></div>
                 <div><b>Fechas:</b> <?= date('d/m/Y', strtotime($paquete['fecha_inicio'])) ?> al <?= date('d/m/Y', strtotime($paquete['fecha_fin'])) ?></div>
                 <div><b>Cupo disponible:</b> <?= $paquete['cupo_disponible'] ?></div>
+                <?php if(isset($_SESSION['usuario_id'])): ?>
+                    <div style="margin:20px 0;">
+                        <label>Cantidad: <input type="number" id="cantidad" value="1" min="1" max="<?= $paquete['cupo_disponible'] ?>"></label>
+                        <button onclick="agregarAlCarrito(<?= $paquete['id_paquete'] ?>)">Agregar al carrito</button>
+                    </div>
+                <?php else: ?>
+                    <div style="margin:20px 0;">
+                        <a href="login.php">Inicia sesión para reservar</a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="detalle-section">
@@ -135,3 +145,21 @@ $comentarios = $conexion->query("SELECT c.*, u.nombre FROM comentarios_paquetes 
     ?>
 </body>
 </html>
+<script>
+function agregarAlCarrito(id_paquete) {
+    const cantidad = document.getElementById('cantidad').value;
+    fetch('carrito/agregar_item.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'tipo_producto=paquete_turistico&id_producto=' + id_paquete + '&cantidad=' + cantidad
+    })
+    .then(res => res.text())
+    .then(txt => {
+        if(txt === 'ok') {
+            alert('Agregado al carrito');
+        } else {
+            alert('Error: ' + txt);
+        }
+    });
+}
+</script>

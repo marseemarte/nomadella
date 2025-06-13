@@ -8,47 +8,57 @@ if (session_status() === PHP_SESSION_NONE) session_start();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nomadella - Paquetes Turísticos</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/index.css">
-  <!-- Glider.js CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glider-js@1/glider.min.css">
-  
-  <style>
-    .user-menu {position:relative;display:inline-block;}
-    .user-dropdown {
-      display:none;position:absolute;right:0;top:30px;min-width:160px;
-      background:#fff;border:1px solid #eee;border-radius:8px;box-shadow:0 2px 8px #0002;z-index:10;
-    }
-    .user-menu:hover .user-dropdown {display:block;}
-    .user-dropdown a {
-      display:block;padding:10px 18px;color:#b84e6f;text-decoration:none;font-size:1em;
-    }
-    .user-dropdown a:hover {background:#f3e6ea;}
-  </style>
+  <!-- <link rel="stylesheet" href="../css/index.css"> -->
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+
 </head>
 <body>
-  <header>
-    <a href="./index.php"><div class="logo"><img class="logo_img" src="../img/nomadella_logo.png" alt=""></div></a>
-    <nav class="nav-center">
-    <ul>
-      <li><a href="index.php">Inicio</a></li>
-      <li><a href="./paquetes.php">Paquetes</a></li>
-      <li><a href="#">Contacto</a></li>
-    </ul>
-  </nav>
-    <div class="header-icons">
-      <?php if (isset($_SESSION['usuario_id'])): ?>
-        <div class="user-menu">
-          <span title="Mi cuenta" style="cursor:pointer;font-size:1.3em;">👤▼</span>
-          <div class="user-dropdown">
-            <a href="perfil/perfil.php">Mi perfil</a>
-            <a href="carrito.php">Carrito</a>
-            <a href="reservas.php">Mis reservas</a>
-            <a href="logout.php" style="color:#b84e6f;">Cerrar sesión</a>
+  <header class="bg-gradient p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #741d41 60%, #b84e6f 100%);">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="./index.php">
+          <img src="../img/nomadella_logo.png" alt="Nomadella" class="logo_img me-2" style="height:48px;">
+          Nomadella
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Menú">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="index.php">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="./paquetes.php">Paquetes</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-2">
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+              <div class="dropdown">
+                <a class="btn btn-outline-light dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-person-circle"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li><a class="dropdown-item" href="perfil/perfil.php">Mi perfil</a></li>
+                  <li><a class="dropdown-item" href="reservas.php">Mis reservas</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item text-danger" href="logout.php">Cerrar sesión</a></li>
+                </ul>
+              </div>
+            <?php else: ?>
+              <a href="./login.php" class="btn btn-outline-light"><i class="bi bi-person"></i></a>
+            <?php endif; ?>
+            <a href="./carrito.php" class="btn btn-outline-light position-relative">
+              <i class="bi bi-cart3"></i>
+            </a>
           </div>
         </div>
-      <?php else: ?>
-        <a href="./login.php"><span title="Usuario">👤</span></a>
-      <?php endif; ?>
-      <span title="Menú">☰</span>
-    </div>
+      </div>
+    </nav>
+    
   </header>

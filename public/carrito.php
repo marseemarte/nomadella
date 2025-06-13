@@ -58,7 +58,7 @@ async function eliminarItem(id) {
 }
 
 async function confirmarCompra() {
-  const res = await fetch('orden/crear_orden.php');
+  const res = await fetch('order/crear_orden.php');
   const texto = await res.text();
   if (texto === 'Orden creada correctamente') {
     alert('Compra realizada. Se descargará el ticket.');

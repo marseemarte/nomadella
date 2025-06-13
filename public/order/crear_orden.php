@@ -3,69 +3,46 @@ session_start();
 include '../conexion.php';
 
 if (!isset($_SESSION['usuario_id'])) {
-    echo "No logueado";
-    exit;
+    http_response_code(401);
+    exit('No autenticado');
 }
 
 $id_usuario = $_SESSION['usuario_id'];
-
-// Buscar carrito activo
-$sql = "SELECT * FROM carritos WHERE id_usuario = ? AND estado = 'activo'";
-$stmt = $conexion->prepare($sql);
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$res = $stmt->get_result();
-
-if ($res->num_rows === 0) {
-    echo "No hay carrito activo";
-    exit;
-}
-
-$carrito = $res->fetch_assoc();
-$id_carrito = $carrito['id_carrito'];
+$res = $conexion->query("SELECT id_carrito FROM carritos WHERE id_usuario=$id_usuario AND estado='activo' ORDER BY id_carrito DESC LIMIT 1");
+if (!$row = $res->fetch_assoc()) exit('No hay carrito activo');
+$id_carrito = $row['id_carrito'];
 
 // Obtener items
-$sql_items = "SELECT * FROM carrito_items WHERE id_carrito = ?";
-$stmt_items = $conexion->prepare($sql_items);
-$stmt_items->bind_param("i", $id_carrito);
-$stmt_items->execute();
-$items_res = $stmt_items->get_result();
-
-$total = 0;
 $items = [];
-while ($item = $items_res->fetch_assoc()) {
-    $total += $item['subtotal'];
+$total = 0;
+$q = $conexion->query("SELECT * FROM carrito_items WHERE id_carrito=$id_carrito");
+while($item = $q->fetch_assoc()) {
     $items[] = $item;
+    $total += $item['subtotal'];
 }
+
+// Simular pago (puedes agregar integración real aquí)
+$medio_pago = 'Tarjeta de Crédito';
+$datos_facturacion = 'Datos de ejemplo';
 
 // Crear orden
-$sql_orden = "INSERT INTO ordenes (id_usuario, total, estado, medio_pago, datos_facturacion) VALUES (?, ?, 'pendiente', 'no especificado', 'no especificado')";
-$stmt_orden = $conexion->prepare($sql_orden);
-$stmt_orden->bind_param("id", $id_usuario, $total);
-$stmt_orden->execute();
-$id_orden = $stmt_orden->insert_id;
+$conexion->query("INSERT INTO ordenes (id_usuario, total, estado, medio_pago, datos_facturacion) VALUES ($id_usuario, $total, 'Confirmada', '$medio_pago', '$datos_facturacion')");
+$id_orden = $conexion->insert_id;
 
-// Insertar ítems en la orden
-foreach ($items as $item) {
-    $sql_item = "INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad, precio_unitario, subtotal)
-                 VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt_item = $conexion->prepare($sql_item);
-    $stmt_item->bind_param(
-        "isiiid",
-        $id_orden,
-        $item['tipo_producto'],
-        $item['id_producto'],
-        $item['cantidad'],
-        $item['precio_unitario'],
-        $item['subtotal']
-    );
-    $stmt_item->execute();
+// Pasar items a la orden
+foreach($items as $item) {
+    $conexion->query("INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad, precio_unitario, subtotal) VALUES ($id_orden, '{$item['tipo_producto']}', {$item['id_producto']}, {$item['cantidad']}, {$item['precio_unitario']}, {$item['subtotal']})");
+    // Descontar cupo si es paquete
+    if ($item['tipo_producto'] === 'paquete_turistico') {
+        $conexion->query("UPDATE paquetes_turisticos SET cupo_disponible = cupo_disponible - {$item['cantidad']} WHERE id_paquete = {$item['id_producto']}");
+    }
 }
 
-// Marcar carrito como procesado
-$update = $conexion->prepare("UPDATE carritos SET estado = 'procesado' WHERE id_carrito = ?");
-$update->bind_param("i", $id_carrito);
-$update->execute();
+// Vaciar carrito
+$conexion->query("DELETE FROM carrito_items WHERE id_carrito=$id_carrito");
 
-echo "Orden creada correctamente";
+// Opcional: cerrar carrito
+$conexion->query("UPDATE carritos SET estado='cerrado' WHERE id_carrito=$id_carrito");
+
+echo 'Orden creada correctamente';
 ?>
