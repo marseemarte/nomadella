@@ -44,11 +44,30 @@ include 'header.php';
     background: #b84e6f;
     color: #fff;
   }
-  /* Flechas Swiper */
+.swiper-container-wrapper {
+  position: relative;
+  padding: 0 40px; /* espacio para flechas sin cortar el contenido */
+}
+
 .swiper-button-next,
 .swiper-button-prev {
-    color: #741d41; /* color vino oscuro */
+  color: #741d41;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
 }
+
+.swiper-button-prev {
+  left: 0;
+}
+
+.swiper-button-next {
+  right: 0;
+}
+
 
 /* Paginación (bullets) Swiper */
 .swiper-pagination-bullet {
@@ -69,6 +88,11 @@ include 'header.php';
 .swiper-pagination-bullet-active {
     transform: scale(1.2);
 }
+body {
+  background: #f8f8f4;
+  margin: 0;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
 </style>
 
 <div class="hero-section">
@@ -82,88 +106,52 @@ include 'header.php';
 <!-- Carrusel de Paquetes Destacados -->
 <section class="container my-5">
   <h2 class="text-center mb-4" style="color:#741d41;">Paquetes Turísticos Destacados</h2>
-  
-  <div class="swiper mySwiper">
-    <div class="swiper-wrapper">
-      <?php
-        include 'conexion.php';
-        $sql = "SELECT * FROM paquetes_turisticos WHERE activo = 1 LIMIT 9";
-        $result = $conexion->query($sql);
-        while ($row = $result->fetch_assoc()):
-      ?>
-      <div class="swiper-slide">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title" style="color:#b84e6f;"><?= htmlspecialchars($row['nombre']) ?></h5>
-            <p class="card-text"><?= htmlspecialchars($row['descripcion']) ?></p>
-            <div class="fw-bold mb-2" style="color:#741d41;">$<?= number_format($row['precio_base'], 2) ?> USD</div>
-            <a href="./paquetes_info.php?id=<?= $row['id_paquete'] ?>" class="btn btn-primary w-100" style="background:linear-gradient(90deg,#741d41 60%,#b84e6f 100%);border:none;">Ver detalles</a>
+
+  <!-- WRAPPER nuevo para controlar flechas -->
+  <div class="swiper-container-wrapper position-relative">
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        <?php
+          include 'conexion.php';
+          $sql = "SELECT * FROM paquetes_turisticos WHERE activo = 1 LIMIT 9";
+          $result = $conexion->query($sql);
+          while ($row = $result->fetch_assoc()):
+        ?>
+        <div class="swiper-slide">
+          <div class="card shadow-sm" style="height:200px;">
+            <div class="card-body justify-content-between d-flex flex-column">
+              <h5 class="card-title" style="color:#b84e6f;"><?= htmlspecialchars($row['nombre']) ?></h5>
+              <p class="card-text"><?= htmlspecialchars($row['descripcion']) ?></p>
+              <div class="fw-bold mb-2" style="color:#741d41;">$<?= number_format($row['precio_base'], 2) ?> USD</div>
+              <a href="./paquetes_info.php?id=<?= $row['id_paquete'] ?>" class="btn btn-primary w-100" style="background:linear-gradient(90deg,#741d41 60%,#b84e6f 100%);border:none;">Ver detalles</a>
+            </div>
           </div>
         </div>
+        <?php endwhile; ?>
       </div>
-      <?php endwhile; ?>
-    </div>
-    
-    <!-- Flechas -->
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
 
-    <!-- Paginación (opcional) -->
-     <br>
-     <br>
-    <div class="swiper-pagination"></div>
+      <!-- Paginación -->
+       <br>
+       <br>
+      <div class="swiper-pagination mt-4"></div>
+    </div>
+
+    <!-- Flechas por fuera del slider -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
   </div>
 </section>
 
 
-<!-- Filtros avanzados -->
-<section class="container filtros-section my-5">
-  <form class="row g-3 filtros-form align-items-end">
-    <div class="col-12 col-md-3">
-      <label for="precio" class="form-label">Precio:</label>
-      <input type="range" id="precio" name="precio" min="200" max="4000" step="50" value="1500" class="form-range" oninput="precioOutput.value = precio.value">
-      <output id="precioOutput" class="ms-2">1500</output> USD
-    </div>
-    <div class="col-12 col-md-3">
-      <label for="duracion" class="form-label">Duración:</label>
-      <select id="duracion" name="duracion" class="form-select">
-        <option value="">Cualquier duración</option>
-        <?php for($i=1;$i<=10;$i++): ?>
-          <option value="<?=$i?>"><?=$i?> día<?=($i>1?'s':'')?></option>
-        <?php endfor; ?>
-      </select>
-    </div>
-    <div class="col-12 col-md-3">
-      <label for="salida" class="form-label">Salida desde:</label>
-      <select id="salida" name="salida" class="form-select">
-        <option value="">Cualquier ciudad</option>
-        <option>Buenos Aires</option>
-        <option>Córdoba</option>
-        <option>Mendoza</option>
-        <option>Rosario</option>
-      </select>
-    </div>
-    <div class="col-12 col-md-3">
-      <label for="tipo" class="form-label">Tipo de viaje:</label>
-      <select id="tipo" name="tipo" class="form-select">
-        <option value="">Todos</option>
-        <option>Playa</option>
-        <option>Ciudad</option>
-        <option>Montaña</option>
-        <option>Aventura</option>
-        <option>Familiar</option>
-      </select>
-    </div>
-    <div class="col-12 text-end">
-      <button type="submit" class="btn filtros-btn">Filtrar</button>
-    </div>
-  </form>
-  <p class="mt-2" style="font-size:0.95em;color:#b84e6f;">
-    * Todos los precios están expresados en dólares estadounidenses (USD). Consultá por formas de pago en pesos argentinos.
-  </p>
+
+<section class=" container justify-content-center text-center my-5 cta-section "> 
+  <h2 class="mb-4" style="color:#741d41;">¿Listo para tu próxima aventura?</h2>
+  <h2>¡Reserva tu aventura hoy!</h2>
+  <a href="./paquetes.php" class="btn btn-primary">Ver todos los paquetes</a>
 </section>
 
 <!-- Opiniones de clientes -->
+
 <section class="container opiniones-section">
   <h2 class="text-center mb-4">Opiniones de nuestros viajeros</h2>
   <div class="row justify-content-center opiniones-grid">
