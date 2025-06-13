@@ -6,9 +6,9 @@ $sql = "SELECT * FROM usuarios $where ORDER BY fecha_registro DESC LIMIT 10";
 $result = $mysqli->query($sql);
 if ($result && $result->num_rows > 0):
     foreach ($result as $i => $row): ?>
-        <tr>
+        <tr data-id="<?= $row['id_usuario'] ?>">
             <td><?= $i + 1 ?></td>
-            <td><?= htmlspecialchars($row['nombre']) ?></td>
+            <td data-id="<?= $row['id_usuario'] ?>"><?= htmlspecialchars($row['nombre']) ?></td>
             <td><?= htmlspecialchars($row['email']) ?></td>
             <td><?= htmlspecialchars($row['telefono']) ?></td>
             <td><?= date('d/m/Y H:i', strtotime($row['fecha_registro'])) ?></td>

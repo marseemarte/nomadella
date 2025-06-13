@@ -118,7 +118,12 @@ $reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre, 
             </ol>
         </nav>
 
-        <h2 class="mb-4">Gestión de Reservas</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Gestionar Reservas</h2>
+            <a href="nueva_reserva.php" class="btn btn-primary mb-3">
+                <i class="bi bi-plus-circle"></i> Nueva reserva
+            </a>
+        </div>
 
         <form class="d-flex mb-4" onsubmit="return false;">
             <input type="text" id="busqueda-reserva" name="search" class="form-control me-2" placeholder="Buscar...">

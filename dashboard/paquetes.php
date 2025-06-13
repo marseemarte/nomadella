@@ -27,7 +27,9 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
         </nav>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Paquetes Turísticos</h2>
-            <a href="nuevo_paquete.php" class="btn btn-outline-primary">+ Nuevo Paquete</a>
+            <a href="nuevo_paquete.php" class="btn btn-primary mb-3">
+                <i class="bi bi-plus-circle"></i> Nuevo Paquete
+            </a>
         </div>
 
         <?php foreach ($paquetes as $paquete): ?>
@@ -98,20 +100,20 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
                         </div>
                         <div>
                             <div>
-                            <p>Precio: <b>$<?= number_format($paquete['precio_base'], 2) ?></b></p>
-                            <p>Destino: <?= htmlspecialchars($paquete['destino']) ?></p>
-                            <p>Fecha: <?= date("d/m/Y", strtotime($paquete['fecha_inicio'])) ?> - <?= date("d/m/Y", strtotime($paquete['fecha_fin'])) ?></p>    
+                                <p>Precio: <b>$<?= number_format($paquete['precio_base'], 2) ?></b></p>
+                                <p>Destino: <?= htmlspecialchars($paquete['destino']) ?></p>
+                                <p>Fecha: <?= date("d/m/Y", strtotime($paquete['fecha_inicio'])) ?> - <?= date("d/m/Y", strtotime($paquete['fecha_fin'])) ?></p>
                             </div>
                             <div>
-                                <p>Estado: 
+                                <p>Estado:
                                     <?php if ($paquete['activo'] == '1'): ?>
                                         <span class="text-success fw-bold">Activo</span>
                                     <?php else: ?>
                                         <span class="text-danger fw-bold">Inactivo</span>
                                     <?php endif; ?>
-                                </p> 
+                                </p>
                             </div>
-                            
+
                             <a href="editar_paquete.php?id=<?= $id_paquete ?>" class="btn btn-editar"><i class="bi bi-pencil-square"></i> EDITAR</a>
                         </div>
                     </div>

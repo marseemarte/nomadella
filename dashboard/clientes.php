@@ -48,7 +48,13 @@ $result = $mysqli->query($sql);
         <div class="container-fluid mt-4">
             <div class="row">
                 <div class="col-12">
-                    <h2 class="mb-4">Usuarios</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="mb-4">Usuarios</h2>
+                        <a href="nuevo_usuario.php" class="btn btn-primary mb-3">
+                            <i class="bi bi-plus-circle"></i> Nuevo Usuario
+                        </a>
+                    </div>
+
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <form class="d-flex" method="get" action="">
                             <input type="text" id="busqueda-cliente" name="search" class="form-control me-2" placeholder="Buscar cliente..." value="<?= htmlspecialchars($search) ?>">
