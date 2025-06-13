@@ -188,17 +188,19 @@ document.getElementById('formPago').addEventListener('submit', async function() 
     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
     body: `email=${encodeURIComponent(email)}`
   });
-  const texto = await res.text();
+  // Cambia aquí: procesa como JSON
+  const data = await res.json();
 
   document.getElementById('btnConfirmarPago').disabled = false;
 
-  if (texto === 'Orden creada correctamente') {
+  if (data.success) {
     bootstrap.Modal.getInstance(document.getElementById('modalPago')).hide();
-    alert('Compra realizada. Recibirás el ticket por email.');
+    // Muestra el mensaje HTML en el DOM, no en alert
+    document.body.innerHTML = data.mensaje;
     cargarCarrito();
     actualizarBadgeCarrito();
   } else {
-    alert('Error al confirmar: ' + texto);
+    alert('Error al confirmar: ' + (data.mensaje || 'Error desconocido'));
   }
 });
 

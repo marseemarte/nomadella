@@ -1,6 +1,15 @@
 <?php
 session_start();
-include '../conexion.php';
+require '../conexion.php';
+require __DIR__ . '/../../vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use Dompdf\Dompdf;
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401);
@@ -34,7 +43,6 @@ $id_orden = $conexion->insert_id;
 // Pasar items a la orden
 foreach($items as $item) {
     $conexion->query("INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad, precio_unitario, subtotal) VALUES ($id_orden, '{$item['tipo_producto']}', {$item['id_producto']}, {$item['cantidad']}, {$item['precio_unitario']}, {$item['subtotal']})");
-    // Descontar cupo si es paquete
     if ($item['tipo_producto'] === 'paquete_turistico') {
         $conexion->query("UPDATE paquetes_turisticos SET cupo_disponible = cupo_disponible - {$item['cantidad']} WHERE id_paquete = {$item['id_producto']}");
     }
@@ -44,29 +52,119 @@ foreach($items as $item) {
 $conexion->query("DELETE FROM carrito_items WHERE id_carrito=$id_carrito");
 $conexion->query("UPDATE carritos SET estado='cerrado' WHERE id_carrito=$id_carrito");
 
-// Enviar email con ticket (HTML simple)
+// --- GENERAR PDF DEL TICKET ---
+$ticketHtml = '
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 11px; background: #fff; margin: 0; padding: 0; }
+        .ticket { width: 220px; padding: 10px; border: 1px dashed #b84e6f; margin: auto; }
+        .titulo { color: #b84e6f; font-size: 18px; text-align: center; font-weight: bold; }
+        .subtitulo { text-align: center; font-size: 13px; }
+        .detalle { margin-top: 10px; }
+        .total { font-size: 13px; font-weight: bold; text-align: right; margin-top: 10px; }
+        .gracias { color: #741d41; text-align: center; margin-top: 12px; font-size: 11px; }
+        ul { padding-left: 15px; margin: 0; }
+        li { margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="titulo">Nomadella</div>
+        <div class="subtitulo">Ticket de compra</div>
+        <div class="subtitulo">'.date('d/m/Y H:i').'</div>
+        <div class="detalle">
+            <b>Detalle:</b>
+            <ul>';
+foreach($items as $item) {
+    $nombre = "Paquete";
+    if ($item['tipo_producto'] === 'paquete_turistico') {
+        $p = $conexion->query("SELECT nombre FROM paquetes_turisticos WHERE id_paquete={$item['id_producto']}")->fetch_assoc();
+        $nombre = $p ? $p['nombre'] : 'Paquete';
+    }
+    $ticketHtml .= "<li>$nombre x{$item['cantidad']} - $ {$item['subtotal']} USD</li>";
+}
+$ticketHtml .= '
+            </ul>
+        </div>
+        <div class="total">TOTAL: $'.number_format($total,2).' USD</div>
+        <div class="gracias">¡Gracias por confiar en Nomadella!<br>www.nomadella.com</div>
+    </div>
+</body>
+</html>';
+
+// Generar PDF y guardarlo temporalmente
+$dompdf = new Dompdf();
+$dompdf->loadHtml($ticketHtml);
+$dompdf->setPaper([0,0,226.77,425.19], 'portrait');
+$dompdf->render();
+$pdfdoc = $dompdf->output(); // PDF en memoria
+
+// --- ENVIAR MAIL SOLO CON INFORMACIÓN, SIN PDF ---
 if ($email_cliente) {
-    $asunto = "Tu compra en Nomadella";
-    $mensaje = "<h2>¡Gracias por tu compra!</h2>";
-    $mensaje .= "<p>Detalle de tu compra:</p><ul>";
+    $asunto = "¡Gracias por tu compra en Nomadella!";
+    $mensajeHtml = '
+        <div style="font-family:Arial,sans-serif;background:#faf6f8;padding:24px;">
+            <h2 style="color:#b84e6f;">¡Gracias por tu compra en Nomadella!</h2>
+            <p>Este es el resumen de tu compra:<br>
+            <b>Resumen:</b></p>
+            <ul style="padding-left:18px;">';
     foreach($items as $item) {
         $nombre = "Paquete";
         if ($item['tipo_producto'] === 'paquete_turistico') {
             $p = $conexion->query("SELECT nombre FROM paquetes_turisticos WHERE id_paquete={$item['id_producto']}")->fetch_assoc();
             $nombre = $p ? $p['nombre'] : 'Paquete';
         }
-        $mensaje .= "<li><b>$nombre</b> x {$item['cantidad']} - Subtotal: $ {$item['subtotal']} USD</li>";
+        $mensajeHtml .= "<li><b>$nombre</b> x {$item['cantidad']} - Subtotal: $ {$item['subtotal']} USD</li>";
     }
-    $mensaje .= "</ul>";
-    $mensaje .= "<p><b>Total:</b> $ $total USD</p>";
-    $mensaje .= "<p>¡Gracias por confiar en Nomadella!</p>";
+    $mensajeHtml .= '</ul>
+            <p style="font-size:1.1em;"><b>Total:</b> $' . $total . ' USD</p>
+            <p style="color:#741d41;">¡Esperamos que disfrutes tu experiencia!</p>
+        </div>';
 
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    $headers .= "From: Nomadella <no-reply@nomadella.com>" . "\r\n";
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'localhost';
+        $mail->Port = 1025;
+        $mail->SMTPAuth = false;
+        $mail->SMTPSecure = false;
 
-    @mail($email_cliente, $asunto, $mensaje, $headers);
+        $mail->setFrom('no-reply@nomadella.com', 'Nomadella');
+        $mail->addAddress($email_cliente);
+        $mail->isHTML(true);
+        $mail->CharSet = 'UTF-8';
+        $mail->Subject = $asunto;
+        $mail->Body    = $mensajeHtml;
+        // No se adjunta PDF
+        $mail->send();
+    } catch (Exception $e) {
+        error_log("Error al enviar correo: {$mail->ErrorInfo}");
+    }
 }
 
-echo 'Orden creada correctamente';
+// --- RESPONDER CON JSON ---
+$response = [
+    'success' => true,
+    'mensaje' => '<div style="font-family:Arial,sans-serif;background:#faf6f8;padding:24px;max-width:500px;margin:40px auto;border-radius:8px;">
+        <h2 style="color:#b84e6f;">¡Gracias por tu compra!</h2>
+        <p>Te enviamos un correo con el resumen de tu compra.<br>
+        Si lo deseas, puedes descargar tu ticket aquí:</p>
+        <a href="order/descargar_ticket.php?id_orden='.$id_orden.'" style="display:inline-block;padding:10px 18px;background:#b84e6f;color:#fff;text-decoration:none;border-radius:5px;font-weight:bold;margin-top:10px;">Descargar ticket PDF</a>
+        <p style="color:#741d41;margin-top:18px;">¡Esperamos que disfrutes tu experiencia!</p>
+        <a href="index.php" style="display:inline-block;margin-top:20px;padding:10px 18px;background:#b84e6f;color:#fff;text-decoration:none;border-radius:5px;font-weight:bold;">Volver al inicio</a>
+    </div>
+    
+    '
+];
+header('Content-Type: application/json');
+echo json_encode($response);
+exit;
 ?>
+<script>
+fetch('order/crear_orden.php', { ... })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('resultado').innerHTML = data.mensaje;
+  });
+</script>
