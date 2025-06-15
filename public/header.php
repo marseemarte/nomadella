@@ -49,6 +49,12 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
               <li><a class="dropdown-item" href="perfil/perfil.php">Mi perfil</a></li>
               <li><a class="dropdown-item" href="reservas.php">Mis reservas</a></li>
+              <?php if (isset($_SESSION['rol']) && in_array($_SESSION['rol'], [1,2])): ?>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-primary fw-bold" href="/nomadella/dashboard/dashboard.php">
+                  <i class="bi bi-speedometer2"></i> Ingresar al Dashboard
+                </a></li>
+              <?php endif; ?>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item text-danger" href="logout.php">Cerrar sesión</a></li>
             </ul>

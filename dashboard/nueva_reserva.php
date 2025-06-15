@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+include 'verificar_admin.php';
 
 // Procesar el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -128,4 +129,16 @@ $paquetes = $conn->query("SELECT id_paquete, nombre, destino FROM paquetes_turis
     </script>
 </body>
 </html>
-<?php $conn->close(); ?>
+<?php 
+
+if (isset($_SESSION['id_usuario'])) {
+    registrar_bitacora(
+        $pdo,
+        $_SESSION['id_usuario'],
+        'Crear reserva',
+        "Nueva reserva creada por el usuario {$_SESSION['id_usuario']} con paquete ID {$id_paquete} y cliente ID {$id_usuario}"
+    );
+}
+
+$conn->close();
+?>

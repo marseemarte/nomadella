@@ -19,4 +19,9 @@ try {
 } catch (PDOException $e) {
     die("Error de conexión PDO: " . $e->getMessage());
 }
+
+function registrar_bitacora($pdo, $id_usuario, $accion, $descripcion) {
+    $stmt = $pdo->prepare("INSERT INTO bitacora (id_usuario, accion, descripcion, fecha_hora) VALUES (?, ?, ?, NOW())");
+    $stmt->execute([$id_usuario, $accion, $descripcion]);
+}
 ?>

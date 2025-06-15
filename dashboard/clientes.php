@@ -4,6 +4,7 @@ $mysqli = new mysqli("localhost", "root", "", "nomadella");
 if ($mysqli->connect_errno) {
     die("Error de conexión: " . $mysqli->connect_error);
 }
+include 'verificar_admin.php';
 
 // Parámetros de paginación y búsqueda
 $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
@@ -12,7 +13,10 @@ $search = isset($_GET['search']) ? $mysqli->real_escape_string($_GET['search']) 
 $offset = ($page - 1) * $limit;
 
 // Consulta para contar total de registros
-$where = $search ? "WHERE nombre LIKE '%$search%' OR email LIKE '%$search%' OR telefono LIKE '%$search%'" : "";
+$where = "WHERE estado='activo'";
+if ($search) {
+    $where .= " AND (nombre LIKE '%$search%' OR email LIKE '%$search%' OR telefono LIKE '%$search%')";
+}
 $totalQuery = $mysqli->query("SELECT COUNT(*) as total FROM usuarios $where");
 $totalRows = $totalQuery->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
@@ -50,9 +54,9 @@ $result = $mysqli->query($sql);
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="mb-4">Usuarios</h2>
-                        <a href="nuevo_usuario.php" class="btn btn-primary mb-3">
+                        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
                             <i class="bi bi-plus-circle"></i> Nuevo Usuario
-                        </a>
+                        </button>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -81,6 +85,8 @@ $result = $mysqli->query($sql);
                                     <th>Email</th>
                                     <th>Teléfono</th>
                                     <th>Fecha de Registro</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-clientes">
@@ -92,11 +98,28 @@ $result = $mysqli->query($sql);
                                             <td><?= htmlspecialchars($row['email']) ?></td>
                                             <td><?= htmlspecialchars($row['telefono']) ?></td>
                                             <td><?= date('d/m/Y H:i', strtotime($row['fecha_registro'])) ?></td>
+                                            <td>
+                                                <?php if (isset($row['estado']) && $row['estado'] === 'activo'): ?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary">Inactivo</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <a href="editar_usuario.php?id=<?= $row['id_usuario'] ?>" class="btn btn-sm btn-primary me-1">
+                                                    <i class="bi bi-pencil-square"></i> Editar
+                                                </a>
+                                                <?php if ($row['estado']): ?>
+                                                    <button type="button" class="btn btn-sm btn-danger btn-desactivar" data-id="<?= $row['id_usuario'] ?>" data-nombre="<?= htmlspecialchars($row['nombre']) ?>">
+                                                        <i class="bi bi-person-x"></i> Desactivar
+                                                    </button>
+                                                <?php endif; ?>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="5" class="text-center">No se encontraron usuarios.</td>
+                                        <td colspan="7" class="text-center">No se encontraron usuarios.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -137,9 +160,49 @@ $result = $mysqli->query($sql);
                             </ul>
                         </nav>
                     </div>
+                    <a href="usuarios_desactivados.php" class="btn btn-outline-secondary mb-3">
+                        <i class="bi bi-archive"></i> Ver usuarios desactivados
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Modal Nuevo Usuario -->
+    <div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header">
+            <h5 class="modal-title w-100" id="modalNuevoUsuarioLabel">¿Qué tipo de usuario desea ingresar?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body py-4">
+            <div class="d-grid gap-3">
+              <a href="/nomadella/public/registro.php" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-person-plus"></i> Nuevo Cliente
+              </a>
+              <a href="registro_empleado.php" class="btn btn-outline-success btn-lg">
+                <i class="bi bi-person-badge"></i> Nuevo Empleado
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Desactivar Usuario -->
+    <div class="modal fade" id="modalDesactivarUsuario" tabindex="-1" aria-labelledby="modalDesactivarUsuarioLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header">
+            <h5 class="modal-title w-100" id="modalDesactivarUsuarioLabel">Desactivar usuario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body py-4">
+            <p id="textoModalDesactivar"></p>
+            <button type="button" class="btn btn-danger px-4" id="btnConfirmarDesactivar">Desactivar</button>
+            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
     </div>
     <script>
         $('#busqueda-cliente').on('input', function() {
@@ -150,8 +213,28 @@ $result = $mysqli->query($sql);
                 $('#tabla-clientes').html(data);
             });
         });
+        let usuarioAEliminar = null;
+        $(document).on('click', '.btn-desactivar', function() {
+            usuarioAEliminar = $(this).data('id');
+            let nombre = $(this).data('nombre');
+            $('#textoModalDesactivar').html(`¿Está seguro que desea desactivar la cuenta de <b>${nombre}</b>?`);
+            let modal = new bootstrap.Modal(document.getElementById('modalDesactivarUsuario'));
+            modal.show();
+        });
+
+        $('#btnConfirmarDesactivar').on('click', function() {
+            if (usuarioAEliminar) {
+                $.post('desactivar_usuario.php', { id: usuarioAEliminar }, function(resp) {
+                    location.reload();
+                });
+            }
+        });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
-<?php $mysqli->close(); ?>
+<?php
+
+$mysqli->close(); 
+?>

@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+include 'verificar_admin.php';
 // KPIs
 $totalVentas = $pdo->query("SELECT COALESCE(SUM(total), 0) AS total FROM ordenes")->fetch()['total'];
 $reservasHoy = $pdo->query("SELECT COUNT(*) AS total FROM ordenes WHERE DATE(fecha_orden) = CURDATE()")->fetch()['total'];

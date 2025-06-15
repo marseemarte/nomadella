@@ -1,5 +1,7 @@
 <?php
 include 'conexion.php';
+include 'verificar_admin.php';
+
 
 // Búsqueda de reservas
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
@@ -17,7 +19,7 @@ $sql = "SELECT o.id_orden, o.fecha_orden, o.estado, o.total, u.nombre, u.apellid
 $reservas = $conn->query($sql);
 
 if ($reservas && $reservas->num_rows > 0):
-    foreach ($reservas as $r): 
+    foreach ($reservas as $r):
         $id_orden = $r['id_orden'];
         $id_paquete = $r['id_paquete'];
 
@@ -85,47 +87,59 @@ if ($reservas && $reservas->num_rows > 0):
         $total_reserva = $total_alojamientos + $total_autos + $total_vuelos + $total_servicios;
 ?>
 
-<div class="accordion-item">
-    <h2 class="accordion-header" id="heading<?= $r['id_orden'] ?>">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $r['id_orden'] ?>">
-            <i class="bi bi-postcard"></i>  Reserva #<?= $r['id_orden'] ?> - <?= htmlspecialchars($r['nombre']) ?> <?= htmlspecialchars($r['apellido']) ?> (<?= htmlspecialchars($paquete_mostrar) ?>)
-        </button>
-    </h2>
-    <div id="collapse<?= $r['id_orden'] ?>" class="accordion-collapse collapse" data-bs-parent="#reservasAccordion">
-        <div class="accordion-body">
-            <div><strong>Fecha de orden:</strong> <?= date('d/m/Y', strtotime($r['fecha_orden'])) ?></div>
-            <div><strong>Fecha de inicio del viaje:</strong> <?= $fecha_inicio->format('d/m/Y') ?></div>
-            <div><strong>Fecha de fin del viaje:</strong> <?= $fecha_fin->format('d/m/Y') ?></div>
-            <div><strong>Días de viaje:</strong> <?= $dias_viaje ?></div>
-            <div><strong>Estado:</strong> <span class="text-danger fw-bold"><?= $r['estado'] ?></span></div>
-            <hr>
-            <table class="table table-sm">
-                <tr>
-                    <td><strong><i class="bi bi-airplane-engines"></i> Vuelos</strong></td>
-                    <td><?= $vuelos ? implode("<br>", $vuelos) : "---" ?></td>
-                </tr>
-                <tr>
-                    <td><strong><i class="bi bi-buildings"></i> Alojamiento</strong></td>
-                    <td><?= $alojamientos ? implode("<br>", $alojamientos) : "---" ?></td>
-                </tr>
-                <tr>
-                    <td><strong><i class="bi bi-car-front-fill"></i> Alquiler de Auto</strong></td>
-                    <td><?= $autos ? implode("<br>", $autos) : "---" ?></td>
-                </tr>
-                <tr>
-                    <td><strong><i class="bi bi-backpack"></i> Servicios Adicionales</strong></td>
-                    <td><?= $servicios ? implode("<br>", $servicios) : "---" ?></td>
-                </tr>
-                <tr class="table-danger fw-bold">
-                    <td>Total</td>
-                    <td>$<?= number_format($total_reserva, 2) ?></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-</div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading<?= $r['id_orden'] ?>">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $r['id_orden'] ?>">
+                    <i class="bi bi-postcard"></i> Reserva #<?= $r['id_orden'] ?> - <?= htmlspecialchars($r['nombre']) ?> <?= htmlspecialchars($r['apellido']) ?> (<?= htmlspecialchars($paquete_mostrar) ?>)
+                </button>
+            </h2>
+            <div id="collapse<?= $r['id_orden'] ?>" class="accordion-collapse collapse" data-bs-parent="#reservasAccordion">
+                <div class="accordion-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div>
+                            <div><strong>Fecha de orden:</strong> <?= date('d/m/Y', strtotime($r['fecha_orden'])) ?></div>
+                            <div><strong>Fecha de inicio del viaje:</strong> <?= $fecha_inicio->format('d/m/Y') ?></div>
+                            <div><strong>Fecha de fin del viaje:</strong> <?= $fecha_fin->format('d/m/Y') ?></div>
+                            <div><strong>Días de viaje:</strong> <?= $dias_viaje ?></div>
+                            <div><strong>Estado:</strong> <span class="text-danger fw-bold"><?= $r['estado'] ?></span></div>
+                            
+                        </div>
+                        <div>
+                            <a href="editar_reserva.php?id=<?= $r['id_orden'] ?>" class="btn btn-sm btn-primary me-2">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+                        </div>
+                        
+                    </div>
+                    <hr>
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong><i class="bi bi-airplane-engines"></i> Vuelos</strong></td>
+                            <td><?= $vuelos ? implode("<br>", $vuelos) : "---" ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong><i class="bi bi-buildings"></i> Alojamiento</strong></td>
+                            <td><?= $alojamientos ? implode("<br>", $alojamientos) : "---" ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong><i class="bi bi-car-front-fill"></i> Alquiler de Auto</strong></td>
+                            <td><?= $autos ? implode("<br>", $autos) : "---" ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong><i class="bi bi-backpack"></i> Servicios Adicionales</strong></td>
+                            <td><?= $servicios ? implode("<br>", $servicios) : "---" ?></td>
+                        </tr>
+                        <tr class="table-danger fw-bold">
+                            <td>Total</td>
+                            <td>$<?= number_format($total_reserva, 2) ?></td>
+                        </tr>
+                    </table>
 
-<?php endforeach;
+                </div>
+            </div>
+        </div>
+
+    <?php endforeach;
 else: ?>
     <div class="alert alert-warning">No se encontraron reservas.</div>
 <?php endif;

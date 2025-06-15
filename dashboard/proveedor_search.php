@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+include 'verificar_admin.php';
 
 $term = isset($_GET['term']) ? $conn->real_escape_string($_GET['term']) : '';
 

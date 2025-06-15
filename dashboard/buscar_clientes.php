@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+include 'verificar_admin.php';
 
 $term = isset($_GET['term']) ? $conn->real_escape_string($_GET['term']) : '';
 
@@ -12,6 +13,7 @@ while ($row = $resultado->fetch_assoc()) {
         'label' => $row['nombre'] . ' - ' . $row['email'] . ' - ' . $row['telefono']
     ];
 }
+
 
 header('Content-Type: application/json');
 echo json_encode($sugerencias);

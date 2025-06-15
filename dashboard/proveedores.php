@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+include 'verificar_admin.php';
 
 // Obtenemos proveedores por tipo
 function obtenerProveedores($conn, $tipo)
@@ -94,27 +95,58 @@ $servicios = obtenerProveedores($conn, 'servicio');
 
             <div class="tab-pane fade show active" id="alojamiento">
                 <div class="row g-4">
+                    <!--ALOJAMIENTOS-->
                     <?php while ($a = $alojamientos->fetch_assoc()): ?>
                         <div class="col-md-4">
                             <div class="card p-3">
-                                <h5 class="card-title"><?= htmlspecialchars($a['nombre']) ?></h5>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0 flex-grow-1 me-2" style="word-break:break-word;"><?= htmlspecialchars($a['nombre']) ?></h5>
+                                    <div class="d-flex gap-1">
+                                        <a href="editar_proveedor.php?id=<?= $a['id_proveedor'] ?>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                            onclick="confirmarEliminacion(<?= $a['id_proveedor'] ?>)">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
                                 <p><?= nl2br($a['descripcion']) ?></p>
-                                <p><i class="bi bi-telephone"></i> <?= $a['telefono'] ?> <br> <i class="bi bi-envelope"></i> <?= $a['email'] ?></p>
+                                <p>
+                                    <i class="bi bi-telephone"></i> <?= $a['telefono'] ?> <br>
+                                    <i class="bi bi-envelope"></i> <?= $a['email'] ?> <br>
+                                    <i class="bi bi-house"></i> <?= $a['direccion'] ?>
+                                </p>
                                 <span class="badge badge-azul"><?= ucfirst($a['tipo']) ?></span>
                             </div>
                         </div>
                     <?php endwhile; ?>
                 </div>
             </div>
-
+            <!--VUELOS-->
             <div class="tab-pane fade" id="vuelos">
                 <div class="row g-4">
                     <?php while ($v = $vuelos->fetch_assoc()): ?>
                         <div class="col-md-4">
                             <div class="card p-3">
-                                <h5 class="card-title"><?= htmlspecialchars($v['nombre']) ?></h5>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0 flex-grow-1 me-2" style="word-break:break-word;"><?= htmlspecialchars($v['nombre']) ?></h5>
+                                    <div class="d-flex gap-1">
+                                        <a href="editar_proveedor.php?id=<?= $v['id_proveedor'] ?>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                            onclick="confirmarEliminacion(<?= $v['id_proveedor'] ?>)">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
                                 <p><?= nl2br($v['descripcion']) ?></p>
-                                <p><i class="bi bi-telephone"></i> <?= $v['telefono'] ?> <br> <i class="bi bi-envelope"></i> <?= $v['email'] ?></p>
+                                <p>
+                                    <i class="bi bi-telephone"></i> <?= $v['telefono'] ?> <br> 
+                                    <i class="bi bi-envelope"></i> <?= $v['email'] ?> <br>
+                                    <i class="bi bi-house"></i> <?= $v['direccion'] ?>
+                                </p>
                                 <span class="badge badge-azul"><?= ucfirst($v['tipo']) ?></span>
                             </div>
                         </div>
@@ -127,9 +159,24 @@ $servicios = obtenerProveedores($conn, 'servicio');
                     <?php while ($au = $autos->fetch_assoc()): ?>
                         <div class="col-md-4">
                             <div class="card p-3">
-                                <h5 class="card-title"><?= htmlspecialchars($au['nombre']) ?></h5>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0 flex-grow-1 me-2" style="word-break:break-word;"><?= htmlspecialchars($au['nombre']) ?></h5>
+                                    <div class="d-flex gap-1">
+                                        <a href="editar_proveedor.php?id=<?= $au['id_proveedor'] ?>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                            onclick="confirmarEliminacion(<?= $au['id_proveedor'] ?>)">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
                                 <p><?= nl2br($au['descripcion']) ?></p>
-                                <p><i class="bi bi-telephone"></i> <?= $au['telefono'] ?> <br> <i class="bi bi-envelope"></i> <?= $au['email'] ?></p>
+                                <p>
+                                    <i class="bi bi-telephone"></i> <?= $au['telefono'] ?> <br> 
+                                    <i class="bi bi-envelope"></i> <?= $au['email'] ?> <br>
+                                    <i class="bi bi-house"></i> <?= $au['direccion'] ?>
+                                </p>
                                 <span class="badge badge-azul"><?= ucfirst($au['tipo']) ?></span>
                             </div>
                         </div>
@@ -142,9 +189,24 @@ $servicios = obtenerProveedores($conn, 'servicio');
                     <?php while ($s = $servicios->fetch_assoc()): ?>
                         <div class="col-md-4">
                             <div class="card p-3">
-                                <h5 class="card-title"><?= htmlspecialchars($s['nombre']) ?></h5>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0 flex-grow-1 me-2" style="word-break:break-word;"><?= htmlspecialchars($s['nombre']) ?></h5>
+                                    <div class="d-flex gap-1">
+                                        <a href="editar_proveedor.php?id=<?= $s['id_proveedor'] ?>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                            onclick="confirmarEliminacion(<?= $s['id_proveedor'] ?>)">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
                                 <p><?= nl2br($s['descripcion']) ?></p>
-                                <p><i class="bi bi-telephone"></i> <?= $s['telefono'] ?> <br> <i class="bi bi-envelope"></i> <?= $s['email'] ?></p>
+                                <p>
+                                    <i class="bi bi-telephone"></i> <?= $s['telefono'] ?> <br> 
+                                    <i class="bi bi-envelope"></i> <?= $s['email'] ?> <br>
+                                    <i class="bi bi-house"></i> <?= $s['direccion'] ?>
+                                </p>
                                 <span class="badge badge-azul"><?= ucfirst($s['tipo']) ?></span>
                             </div>
                         </div>
@@ -156,53 +218,146 @@ $servicios = obtenerProveedores($conn, 'servicio');
 
     </div>
 
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-labelledby="modalConfirmarEliminarLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2.5rem;"></i>
+                    </div>
+                    <h5 class="mb-3" id="modalConfirmarEliminarLabel">¿Estás seguro de que quieres eliminar?</h5>
+                    <p class="mb-4">Esta acción no se puede deshacer.</p>
+                    <button type="button" class="btn btn-danger px-4 me-2" id="btnEliminarConfirmado"><i class="bi bi-x-circle"></i> Eliminar</button>
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de éxito -->
+    <div class="modal fade" id="modalEliminadoOk" tabindex="-1" aria-labelledby="modalEliminadoOkLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size:2.5rem;"></i>
+                    </div>
+                    <h5 class="mb-3" id="modalEliminadoOkLabel">¡Se ha eliminado correctamente!</h5>
+                    <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal" onclick="location.reload()">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-$(document).ready(function() {
-    let $buscador = $('#buscador');
-    let $resultados = $('#resultados');
-    let timeout = null;
+        $(document).ready(function() {
+            let $buscador = $('#buscador');
+            let $resultados = $('#resultados');
+            let timeout = null;
 
-    $buscador.on('input', function() {
-        clearTimeout(timeout);
-        let term = $(this).val();
-        if (term.length < 2) { $resultados.html('').hide(); return; }
-        timeout = setTimeout(function() {
-            $.get('proveedor_search.php', {term: term}, function(data) {
-                if (data.length) {
-                    let list = '<ul class="list-group mb-0">';
-                    data.forEach(p => {
-                        list += `<li class="list-group-item list-group-item-action" style="cursor:pointer" data-id="${p.id}">${p.label}</li>`;
-                    });
-                    list += '</ul>';
-                    $resultados.html(list).show();
-                } else {
-                    $resultados.html('<div class="p-2 text-muted">Sin resultados</div>').show();
+            $buscador.on('input', function() {
+                clearTimeout(timeout);
+                let term = $(this).val();
+                if (term.length < 2) {
+                    $resultados.html('').hide();
+                    return;
                 }
-            }, 'json');
-        }, 200);
-    });
+                timeout = setTimeout(function() {
+                    $.get('proveedor_search.php', {
+                        term: term
+                    }, function(data) {
+                        if (data.length) {
+                            let list = '<ul class="list-group mb-0">';
+                            data.forEach(p => {
+                                list += `<li class="list-group-item list-group-item-action" style="cursor:pointer" data-id="${p.id}">${p.label}</li>`;
+                            });
+                            list += '</ul>';
+                            $resultados.html(list).show();
+                        } else {
+                            $resultados.html('<div class="p-2 text-muted">Sin resultados</div>').show();
+                        }
+                    }, 'json');
+                }, 200);
+            });
 
-    // Click en resultado
-    $resultados.on('click', '.list-group-item', function() {
-        let id = $(this).data('id');
-        window.location = 'proveedor_form.php?id=' + id;
-    });
+            // Click en resultado
+            $resultados.on('click', '.list-group-item', function() {
+                let id = $(this).data('id');
+                window.location = 'proveedor_form.php?id=' + id;
+            });
 
-    // Ocultar resultados al hacer click fuera
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('#buscador, #resultados').length) {
-            $resultados.hide();
+            // Ocultar resultados al hacer click fuera
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#buscador, #resultados').length) {
+                    $resultados.hide();
+                }
+            });
+
+            // Mostrar resultados si el input recupera el foco y hay resultados
+            $buscador.on('focus', function() {
+                if ($resultados.html().trim() !== '') $resultados.show();
+            });
+
+            // Mostrar modal de éxito si se acaba de cargar un proveedor
+            <?php if (isset($_GET['ok']) && $_GET['ok'] == 1): ?>
+                setTimeout(function() {
+                    $('#modalEliminadoOkLabel').text('¡Se ha cargado correctamente!');
+                    var modalOk = new bootstrap.Modal(document.getElementById('modalEliminadoOk'));
+                    modalOk.show();
+
+                    // Quitamos el parámetro ok de la URL inmediatamente
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('ok');
+                        window.history.replaceState({}, document.title, url.pathname + url.search);
+                    }
+                }, 300);
+            <?php endif; ?>
+
+            // Mostrar modal de éxito si se acaba de editar un proveedor
+            <?php if (isset($_GET['edit']) && $_GET['edit'] == 1): ?>
+                setTimeout(function() {
+                    $('#modalEliminadoOkLabel').text('¡Se ha editado correctamente!');
+                    var modalOk = new bootstrap.Modal(document.getElementById('modalEliminadoOk'));
+                    modalOk.show();
+
+                    // Quitamos el parámetro edit de la URL inmediatamente
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('edit');
+                        window.history.replaceState({}, document.title, url.pathname + url.search);
+                    }
+                }, 300);
+            <?php endif; ?>
+        });
+
+        let proveedorAEliminar = null;
+
+        function confirmarEliminacion(id) {
+            proveedorAEliminar = id;
+            let modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminar'));
+            modal.show();
         }
-    });
 
-    // Mostrar resultados si el input recupera el foco y hay resultados
-    $buscador.on('focus', function() {
-        if ($resultados.html().trim() !== '') $resultados.show();
-    });
-});
-</script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnEliminarConfirmado').onclick = function() {
+                if (proveedorAEliminar) {
+                    // AJAX para eliminar sin recargar
+                    $.get('eliminar_proveedor.php', {
+                        id: proveedorAEliminar
+                    }, function() {
+                        let modalConfirm = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarEliminar'));
+                        modalConfirm.hide();
+                        let modalOk = new bootstrap.Modal(document.getElementById('modalEliminadoOk'));
+                        modalOk.show();
+                    });
+                }
+            };
+        });
+    </script>
 </body>
 
 </html>

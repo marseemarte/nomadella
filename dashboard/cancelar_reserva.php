@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+include 'verificar_admin.php';
 
 $msg = '';
 
@@ -109,4 +110,14 @@ if (isset($_GET['id'])) {
 </body>
 </html>
 
-<?php $conn->close(); ?>
+<?php 
+if (isset($_SESSION['id_usuario'])) {
+    registrar_bitacora(
+        $pdo,
+        $_SESSION['id_usuario'],
+        'Cancelar reserva',
+        "Reserva #{$reserva['id_orden']} cancelada por el usuario {$_SESSION['id_usuario']}"
+    );
+}
+
+$conn->close(); ?>

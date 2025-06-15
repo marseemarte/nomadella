@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+include 'verificar_admin.php';
 
 $msg = '';
 
@@ -11,6 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $conn->query("UPDATE ordenes SET fecha_orden='$fecha', estado='$estado' WHERE id_orden=$id_orden");
     $msg = "Reserva actualizada correctamente.";
+
+    // Registrar en bitácora
+    if (isset($_SESSION['id_usuario'])) {
+        registrar_bitacora(
+            $pdo,
+            $_SESSION['id_usuario'],
+            'Editar reserva',
+            "Reserva #$id_orden actualizada. Estado: $estado, Fecha: $fecha"
+        );
+    }
 }
 
 // Obtener datos de la reserva:
