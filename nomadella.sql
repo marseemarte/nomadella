@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-06-2025 a las 03:01:35
+-- Tiempo de generación: 16-06-2025 a las 00:20:27
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -35,17 +35,20 @@ CREATE TABLE `alojamientos` (
   `categoria` varchar(50) DEFAULT NULL,
   `descripcion` text DEFAULT NULL,
   `telefono` varchar(50) DEFAULT NULL,
-  `email_contacto` varchar(150) DEFAULT NULL
+  `precio_dia` int(11) NOT NULL,
+  `email_contacto` varchar(150) DEFAULT NULL,
+  `id_proveedor` int(11) DEFAULT NULL,
+  `id_destino` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `alojamientos`
 --
 
-INSERT INTO `alojamientos` (`id_alojamiento`, `nombre`, `direccion`, `ciudad`, `categoria`, `descripcion`, `telefono`, `email_contacto`) VALUES
-(1, 'Hotel Los Andes', 'Av. Libertador 1234', 'El Calafate', '4 estrellas', 'Confort y vistas a los glaciares.', '2901-123456', 'info@losandes.com'),
-(2, 'EcoHotel Caribe', 'Calle Sol 432', 'Punta Cana', '5 estrellas', 'Todo incluido con actividades acuáticas.', '809-8765432', 'reservas@ecocaribe.com'),
-(3, 'Hostal Europa', 'Rue des Fleurs 21', 'París', '3 estrellas', 'Ideal para mochileros.', '+33 1 23456789', 'contact@hostaleuropa.fr');
+INSERT INTO `alojamientos` (`id_alojamiento`, `nombre`, `direccion`, `ciudad`, `categoria`, `descripcion`, `telefono`, `precio_dia`, `email_contacto`, `id_proveedor`, `id_destino`) VALUES
+(1, 'Hotel Los Andes', 'Av. Libertador 1234', 'El Calafate', '4 estrellas', 'Confort y vistas a los glaciares.', '2901-123456', 300, 'info@losandes.com', 1, 1),
+(2, 'EcoHotel Caribe', 'Calle Sol 432', 'Punta Cana', '5 estrellas', 'Todo incluido con actividades acuáticas.', '809-8765432', 650, 'reservas@ecocaribe.com', 2, 3),
+(3, 'Hostal Europa', 'Rue des Fleurs 21', 'París', '3 estrellas', 'Ideal para mochileros.', '+33 1 23456789', 270, 'contact@hostaleuropa.fr', 3, 4);
 
 -- --------------------------------------------------------
 
@@ -58,19 +61,21 @@ CREATE TABLE `alquiler_autos` (
   `proveedor` varchar(150) DEFAULT NULL,
   `tipo_vehiculo` varchar(100) DEFAULT NULL,
   `ubicacion_retiro` varchar(150) DEFAULT NULL,
+  `id_destino` int(11) NOT NULL,
   `ubicacion_entrega` varchar(150) DEFAULT NULL,
   `precio_por_dia` decimal(10,2) DEFAULT NULL,
-  `condiciones` text DEFAULT NULL
+  `condiciones` text DEFAULT NULL,
+  `id_proveedor` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `alquiler_autos`
 --
 
-INSERT INTO `alquiler_autos` (`id_alquiler`, `proveedor`, `tipo_vehiculo`, `ubicacion_retiro`, `ubicacion_entrega`, `precio_por_dia`, `condiciones`) VALUES
-(1, 'Hertz', 'SUV', 'Aeropuerto El Calafate', 'Aeropuerto El Calafate', 80.00, 'Seguro básico incluido.'),
-(2, 'Avis', 'Convertible', 'Aeropuerto Punta Cana', 'Aeropuerto Punta Cana', 100.00, 'GPS y aire acondicionado incluidos.'),
-(3, 'Sixt', 'Sedán', 'Aeropuerto CDG París', 'Centro de París', 90.00, 'Kilometraje ilimitado.');
+INSERT INTO `alquiler_autos` (`id_alquiler`, `proveedor`, `tipo_vehiculo`, `ubicacion_retiro`, `id_destino`, `ubicacion_entrega`, `precio_por_dia`, `condiciones`, `id_proveedor`) VALUES
+(1, 'Hertz', 'SUV', 'Aeropuerto El Calafate', 2, 'Aeropuerto El Calafate', 80.00, 'Seguro básico incluido.', 4),
+(2, 'Avis', 'Convertible', 'Aeropuerto Punta Cana', 3, 'Aeropuerto Punta Cana', 100.00, 'GPS y aire acondicionado incluidos.', 5),
+(3, 'Sixt', 'Sedán', 'Aeropuerto CDG París', 4, 'Centro de París', 90.00, 'Kilometraje ilimitado.', 6);
 
 -- --------------------------------------------------------
 
@@ -132,7 +137,12 @@ INSERT INTO `carritos` (`id_carrito`, `id_usuario`, `fecha_creacion`, `estado`) 
 (17, 17, '2025-06-10 18:17:53', 'activo'),
 (18, 18, '2025-06-10 18:17:53', 'activo'),
 (19, 19, '2025-06-10 18:17:53', 'activo'),
-(20, 20, '2025-06-10 18:17:53', 'activo');
+(20, 20, '2025-06-10 18:17:53', 'activo'),
+(21, 43, '2025-06-13 21:31:42', 'cerrado'),
+(22, 43, '2025-06-13 21:49:39', 'cerrado'),
+(23, 43, '2025-06-13 23:33:12', 'cerrado'),
+(24, 45, '2025-06-15 03:18:07', 'activo'),
+(25, 46, '2025-06-15 03:40:16', 'cerrado');
 
 -- --------------------------------------------------------
 
@@ -177,7 +187,8 @@ INSERT INTO `carrito_items` (`id_item`, `id_carrito`, `tipo_producto`, `id_produ
 (20, 11, 'paquete_turistico', 3, 1, 1850.00, 1850.00),
 (21, 12, 'paquete_turistico', 1, 1, 950.00, 950.00),
 (22, 12, 'paquete_turistico', 2, 1, 1200.00, 1200.00),
-(23, 12, 'paquete_turistico', 3, 1, 1850.00, 1850.00);
+(23, 12, 'paquete_turistico', 3, 1, 1850.00, 1850.00),
+(29, 24, 'paquete_turistico', 2, 1, 6900.00, 6900.00);
 
 -- --------------------------------------------------------
 
@@ -205,6 +216,27 @@ INSERT INTO `comentarios_paquetes` (`id_comentario`, `id_paquete`, `id_usuario`,
 (4, 1, 11, 'Una experiencia inolvidable. Repetiría sin dudar.', 5, '2025-06-10 18:25:02'),
 (5, 2, 12, 'Excelente atención y servicios. Muy recomendable.', 4, '2025-06-10 18:25:02'),
 (6, 3, 13, 'Europa es maravillosa, pero el tour fue apurado.', 3, '2025-06-10 18:25:02');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `destinos`
+--
+
+CREATE TABLE `destinos` (
+  `id_destino` int(11) NOT NULL,
+  `destino` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `destinos`
+--
+
+INSERT INTO `destinos` (`id_destino`, `destino`) VALUES
+(1, 'Patagonia'),
+(2, 'Europa'),
+(3, 'Punta Cana'),
+(4, 'Paris');
 
 -- --------------------------------------------------------
 
@@ -253,6 +285,55 @@ INSERT INTO `etiquetas` (`id_etiqueta`, `nombre`, `descripcion`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `notificaciones`
+--
+
+CREATE TABLE `notificaciones` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `mensaje` text DEFAULT NULL,
+  `tipo` enum('confirmada','pendiente','cancelada') DEFAULT NULL,
+  `leido` tinyint(1) DEFAULT 0,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `notificaciones`
+--
+
+INSERT INTO `notificaciones` (`id`, `id_usuario`, `mensaje`, `tipo`, `leido`, `fecha`) VALUES
+(1, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:44:59'),
+(2, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:47:26'),
+(3, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:52'),
+(4, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:52'),
+(5, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:52'),
+(6, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:53'),
+(7, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:53'),
+(8, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:55'),
+(9, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:56'),
+(10, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:49:09'),
+(11, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:49:12'),
+(12, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:50:41'),
+(13, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:50:45'),
+(14, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 03:50:50'),
+(15, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 03:50:53'),
+(16, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 03:54:22'),
+(17, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:54:26'),
+(18, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 04:09:30'),
+(19, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:11:07'),
+(20, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:17:33'),
+(21, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:18:04'),
+(22, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:18:08'),
+(23, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:20:04'),
+(24, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:20:06'),
+(25, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 04:20:13'),
+(26, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 04:22:08'),
+(27, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:22:11'),
+(28, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 04:25:00');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `ordenes`
 --
 
@@ -279,7 +360,13 @@ INSERT INTO `ordenes` (`id_orden`, `id_usuario`, `fecha_orden`, `total`, `estado
 (7, 17, '2025-06-04 17:45:00', 1900.00, 'confirmada', 'Tarjeta', 'Valeria Silva - DNI 33445566 - Calle A'),
 (8, 18, '2025-06-05 14:20:00', 1200.00, 'cancelada', 'Efectivo', 'Diego Fernández - DNI 34566778 - Calle C'),
 (9, 19, '2025-06-11 18:10:59', 3700.00, 'Cancelada', 'Transferencia', 'Julia Herrera - CUIT 20-44556677-1 - Calle D'),
-(10, 20, '2025-06-07 11:30:00', 950.00, 'confirmada', 'Crédito', 'Nicolás Pérez - DNI 45677889 - Calle E');
+(10, 20, '2025-06-07 11:30:00', 950.00, 'confirmada', 'Crédito', 'Nicolás Pérez - DNI 45677889 - Calle E'),
+(11, 2, '2025-06-13 03:41:13', 23333.00, 'pendiente', 'Mercado Pago', 'Ana López - CUIT 27-23456789-0 - Calle Falsa 456'),
+(12, 11, '2025-06-13 09:19:27', 0.00, 'Pendiente', NULL, NULL),
+(13, 43, '2025-06-13 21:31:42', 7040.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
+(14, 43, '2025-06-13 21:49:39', 10410.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
+(15, 43, '2025-06-13 23:33:12', 6900.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
+(16, 46, '2025-06-15 03:00:00', 3510.00, 'Pendiente', 'Tarjeta de Crédito', 'Datos de ejemplo');
 
 -- --------------------------------------------------------
 
@@ -312,7 +399,13 @@ INSERT INTO `orden_items` (`id_item`, `id_orden`, `tipo_producto`, `id_producto`
 (10, 9, 'paquete_turistico', 3, 1, 1850.00, 1850.00),
 (11, 9, 'paquete_turistico', 1, 1, 950.00, 950.00),
 (12, 9, 'paquete_turistico', 2, 1, 900.00, 900.00),
-(13, 10, 'paquete_turistico', 1, 1, 950.00, 950.00);
+(13, 10, 'paquete_turistico', 1, 1, 950.00, 950.00),
+(14, 12, 'paquete_turistico', 1, 1, NULL, NULL),
+(15, 13, 'paquete_turistico', 3, 1, 7040.00, 7040.00),
+(16, 14, 'paquete_turistico', 2, 1, 6900.00, 6900.00),
+(17, 14, 'paquete_turistico', 1, 1, 3510.00, 3510.00),
+(18, 15, 'paquete_turistico', 2, 1, 6900.00, 6900.00),
+(19, 16, 'paquete_turistico', 1, 1, 3510.00, 3510.00);
 
 -- --------------------------------------------------------
 
@@ -324,13 +417,13 @@ CREATE TABLE `paquetes_turisticos` (
   `id_paquete` int(11) NOT NULL,
   `nombre` varchar(200) DEFAULT NULL,
   `descripcion` text DEFAULT NULL,
+  `id_destino` int(11) DEFAULT NULL,
   `precio_base` decimal(12,2) DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
   `cupo_disponible` int(11) DEFAULT NULL,
   `destino` varchar(150) DEFAULT NULL,
   `tipo_paquete` varchar(100) DEFAULT NULL,
-  `imagen_destacada` varchar(200) DEFAULT NULL,
   `activo` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -338,10 +431,10 @@ CREATE TABLE `paquetes_turisticos` (
 -- Volcado de datos para la tabla `paquetes_turisticos`
 --
 
-INSERT INTO `paquetes_turisticos` (`id_paquete`, `nombre`, `descripcion`, `precio_base`, `fecha_inicio`, `fecha_fin`, `cupo_disponible`, `destino`, `tipo_paquete`, `imagen_destacada`, `activo`) VALUES
-(1, 'Aventura en Patagonia', 'Una semana de trekking, glaciares y naturaleza.', 950.00, '2025-12-01', '2025-12-08', 15, 'Patagonia', 'Aventura', 'patagonia.jpg', 1),
-(2, 'Relax en el Caribe', 'Resort all-inclusive con actividades acuáticas.', 1200.00, '2025-07-15', '2025-07-22', 30, 'Punta Cana', 'Playa', 'caribe.jpg', 1),
-(3, 'Turismo Cultural en Europa', 'Recorrido por las capitales europeas.', 1850.00, '2025-09-05', '2025-09-20', 20, 'Europa', 'Cultural', 'europa.jpg', 1);
+INSERT INTO `paquetes_turisticos` (`id_paquete`, `nombre`, `descripcion`, `id_destino`, `precio_base`, `fecha_inicio`, `fecha_fin`, `cupo_disponible`, `destino`, `tipo_paquete`, `activo`) VALUES
+(1, 'Aventura en Patagonia', 'Una semana de trekking, glaciares y naturaleza.', 1, 3510.00, '2025-12-01', '2025-12-08', 13, 'Patagonia', 'Aventura', 1),
+(2, 'Relax en el Caribe', 'Resort all-inclusive con actividades acuáticas.', 3, 6900.00, '2025-07-15', '2025-07-22', 28, 'Punta Cana', 'Playa', 1),
+(3, 'Turismo Cultural en Europa', 'Recorrido por las capitales europeas.', 2, 7040.00, '2025-09-05', '2025-09-20', 19, 'Europa', 'Cultural', 1);
 
 -- --------------------------------------------------------
 
@@ -362,7 +455,9 @@ CREATE TABLE `paquete_alojamientos` (
 INSERT INTO `paquete_alojamientos` (`id`, `id_paquete`, `id_alojamiento`) VALUES
 (1, 1, 1),
 (2, 2, 2),
-(3, 3, 3);
+(3, 3, 3),
+(4, 5, 3),
+(5, 6, 3);
 
 -- --------------------------------------------------------
 
@@ -383,7 +478,9 @@ CREATE TABLE `paquete_autos` (
 INSERT INTO `paquete_autos` (`id`, `id_paquete`, `id_alquiler`) VALUES
 (1, 1, 1),
 (2, 2, 2),
-(3, 3, 3);
+(3, 3, 3),
+(4, 5, 3),
+(5, 6, 3);
 
 -- --------------------------------------------------------
 
@@ -442,7 +539,9 @@ CREATE TABLE `paquete_servicios` (
 INSERT INTO `paquete_servicios` (`id`, `id_paquete`, `id_servicio`) VALUES
 (1, 1, 1),
 (2, 2, 2),
-(3, 3, 3);
+(3, 3, 3),
+(4, 5, 2),
+(5, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -463,7 +562,9 @@ CREATE TABLE `paquete_vuelos` (
 INSERT INTO `paquete_vuelos` (`id`, `id_paquete`, `id_vuelo`) VALUES
 (1, 1, 1),
 (2, 2, 2),
-(3, 3, 3);
+(3, 3, 3),
+(4, 5, 3),
+(5, 6, 3);
 
 -- --------------------------------------------------------
 
@@ -488,6 +589,44 @@ CREATE TABLE `promociones` (
 INSERT INTO `promociones` (`id_promocion`, `nombre`, `descripcion`, `descuento_porcentaje`, `fecha_inicio`, `fecha_fin`, `activo`) VALUES
 (1, 'Promo Verano', '10% en paquetes al Caribe', 10.00, '2025-06-01', '2025-08-31', 1),
 (2, 'Europa Week', '15% para reservas en junio', 15.00, '2025-06-01', '2025-06-15', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proveedores`
+--
+
+CREATE TABLE `proveedores` (
+  `id_proveedor` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `tipo` enum('alojamiento','vuelo','auto','servicio') NOT NULL,
+  `contacto` varchar(100) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `direccion` varchar(150) DEFAULT NULL,
+  `origen` varchar(100) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL,
+  `id_destino` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `proveedores`
+--
+
+INSERT INTO `proveedores` (`id_proveedor`, `nombre`, `tipo`, `contacto`, `telefono`, `email`, `direccion`, `origen`, `descripcion`, `id_destino`) VALUES
+(1, 'Los Andes Group', 'alojamiento', 'Carlos Mendoza', '2901-111223', 'contacto@losandesgroup.com', 'El Calafate nro 2', NULL, 'Operador hotelero en Patagonia', NULL),
+(2, 'Caribe Luxury Resorts', 'alojamiento', 'Lucía Paredes', '809-9998888', 'reservas@caribeluxury.com', 'Punta Cana', NULL, 'Resorts 5 estrellas en el Caribe', NULL),
+(3, 'Europa Hostels SA', 'alojamiento', 'Jean Dupont', '+33 1 55667788', 'contact@europahostels.fr', 'París', NULL, 'Hostales económicos europeos', NULL),
+(4, 'Aerolíneas Argentinas', 'vuelo', 'Oficina Central', '011-12345678', 'info@aerolineas.com', 'Buenos Aires', NULL, 'Operador nacional argentino', NULL),
+(5, 'LATAM Airlines', 'vuelo', 'Central LATAM', '011-87654321', 'info@latam.com', 'Santiago de Chile', NULL, 'Conexiones a América Latina', NULL),
+(6, 'Air France', 'vuelo', 'Central Europa', '+33 1 23456789', 'info@airfrance.fr', 'París', NULL, 'Vuelos intercontinentales', NULL),
+(7, 'Hertz Rent-a-Car', 'auto', 'Soporte Hertz', '0800-123456', 'contacto@hertz.com', 'Aeropuerto El Calafate', NULL, 'Alquiler internacional de autos', NULL),
+(8, 'Avis Rent-a-Car', 'auto', 'Oficina Avis', '0800-987654', 'contacto@avis.com', 'Aeropuerto Punta Cana', NULL, 'Flota Premium internacional', NULL),
+(9, 'Sixt Rent-a-Car', 'auto', 'Soporte Europa', '+33 1 98765432', 'info@sixt.com', 'París', NULL, 'Alquiler premium Europa', NULL),
+(10, 'Glaciares Patagonia Excursiones', 'servicio', 'Jorge Quiroga', '2901-333444', 'info@glaciarespatagonia.com', 'El Calafate', NULL, 'Excursiones sobre hielo', NULL),
+(11, 'Caribe Spa & Wellness', 'servicio', 'Maria López', '809-555555', 'spa@caribewellness.com', 'Punta Cana', NULL, 'Masajes y tratamientos de relax', NULL),
+(12, 'Tour Europa Histórica', 'servicio', 'Giuseppe Moretti', '+33 1 44556677', 'tours@europahistorica.com', 'París', NULL, 'Tours guiados por museos y castillos', NULL),
+(14, 'Hotel Calimera', 'alojamiento', 'Oficina Central', '2246 551122', 'calimera@gmail.com', 'calle 4 nro 521', NULL, 'Hotel 3 estrellas con desayuno+cena incluidos', NULL);
 
 -- --------------------------------------------------------
 
@@ -518,19 +657,22 @@ INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
 CREATE TABLE `servicios_adicionales` (
   `id_servicio` int(11) NOT NULL,
   `nombre` varchar(200) DEFAULT NULL,
+  `id_destino` int(11) NOT NULL,
+  `ciudad` varchar(100) DEFAULT NULL,
   `descripcion` text DEFAULT NULL,
   `tipo` varchar(100) DEFAULT NULL,
-  `precio` decimal(10,2) DEFAULT NULL
+  `precio` decimal(10,2) DEFAULT NULL,
+  `id_proveedor` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `servicios_adicionales`
 --
 
-INSERT INTO `servicios_adicionales` (`id_servicio`, `nombre`, `descripcion`, `tipo`, `precio`) VALUES
-(1, 'Excursión glacial', 'Caminata sobre el glaciar Perito Moreno.', 'Actividad', 120.00),
-(2, 'Spa en resort', 'Masajes y tratamientos de relax.', 'Bienestar', 150.00),
-(3, 'Tour histórico', 'Visita guiada por castillos y museos en Europa.', 'Cultural', 80.00);
+INSERT INTO `servicios_adicionales` (`id_servicio`, `nombre`, `id_destino`, `ciudad`, `descripcion`, `tipo`, `precio`, `id_proveedor`) VALUES
+(1, 'Excursión glacial', 1, NULL, 'Caminata sobre el glaciar Perito Moreno.', 'Actividad', 120.00, 7),
+(2, 'Spa en resort', 2, NULL, 'Masajes y tratamientos de relax.', 'Bienestar', 150.00, 8),
+(3, 'Tour histórico', 3, NULL, 'Visita guiada por castillos y museos en Europa.', 'Cultural', 80.00, 9);
 
 -- --------------------------------------------------------
 
@@ -558,7 +700,7 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `email`, `contraseñ
 (1, 'Super', 'Admin', 'super@admin.com', '1234', 0, '2025-06-10 18:30:45', 1, 'activo'),
 (2, 'Ana', 'Admin', 'ana@admin.com', '1234', 0, '2025-06-10 18:30:45', 2, 'activo'),
 (3, 'Luis', 'Admin', 'luis@admin.com', '1234', 0, '2025-06-10 18:30:45', 2, 'activo'),
-(11, 'Cliente4', 'Apellido', 'cliente4@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
+(11, 'Cliente4', 'Apellido', 'cliente4@correo.com', '1234', 0, '2025-06-14 05:23:37', 3, 'activo'),
 (12, 'Cliente5', 'Apellido', 'cliente5@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
 (13, 'Cliente6', 'Apellido', 'cliente6@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
 (14, 'Cliente7', 'Apellido', 'cliente7@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
@@ -574,7 +716,11 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `email`, `contraseñ
 (24, 'Cliente17', 'Apellido', 'cliente17@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
 (25, 'Cliente18', 'Apellido', 'cliente18@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
 (26, 'Cliente19', 'Apellido', 'cliente19@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(27, 'Cliente20', 'Apellido', 'cliente20@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo');
+(27, 'Cliente20', 'Apellido', 'cliente20@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
+(43, 'Martina ', 'Plandolit', 'plandomartu1@gmail.com', '$2y$10$WgvIECr4srQwy8yWsOJ3runGshhLjg0b5BvCP2ydMz31cfhIrdl6C', 0, '2025-06-14 04:29:40', 1, 'activo'),
+(44, 'admin', 'nuevo', 'admin@3', '$2y$10$p.OnOR/Dd6dYimOSTIaIKuJ0rdzVtzJk51zfiNLQSYTcULQyKQtla', 12312, '2025-06-14 05:24:19', 2, 'activo'),
+(45, 'cliente', 'comun', 'cliente@comun', '$2y$10$S4XOnhzysb.n9LT8TpFXCOeiLNNoyY7N3QXMvFs4G3nlLTAkCOdCG', 0, '2025-06-15 03:17:54', 3, 'activo'),
+(46, 'usuario', 'comun', 'mplandolit1@gmail', '$2y$10$JQetC3.7rfnxsYF.06phye2J6RcdQ5KY3nilw1vJjtOk3t1CN1XPm', 0, '2025-06-15 03:25:19', 3, 'activo');
 
 -- --------------------------------------------------------
 
@@ -588,8 +734,9 @@ CREATE TABLE `vuelos` (
   `aerolinea` varchar(100) DEFAULT NULL,
   `origen` varchar(100) DEFAULT NULL,
   `destino` varchar(100) DEFAULT NULL,
-  `fecha_salida` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `fecha_llegada` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `id_destino` int(11) NOT NULL,
+  `fecha_salida` datetime NOT NULL,
+  `fecha_llegada` datetime NOT NULL,
   `precio_base` decimal(12,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -597,10 +744,10 @@ CREATE TABLE `vuelos` (
 -- Volcado de datos para la tabla `vuelos`
 --
 
-INSERT INTO `vuelos` (`id_vuelo`, `codigo_vuelo`, `aerolinea`, `origen`, `destino`, `fecha_salida`, `fecha_llegada`, `precio_base`) VALUES
-(1, 'AR1234', 'Aerolíneas Argentinas', 'Buenos Aires', 'El Calafate', '2025-12-01 11:00:00', '2025-12-01 14:00:00', 350.00),
-(2, 'PC5678', 'LATAM', 'Buenos Aires', 'Punta Cana', '2025-07-15 10:00:00', '2025-07-15 16:30:00', 750.00),
-(3, 'AF9876', 'Air France', 'Buenos Aires', 'París', '2025-09-05 21:00:00', '2025-09-06 12:00:00', 1200.00);
+INSERT INTO `vuelos` (`id_vuelo`, `codigo_vuelo`, `aerolinea`, `origen`, `destino`, `id_destino`, `fecha_salida`, `fecha_llegada`, `precio_base`) VALUES
+(1, 'AR1234', 'Aerolíneas Argentinas', 'Buenos Aires', 'El Calafate', 1, '2025-12-01 08:00:00', '2025-12-01 11:00:00', 350.00),
+(2, 'PC5678', 'LATAM', 'Buenos Aires', 'Punta Cana', 3, '2025-07-15 07:00:00', '2025-07-15 13:30:00', 750.00),
+(3, 'AF9876', 'Air France', 'Buenos Aires', 'París', 4, '2025-09-05 18:00:00', '2025-09-06 09:00:00', 1200.00);
 
 --
 -- Índices para tablas volcadas
@@ -610,13 +757,17 @@ INSERT INTO `vuelos` (`id_vuelo`, `codigo_vuelo`, `aerolinea`, `origen`, `destin
 -- Indices de la tabla `alojamientos`
 --
 ALTER TABLE `alojamientos`
-  ADD PRIMARY KEY (`id_alojamiento`);
+  ADD PRIMARY KEY (`id_alojamiento`),
+  ADD KEY `id_proveedor` (`id_proveedor`),
+  ADD KEY `fk_aloj_destino` (`id_destino`);
 
 --
 -- Indices de la tabla `alquiler_autos`
 --
 ALTER TABLE `alquiler_autos`
-  ADD PRIMARY KEY (`id_alquiler`);
+  ADD PRIMARY KEY (`id_alquiler`),
+  ADD KEY `id_proveedor` (`id_proveedor`),
+  ADD KEY `fk_auto_destino` (`id_destino`);
 
 --
 -- Indices de la tabla `bitacora_sistema`
@@ -648,10 +799,23 @@ ALTER TABLE `comentarios_paquetes`
   ADD KEY `id_usuario` (`id_usuario`);
 
 --
+-- Indices de la tabla `destinos`
+--
+ALTER TABLE `destinos`
+  ADD PRIMARY KEY (`id_destino`);
+
+--
 -- Indices de la tabla `etiquetas`
 --
 ALTER TABLE `etiquetas`
   ADD PRIMARY KEY (`id_etiqueta`);
+
+--
+-- Indices de la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `ordenes`
@@ -671,7 +835,8 @@ ALTER TABLE `orden_items`
 -- Indices de la tabla `paquetes_turisticos`
 --
 ALTER TABLE `paquetes_turisticos`
-  ADD PRIMARY KEY (`id_paquete`);
+  ADD PRIMARY KEY (`id_paquete`),
+  ADD KEY `fk_paquete_destino` (`id_destino`);
 
 --
 -- Indices de la tabla `paquete_alojamientos`
@@ -720,6 +885,13 @@ ALTER TABLE `promociones`
   ADD PRIMARY KEY (`id_promocion`);
 
 --
+-- Indices de la tabla `proveedores`
+--
+ALTER TABLE `proveedores`
+  ADD PRIMARY KEY (`id_proveedor`),
+  ADD KEY `fk_prov_destino` (`id_destino`);
+
+--
 -- Indices de la tabla `rol`
 --
 ALTER TABLE `rol`
@@ -729,7 +901,9 @@ ALTER TABLE `rol`
 -- Indices de la tabla `servicios_adicionales`
 --
 ALTER TABLE `servicios_adicionales`
-  ADD PRIMARY KEY (`id_servicio`);
+  ADD PRIMARY KEY (`id_servicio`),
+  ADD KEY `id_proveedor` (`id_proveedor`),
+  ADD KEY `fk_servicio_destino` (`id_destino`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -743,7 +917,8 @@ ALTER TABLE `usuarios`
 -- Indices de la tabla `vuelos`
 --
 ALTER TABLE `vuelos`
-  ADD PRIMARY KEY (`id_vuelo`);
+  ADD PRIMARY KEY (`id_vuelo`),
+  ADD KEY `fk_vuelo_destino` (`id_destino`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -771,13 +946,13 @@ ALTER TABLE `bitacora_sistema`
 -- AUTO_INCREMENT de la tabla `carritos`
 --
 ALTER TABLE `carritos`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `carrito_items`
 --
 ALTER TABLE `carrito_items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `comentarios_paquetes`
@@ -786,64 +961,82 @@ ALTER TABLE `comentarios_paquetes`
   MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT de la tabla `destinos`
+--
+ALTER TABLE `destinos`
+  MODIFY `id_destino` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT de la tabla `etiquetas`
 --
 ALTER TABLE `etiquetas`
   MODIFY `id_etiqueta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
+-- AUTO_INCREMENT de la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
 -- AUTO_INCREMENT de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
-  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `orden_items`
 --
 ALTER TABLE `orden_items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `paquetes_turisticos`
 --
 ALTER TABLE `paquetes_turisticos`
-  MODIFY `id_paquete` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_paquete` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_alojamientos`
 --
 ALTER TABLE `paquete_alojamientos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_autos`
 --
 ALTER TABLE `paquete_autos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_etiquetas`
 --
 ALTER TABLE `paquete_etiquetas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_servicios`
 --
 ALTER TABLE `paquete_servicios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_vuelos`
 --
 ALTER TABLE `paquete_vuelos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `promociones`
 --
 ALTER TABLE `promociones`
   MODIFY `id_promocion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `proveedores`
+--
+ALTER TABLE `proveedores`
+  MODIFY `id_proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -861,7 +1054,7 @@ ALTER TABLE `servicios_adicionales`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT de la tabla `vuelos`
@@ -872,6 +1065,20 @@ ALTER TABLE `vuelos`
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `alojamientos`
+--
+ALTER TABLE `alojamientos`
+  ADD CONSTRAINT `alojamientos_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedores` (`id_proveedor`),
+  ADD CONSTRAINT `fk_aloj_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`);
+
+--
+-- Filtros para la tabla `alquiler_autos`
+--
+ALTER TABLE `alquiler_autos`
+  ADD CONSTRAINT `alquiler_autos_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedores` (`id_proveedor`),
+  ADD CONSTRAINT `fk_auto_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`);
 
 --
 -- Filtros para la tabla `bitacora_sistema`
@@ -899,6 +1106,12 @@ ALTER TABLE `comentarios_paquetes`
   ADD CONSTRAINT `comentarios_paquetes_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
 
 --
+-- Filtros para la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
+
+--
 -- Filtros para la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
@@ -909,6 +1122,12 @@ ALTER TABLE `ordenes`
 --
 ALTER TABLE `orden_items`
   ADD CONSTRAINT `orden_items_ibfk_1` FOREIGN KEY (`id_orden`) REFERENCES `ordenes` (`id_orden`);
+
+--
+-- Filtros para la tabla `paquetes_turisticos`
+--
+ALTER TABLE `paquetes_turisticos`
+  ADD CONSTRAINT `fk_paquete_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`);
 
 --
 -- Filtros para la tabla `paquete_alojamientos`
@@ -946,10 +1165,29 @@ ALTER TABLE `paquete_vuelos`
   ADD CONSTRAINT `paquete_vuelos_ibfk_2` FOREIGN KEY (`id_vuelo`) REFERENCES `vuelos` (`id_vuelo`);
 
 --
+-- Filtros para la tabla `proveedores`
+--
+ALTER TABLE `proveedores`
+  ADD CONSTRAINT `fk_prov_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`);
+
+--
+-- Filtros para la tabla `servicios_adicionales`
+--
+ALTER TABLE `servicios_adicionales`
+  ADD CONSTRAINT `fk_servicio_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`),
+  ADD CONSTRAINT `servicios_adicionales_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedores` (`id_proveedor`);
+
+--
 -- Filtros para la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `rol` FOREIGN KEY (`rol`) REFERENCES `rol` (`id_rol`);
+
+--
+-- Filtros para la tabla `vuelos`
+--
+ALTER TABLE `vuelos`
+  ADD CONSTRAINT `fk_vuelo_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

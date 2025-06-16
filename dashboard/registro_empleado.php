@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="empleados.php">Empleados</a></li>
+                <li class="breadcrumb-item"><a href="clientes.php">Empleados</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Registro de Empleado</li>
             </ol>
         </nav>
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <a href="empleados.php" class="btn btn-secondary px-4">Cancelar</a>
+                    <a href="clientes.php" class="btn btn-secondary px-4">Cancelar</a>
                     <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-circle"></i> Guardar</button>
                 </div>
             </form>

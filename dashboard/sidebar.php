@@ -1,3 +1,34 @@
+<?php
+$current = basename($_SERVER['PHP_SELF']);
+
+// Para el menú de usuarios
+$usuarios_activos = [
+    'clientes.php',
+    'editar_usuario.php',
+    'registro_empleado.php',
+    'usuarios_desactivados.php'
+];
+
+$reservas_activos = [
+    'reservas.php',
+    'editar_reserva.php',
+    'nueva_reserva.php',
+    'cancelar_reserva.php'
+];
+
+$proveedores_activos = [
+    'proveedores.php',
+    'proveedor_form.php',
+    'editar_proveedor.php'
+];
+
+$paquetes_activos = [
+    'paquetes.php',
+    'nuevo_paquete.php',
+    'editar_paquete.php'
+];
+
+?>
 <link rel="stylesheet" href="/nomadella/css/apartados.css">
 <div class="sidebar d-flex flex-column justify-content-between">
   <div>
@@ -7,27 +38,28 @@
       <small style="color:#6CE0B6;">Panel de Administración</small>
     </div>
     <nav class="nav flex-column">
-      <a class="nav-link px-4 py-2 " id="<?php if (!isset($_GET['active']) || $_GET['active'] == 1) echo 'active'; ?>" href="./dashboard.php">
+      <a class="nav-link px-4 py-2 <?= $current == 'dashboard.php' ? 'active' : '' ?>" href="./dashboard.php">
         <i class="bi bi-house-door"></i> Dashboard
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 2) echo 'active'; ?>" href="./proveedores.php">
+      <a class="nav-link px-4 py-2 <?= in_array($current, $proveedores_activos) == 'proveedores.php' ? 'active' : '' ?>" href="./proveedores.php">
         <i class="bi bi-truck"></i> Proveedores
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 7) echo 'active'; ?>" href="./paquetes.php">
+      <a class="nav-link px-4 py-2 <?= in_array($current, $paquetes_activos) == 'paquetes.php' ? 'active' : '' ?>" href="./paquetes.php">
         <i class="bi bi-postcard"></i> Paquetes
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 3) echo 'active'; ?>" href="./reservas.php">
+      <a class="nav-link px-4 py-2 <?= in_array($current, $reservas_activos) ? 'active' : '' ?>" href="./reservas.php">
         <i class="bi bi-cart"></i> Reservas
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 4) echo 'active'; ?>" href="./clientes.php">
+      <a class="nav-link px-4 py-2 <?= in_array($current, $usuarios_activos) ? 'active' : '' ?>" href="./clientes.php">
         <i class="bi bi-person"></i> Usuarios
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 5) echo 'active'; ?>" href="./reportes.php">
+      <a class="nav-link px-4 py-2 <?= $current == 'finanzas.php' ? 'active' : '' ?>" href="./finanzas.php">
         <i class="bi bi-bar-chart"></i> Finanzas
       </a>
-      <a class="nav-link px-4 py-2 " id="<?php if (isset($_GET['active']) && $_GET['active'] == 6) echo 'active'; ?>" href="./configuracion.php">
-        <i class="bi bi-gear"></i> Configuración
+      <a class="nav-link px-4 py-2 <?= $current == 'movimientos.php' ? 'active' : '' ?>" href="./movimientos.php">
+        <i class="bi bi-arrow-left-right"></i> Movimientos
       </a>
+      
     </nav>
     <hr style="border-color:#FFF6F8; opacity:0.2;">
     <div class="px-3">

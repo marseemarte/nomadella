@@ -18,9 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $conn->real_escape_string($_POST['nombre']);
     $email = $conn->real_escape_string($_POST['email']);
     $telefono = $conn->real_escape_string($_POST['telefono']);
-    $activo = isset($_POST['estado']) ? 1 : 0;
+    $activo = isset($_POST['activo']) ? 'activo' : 'inactivo';
 
-    $conn->query("UPDATE usuarios SET nombre='$nombre', email='$email', telefono='$telefono', estado=$activo WHERE id_usuario=$id");
+    $conn->query("UPDATE usuarios SET nombre='$nombre', email='$email', telefono='$telefono', estado='$activo' WHERE id_usuario=$id");
 
     // Registrar en bitácora
     if (isset($_SESSION['id_usuario'])) {
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="telefono" class="form-control" maxlength="30" value="<?= htmlspecialchars($usuario['telefono']) ?>">
                 </div>
                 <div class="mb-3 form-check">
-                    <input type="checkbox" name="activo" class="form-check-input" id="activo" <?= $usuario['activo'] ? 'checked' : '' ?>>
+                    <input type="checkbox" name="activo" class="form-check-input" id="activo" <?= $usuario['estado'] ? 'checked' : '' ?>>
                     <label class="form-check-label" for="activo">Cuenta activa</label>
                 </div>
                 <div class="d-flex justify-content-between">
