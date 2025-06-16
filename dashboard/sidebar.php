@@ -40,7 +40,7 @@
     </div>
   </div>
   <div class="px-3 pb-3">
-    <a href="/nomadella/logout.php" class="btn btn-sm w-100" style="background:#5CC7ED; color:#1A001C; font-weight:bold;">
+    <a href="/nomadella/public/logout.php" class="btn btn-sm w-100" style="background:#5CC7ED; color:#1A001C; font-weight:bold;">
       <i class="bi bi-box-arrow-right"></i> Cerrar sesión
     </a>
     <div class="text-center mt-2" style="color:#FFF6F8; font-size:0.85em; opacity:0.7;">
