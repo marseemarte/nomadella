@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
   href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 />
   <link rel="stylesheet" href="../css/index.css">
-
+<base href="/pruebaasda/nomadella/public/">
 </head>
 <body>
   <header class="bg-gradient p-0">
@@ -48,7 +48,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
               <li><a class="dropdown-item" href="perfil/perfil.php">Mi perfil</a></li>
-              <li><a class="dropdown-item" href="reservas.php">Mis reservas</a></li>
+              <li><a class="dropdown-item" href="perfil/reservas.php">Mis reservas</a></li>
               <?php if (isset($_SESSION['rol']) && in_array($_SESSION['rol'], [1,2])): ?>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-primary fw-bold" href="/nomadella/dashboard/dashboard.php">
