@@ -32,3 +32,5 @@ tests/
 
 # Ignorar archivos temporales de dompdf
 dompdf_cache/
+
+nomadella.sql
