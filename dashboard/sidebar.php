@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 $current = basename($_SERVER['PHP_SELF']);
 
 // Para el menú de usuarios

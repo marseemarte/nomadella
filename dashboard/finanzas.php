@@ -13,7 +13,6 @@ $total_ingresos_result = $conn->query($total_ingresos_query);
 $total_ingresos = $total_ingresos_result->fetch_assoc()['total'];
 
 // Como no tenemos egresos, dejamos en 0 (se puede agregar después)
-$total_egresos = 0;
 $saldo = $total_ingresos - $total_egresos;
 
 // Movimientos financieros: solo ingresos (por ahora)
@@ -69,15 +68,6 @@ $movimientos = $conn->query($movimientos_query);
                     <h6 class="card-title">Ingresos</h6>
                     <h3 class="text-success">$<?= number_format($total_ingresos, 2) ?></h3>
                     <small class="text-muted">Reservas confirmadas</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-kpi shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title">Egresos</h6>
-                    <h3 class="text-danger">$<?= number_format($total_egresos, 2) ?></h3>
-                    <small class="text-muted">(No implementados)</small>
                 </div>
             </div>
         </div>

@@ -174,13 +174,6 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="mb-4 bloque-componente bloque-alojamiento">
-                    <input type="hidden" name="omitir_alojamiento" id="omitir_alojamiento" value="0">
-                    <!-- ...resto del bloque... -->
-                    <button type="button" class="btn btn-outline-secondary btn-sm ms-3 btn-omitir" data-omitir="alojamiento">
-                        Omitir por ahora
-                    </button>
-                </div>
                 <div class="d-flex justify-content-between">
                     <a href="<?= !empty($id_paquete) ? "nuevo_paquete.php?id_paquete=$id_paquete&asociar=1" : "proveedores.php" ?>" class="btn btn-secondary px-4">Cancelar</a>
                     <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-circle"></i> Guardar</button>

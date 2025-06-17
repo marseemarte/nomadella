@@ -8,6 +8,9 @@ $clientes = $pdo->query("SELECT COUNT(*) AS total FROM usuarios")->fetch()['tota
 $nuevos = $pdo->query("SELECT COUNT(*) AS total FROM usuarios WHERE DATE(fecha_registro) = CURDATE()")->fetch()['total'];
 $paquetes = $pdo->query("SELECT COUNT(*) AS total FROM paquetes_turisticos WHERE activo = 1")->fetch()['total'];
 
+// NUEVO: Total de reservas activas
+$reservaActivas = $pdo->query("SELECT COUNT(*) AS total FROM ordenes WHERE estado = 'activa' OR estado = 'confirmada'")->fetch()['total'];
+
 $ventas = $pdo->query("
   SELECT DAYNAME(fecha_orden) AS dia, SUM(total) AS total
   FROM ordenes
@@ -78,7 +81,7 @@ $comentarios = $pdo->query("
         <div class="card card-kpi shadow-sm">
           <div class="card-body">
             <h6 class="card-title">Reservas Activas</h6>
-            <h3><?= $totalVentas ?></h3>
+            <h3><?= $reservaActivas ?></h3>
             <small class="c-success"><?= $reservasHoy ?> hoy</small>
           </div>
         </div>

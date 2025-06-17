@@ -27,9 +27,15 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
         </nav>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Paquetes Turísticos</h2>
-            <a href="nuevo_paquete.php" class="btn btn-primary mb-3">
-                <i class="bi bi-plus-circle"></i> Nuevo Paquete
-            </a>
+            <div>
+                <a href="nuevo_destino.php"class="btn btn-primary mb-3" >
+                    <i class="bi bi-geo-alt"></i> Nuevo Destino
+                </a>
+                <a href="nuevo_paquete.php" class="btn btn-primary mb-3">
+                    <i class="bi bi-plus-circle"></i> Nuevo Paquete
+                </a>    
+            </div>
+            
         </div>
 
         <div class="row mb-3">
