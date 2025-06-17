@@ -1,4 +1,7 @@
 <?php
+session_start();
+$mi_rol = $_SESSION['rol'];
+$mi_id = $_SESSION['usuario_id'];
 // Conexión a la base de datos (ajusta los datos según tu configuración)
 $mysqli = new mysqli("localhost", "root", "", "nomadella");
 if ($mysqli->connect_errno) {
@@ -10,7 +13,6 @@ include 'verificar_admin.php';
 $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $search = isset($_GET['search']) ? $mysqli->real_escape_string($_GET['search']) : '';
-$rol = isset($_GET['rol']) ? intval($_GET['rol']) : 0;
 $offset = ($page - 1) * $limit;
 
 // Ordenar
@@ -18,30 +20,42 @@ $order = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'desc' : 'asc';
 $orderIcon = $order === 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill';
 
 // Consulta para contar total de registros
-$where = "WHERE estado='activo'";
+$where = "WHERE 1";
+if ($mi_rol == 1) {
+    // Superadmin: ve movimientos de admins y clientes
+    $where .= " AND (u.rol IN (2,3))";
+} elseif ($mi_rol == 2) {
+    // Admin: solo movimientos de clientes
+    $where .= " AND (u.rol = 3)";
+} else {
+    $where .= " AND 0";
+}
+
 if ($search) {
-    $where .= " AND (nombre LIKE '%$search%' OR email LIKE '%$search%' OR telefono LIKE '%$search%')";
+    $where .= " AND (accion LIKE '%$search%' OR descripcion LIKE '%$search%')";
 }
+$rol = isset($_GET['rol']) ? intval($_GET['rol']) : '';
 if ($rol) {
-    $where .= " AND rol = $rol";
+    $where .= " AND u.rol = $rol";
 }
-$totalQuery = $mysqli->query("SELECT COUNT(*) as total FROM usuarios $where");
+$totalQuery = $mysqli->query("SELECT COUNT(*) as total FROM bitacora_sistema b LEFT JOIN usuarios u ON b.id_usuario = u.id_usuario $where");
 $totalRows = $totalQuery->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
 
 // Consulta para obtener los usuarios
-$sql = "SELECT * FROM usuarios $where ORDER BY id_usuario $order LIMIT $limit OFFSET $offset";
+$sql = "SELECT b.*, u.nombre, u.rol FROM bitacora_sistema b 
+        LEFT JOIN usuarios u ON b.id_usuario = u.id_usuario
+        $where
+        ORDER BY fecha_hora DESC
+        LIMIT $limit OFFSET $offset";
 $result = $mysqli->query($sql);
-
-
-$highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>Usuarios | Dashboard</title>
+    <title>Movimientos | Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -57,17 +71,14 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
+                <li class="breadcrumb-item active" aria-current="page">Movimientos</li>
             </ol>
         </nav>
         <div class="container-fluid mt-4">
             <div class="row">
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="mb-2">Usuarios</h2>
-                        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
-                            <i class="bi bi-plus-circle"></i> Nuevo Usuario
-                        </button>
+                        <h2 class="mb-2">Movimientos</h2>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -97,56 +108,36 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
                         <table class="table table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>
-                                        <a href="?search=<?= urlencode($search) ?>&rol=<?= $rol ?>&limit=<?= $limit ?>&page=<?= $page ?>&order=<?= $order === 'asc' ? 'desc' : 'asc' ?>" class="text-decoration-none text-light">
-                                            #
-                                            <i class="bi <?= $orderIcon ?>"></i>
-                                        </a>
-                                    </th>
-                                    <th>Nombre</th>
-                                    <th>Email</th>
-                                    <th>Teléfono</th>
-                                    <th>Fecha de Registro
-                                        <a href="?search=<?= urlencode($search) ?>&limit=<?= $limit ?>&order=<?= $order === 'asc' ? 'desc' : 'asc' ?>" class="text-decoration-none">
-                                            <i class="bi <?= $orderIcon ?>"></i>
-                                        </a>
-                                    </th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
+                                    <th>#</th>
+                                    <th>Usuario</th>
+                                    <th>Rol</th>
+                                    <th>Acción</th>
+                                    <th>Descripción</th>
+                                    <th>Fecha y Hora</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabla-clientes">
+                            <tbody>
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php foreach ($result as $i => $row): ?>
-                                        <tr <?= ($row['id_usuario'] == $highlight) ? 'class="table-warning"' : '' ?>>
-
-                                            <td><?= $row['id_usuario'] ?></td>
+                                        <tr>
+                                            <td><?= $row['id_evento'] ?></td>
                                             <td><?= htmlspecialchars($row['nombre']) ?></td>
-                                            <td><?= htmlspecialchars($row['email']) ?></td>
-                                            <td><?= htmlspecialchars($row['telefono']) ?></td>
-                                            <td><?= date('d/m/Y H:i', strtotime($row['fecha_registro'])) ?></td>
                                             <td>
-                                                <?php if (isset($row['estado']) && $row['estado'] === 'activo'): ?>
-                                                    <span class="badge bg-success">Activo</span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-secondary">Inactivo</span>
-                                                <?php endif; ?>
+                                                <?php
+                                                if ($row['rol'] == 1) echo "Superadmin";
+                                                elseif ($row['rol'] == 2) echo "Admin";
+                                                elseif ($row['rol'] == 3) echo "Cliente";
+                                                else echo "Otro";
+                                                ?>
                                             </td>
-                                            <td>
-                                                <a href="editar_usuario.php?id=<?= $row['id_usuario'] ?>" class="btn btn-sm btn-primary me-1">
-                                                    <i class="bi bi-pencil-square"></i> Editar
-                                                </a>
-                                                <?php if ($row['estado']): ?>
-                                                    <button type="button" class="btn btn-sm btn-danger btn-desactivar" data-id="<?= $row['id_usuario'] ?>" data-nombre="<?= htmlspecialchars($row['nombre']) ?>">
-                                                        <i class="bi bi-person-x"></i> Desactivar
-                                                    </button>
-                                                <?php endif; ?>
-                                            </td>
+                                            <td><?= htmlspecialchars($row['accion']) ?></td>
+                                            <td><?= htmlspecialchars($row['descripcion']) ?></td>
+                                            <td><?= date('d/m/Y H:i', strtotime($row['fecha_hora'])) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="7" class="text-center">No se encontraron usuarios.</td>
+                                        <td colspan="6" class="text-center">No se encontraron movimientos.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -196,40 +187,40 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
     </div>
     <!-- Modal Nuevo Usuario -->
     <div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-          <div class="modal-header">
-            <h5 class="modal-title w-100" id="modalNuevoUsuarioLabel">¿Qué tipo de usuario desea ingresar?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-          </div>
-          <div class="modal-body py-4">
-            <div class="d-grid gap-3">
-              <a href="/nomadella/public/registro.php" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-person-plus"></i> Nuevo Cliente
-              </a>
-              <a href="registro_empleado.php" class="btn btn-outline-success btn-lg">
-                <i class="bi bi-person-badge"></i> Nuevo Empleado
-              </a>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100" id="modalNuevoUsuarioLabel">¿Qué tipo de usuario desea ingresar?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="d-grid gap-3">
+                        <a href="/nomadella/public/registro.php" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-person-plus"></i> Nuevo Cliente
+                        </a>
+                        <a href="registro_empleado.php" class="btn btn-outline-success btn-lg">
+                            <i class="bi bi-person-badge"></i> Nuevo Empleado
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
     <!-- Modal Desactivar Usuario -->
     <div class="modal fade" id="modalDesactivarUsuario" tabindex="-1" aria-labelledby="modalDesactivarUsuarioLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-          <div class="modal-header">
-            <h5 class="modal-title w-100" id="modalDesactivarUsuarioLabel">Desactivar usuario</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-          </div>
-          <div class="modal-body py-4">
-            <p id="textoModalDesactivar"></p>
-            <button type="button" class="btn btn-danger px-4" id="btnConfirmarDesactivar">Desactivar</button>
-            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
-          </div>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100" id="modalDesactivarUsuarioLabel">Desactivar usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <p id="textoModalDesactivar"></p>
+                    <button type="button" class="btn btn-danger px-4" id="btnConfirmarDesactivar">Desactivar</button>
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
     <script>
         $('#busqueda-cliente').on('input', function() {
@@ -251,7 +242,9 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
 
         $('#btnConfirmarDesactivar').on('click', function() {
             if (usuarioAEliminar) {
-                $.post('desactivar_usuario.php', { id: usuarioAEliminar }, function(resp) {
+                $.post('desactivar_usuario.php', {
+                    id: usuarioAEliminar
+                }, function(resp) {
                     location.reload();
                 });
             }
@@ -263,5 +256,5 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
 </html>
 <?php
 
-$mysqli->close(); 
+$mysqli->close();
 ?>

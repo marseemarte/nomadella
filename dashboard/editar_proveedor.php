@@ -14,6 +14,13 @@ if (!$proveedor) {
     header("Location: proveedores.php");
     exit;
 }
+//obtener destinos
+$q_destinos = $conn->query("SELECT id_destino, destino FROM destinos");
+$destinos = $q_destinos->fetch_all(MYSQLI_ASSOC);
+if (!$destinos) {
+    $destinos = [];
+}
+
 
 // Procesar el formulario de edición
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -24,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $conn->real_escape_string($_POST['email']);
     $direccion = $conn->real_escape_string($_POST['direccion']);
     $descripcion = $conn->real_escape_string($_POST['descripcion']);
+    $destino = $conn->real_escape_string($_POST['destino']);
 
     $conn->query("UPDATE proveedores SET 
         nombre='$nombre',
@@ -32,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         telefono='$telefono',
         email='$email',
         direccion='$direccion',
-        descripcion='$descripcion'
+        descripcion='$descripcion',
+        destino='$destino'
         WHERE id_proveedor = $id
     ");
 
@@ -163,6 +172,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-3">
                     <label class="form-label">Descripción</label>
                     <textarea name="descripcion" class="form-control" rows="3" maxlength="255"><?= htmlspecialchars($proveedor['descripcion']) ?></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Destino</label>
+                    <select name="destino" class="form-select" required>
+                        <option value="">Seleccione destino</option>
+                        <?php foreach ($destinos as $destino): ?>
+                            <option value="<?= $destino['id_destino'] ?>" <?= $proveedor['id_destino'] == $destino['id_destino'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($destino['destino']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="d-flex justify-content-between">
                     <a href="proveedores.php" class="btn btn-secondary px-4">Cancelar</a>

@@ -67,35 +67,9 @@ $res = $conn->query("SELECT id_etiqueta, nombre FROM etiquetas ORDER BY nombre")
 while ($row = $res->fetch_assoc()) {
     $etiquetas_existentes[] = $row;
 }
-
-// Traer proveedores por id_destino
-$alojamientos = [];
-$vuelos = [];
-$autos = [];
-$servicios = [];
-
-if ($id_destino) {
-    // Alojamientos
-    $res = $conn->query("SELECT id_alojamiento, nombre FROM alojamientos WHERE id_destino = $id_destino");
-    while ($row = $res->fetch_assoc()) $alojamientos[] = $row;
-
-    // Vuelos
-    $res = $conn->query("SELECT id_vuelo, aerolinea FROM vuelos WHERE id_destino = $id_destino");
-    while ($row = $res->fetch_assoc()) $vuelos[] = $row;
-
-    // Autos
-    $res = $conn->query("SELECT id_alquiler, proveedor FROM alquiler_autos WHERE id_destino = $id_destino");
-    while ($row = $res->fetch_assoc()) $autos[] = $row;
-
-    // Servicios adicionales
-    $res = $conn->query("SELECT id_servicio, nombre FROM servicios_adicionales WHERE id_destino = $id_destino");
-    while ($row = $res->fetch_assoc()) $servicios[] = $row;
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Nuevo Paquete Turístico</title>
@@ -110,7 +84,6 @@ if ($id_destino) {
             min-height: 100vh;
             background: #FFF6F8;
         }
-
         .card-paquete {
             background: #fff;
             border: 1px solid #6CE0B6;
@@ -122,7 +95,6 @@ if ($id_destino) {
             position: relative;
             overflow: hidden;
         }
-
         .icon-circle {
             width: 60px;
             height: 60px;
@@ -136,12 +108,10 @@ if ($id_destino) {
             color: #fff;
             box-shadow: 0 2px 8px #6CE0B633;
         }
-
         .form-label {
             color: #750D37;
             font-weight: 500;
         }
-
         .btn-success {
             background: #3AB789 !important;
             border: none;
@@ -149,7 +119,6 @@ if ($id_destino) {
             color: #fff !important;
             letter-spacing: 1px;
         }
-
         .btn-secondary {
             background: #5CC7ED !important;
             border: none;
@@ -158,7 +127,6 @@ if ($id_destino) {
         }
     </style>
 </head>
-
 <body>
     <?php include 'sidebar.php'; ?>
     <div class="main-content">
@@ -249,159 +217,18 @@ if ($id_destino) {
                 </form>
             <?php else: ?>
                 <!-- Paso 2: Asociación de componentes -->
-                <form method="post" action="asociar_componentes_paquete.php?id_paquete=<?= $id_paquete ?>">
-                    <h5 class="mb-3">Destino: <span class="text-success"><?= htmlspecialchars($destino) ?></span></h5>
-                    <!-- Alojamientos -->
-                    <div class="mb-4 bloque-componente bloque-alojamiento">
-                        <input type="hidden" name="omitir_alojamiento" id="omitir_alojamiento" value="0">
-                        <label class="form-label">Alojamientos en destino</label>
-                        <?php if (empty($alojamientos)): ?>
-                            <div class="alert alert-warning d-flex align-items-center justify-content-between">
-                                <div>
-                                    No hay alojamientos para este destino.
-                                    <a href="proveedor_form.php?tipo=alojamiento&id_destino=<?= $id_destino ?>&id_paquete=<?= $id_paquete ?>" class="btn btn-sm btn-primary ms-2">
-                                        <i class="bi bi-plus-circle"></i> Agregar alojamiento en <?= htmlspecialchars($destino) ?>
-                                    </a>
-                                </div>
-                                <button type="button" class="btn btn-outline-secondary btn-sm ms-3 btn-omitir" data-omitir="alojamiento">
-                                    Omitir por ahora
-                                </button>
-                            </div>
-                        <?php else: ?>
-                            <select name="alojamientos[]" class="form-select" multiple required>
-                                <?php foreach ($alojamientos as $row): ?>
-                                    <option value="<?= $row['id_alojamiento'] ?>"><?= htmlspecialchars($row['nombre']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <small class="text-muted">Puede seleccionar varios (Ctrl + click)</small>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Vuelos -->
-                    <div class="mb-4">
-                        <label class="form-label">Vuelos al destino</label>
-                        <?php if (empty($vuelos)): ?>
-                            <div class="alert alert-warning d-flex align-items-center justify-content-between">
-                                <div>
-                                    No hay vuelos para este destino.
-                                    <a href="proveedor_form.php?tipo=vuelo&id_destino=<?= $id_destino ?>&id_paquete=<?= $id_paquete ?>" class="btn btn-sm btn-primary ms-2">
-                                        <i class="bi bi-plus-circle"></i> Agregar vuelo en <?= htmlspecialchars($destino) ?>
-                                    </a>
-                                </div>
-                                <button type="button" class="btn btn-outline-secondary btn-sm ms-3 btn-omitir" data-omitir="vuelo">
-                                    Omitir por ahora
-                                </button>
-                            </div>
-                        <?php else: ?>
-                            <select name="vuelos[]" class="form-select" multiple required>
-                                <?php foreach ($vuelos as $row): ?>
-                                    <option value="<?= $row['id_vuelo'] ?>"><?= htmlspecialchars($row['aerolinea']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <small class="text-muted">Puede seleccionar varios (Ctrl + click)</small>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Autos -->
-                    <div class="mb-4">
-                        <label class="form-label">Alquiler de autos en destino</label>
-                        <?php if (empty($autos)): ?>
-                            <div class="alert alert-warning d-flex align-items-center justify-content-between">
-                                <div>
-                                    No hay autos para este destino.
-                                    <a href="proveedor_form.php?tipo=auto&id_destino=<?= $id_destino ?>&id_paquete=<?= $id_paquete ?>" class="btn btn-sm btn-primary ms-2">
-                                        <i class="bi bi-plus-circle"></i> Agregar auto en <?= htmlspecialchars($destino) ?>
-                                    </a>
-                                </div>
-                                <button type="button" class="btn btn-outline-secondary btn-sm ms-3 btn-omitir" data-omitir="auto">
-                                    Omitir por ahora
-                                </button>
-                            </div>
-                        <?php else: ?>
-                            <select name="autos[]" class="form-select" multiple required>
-                                <?php foreach ($autos as $row): ?>
-                                    <option value="<?= $row['id_alquiler'] ?>"><?= htmlspecialchars($row['proveedor']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <small class="text-muted">Puede seleccionar varios (Ctrl + click)</small>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Servicios adicionales -->
-                    <div class="mb-4">
-                        <label class="form-label">Servicios adicionales en destino</label>
-                        <?php if (empty($servicios)): ?>
-                            <div class="alert alert-warning d-flex align-items-center justify-content-between">
-                                <div>
-                                    No hay servicios para este destino.
-                                    <a href="proveedor_form.php?tipo=servicio&id_destino=<?= $id_destino ?>&id_paquete=<?= $id_paquete ?>" class="btn btn-sm btn-primary ms-2">
-                                        <i class="bi bi-plus-circle"></i> Agregar servicio en <?= htmlspecialchars($destino) ?>
-                                    </a>
-                                </div>
-                                <button type="button" class="btn btn-outline-secondary btn-sm ms-3 btn-omitir" data-omitir="servicio">
-                                    Omitir por ahora
-                                </button>
-                            </div>
-                        <?php else: ?>
-                            <select name="servicios[]" class="form-select" multiple required>
-                                <?php foreach ($servicios as $row): ?>
-                                    <option value="<?= $row['id_servicio'] ?>"><?= htmlspecialchars($row['nombre']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <small class="text-muted">Puede seleccionar varios (Ctrl + click)</small>
-                        <?php endif; ?>
-                    </div>
-                    <input type="hidden" name="omitir_alojamiento" id="omitir_alojamiento" value="0">
-                    <div class="d-flex justify-content-between">
-                        <a href="nuevo_paquete.php?id_paquete=<?= $id_paquete ?>" class="btn btn-outline-primary px-4" id="btn-volver-datos">
-                            <i class="bi bi-arrow-left"></i> Volver a datos del paquete
-                        </a>
-                        <a href="paquetes.php" class="btn btn-secondary px-4" id="btn-volver-paquetes">
-                            Volver a Paquetes Turísticos
-                        </a>
-                        <button type="submit" class="btn btn-success px-4" name="asociar" value="1"><i class="bi bi-check-circle"></i> Guardar Paquete</button>
-                    </div>
-                </form>
+                <?php include 'componentes_destino.php'; ?>
             <?php endif; ?>
         </div>
     </div>
-    <div class="modal fade" id="modalSalir" tabindex="-1" aria-labelledby="modalSalirLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center">
-                <div class="modal-body py-4">
-                    <div class="mb-3">
-                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2.5rem;"></i>
-                    </div>
-                    <h5 class="mb-3" id="modalSalirLabel">¿Está seguro?</h5>
-                    <p class="mb-4">Se perderá todo el progreso de este formulario.</p>
-                    <button type="button" class="btn btn-danger px-4 me-2" id="btnSalirConfirmado">Salir</button>
-                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="modalOmitirServicio" tabindex="-1" aria-labelledby="modalOmitirServicioLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center">
-                <div class="modal-body py-4">
-                    <div class="mb-3">
-                        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size:2.5rem;"></i>
-                    </div>
-                    <h5 class="mb-3" id="modalOmitirServicioLabel">¿Está seguro?</h5>
-                    <p class="mb-4">Podrá editar esta información más tarde.</p>
-                    <button type="button" class="btn btn-success px-4 me-2" id="btnConfirmarOmitirServicio">Omitir y continuar</button>
-                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php include 'modal_proveedor.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="js/js_componentes_desino.js"></script>
     <script>
         // Etiquetas nuevas
         let etiquetas = [];
-
         function renderEtiquetas() {
             $('#etiquetas-container').html(
                 etiquetas.map((et, i) =>
@@ -413,7 +240,6 @@ if ($id_destino) {
             );
             $('#etiquetas-hidden').val(etiquetas.join(','));
         }
-
         function eliminarEtiqueta(idx) {
             etiquetas.splice(idx, 1);
             renderEtiquetas();
@@ -429,119 +255,12 @@ if ($id_destino) {
                 $(this).val('');
             }
         });
-
-        // Select2 para destinos
-        $('#input-destino').select2({
-            placeholder: 'Buscar o agregar destino',
-            ajax: {
-                url: 'buscar_destinos.php',
-                dataType: 'json',
-                delay: 250,
-                data: params => ({
-                    term: params.term
-                }),
-                processResults: data => ({
-                    results: data.map(d => ({
-                        id: d.id_destino,
-                        text: d.destino
-                    }))
-                }),
-                cache: true
-            },
-            language: {
-                noResults: function(params) {
-                    if (params.term && params.term.length > 0) {
-                        return `<button type="button" class="btn btn-link p-0" id="agregar-destino-btn">Agregar "${params.term}" como nuevo destino</button>`;
-                    }
-                    return "No se encontraron resultados";
-                }
-            },
-            escapeMarkup: function(markup) {
-                return markup;
-            }
-        });
-
-        // Agregar destino desde el botón en el dropdown
-        $(document).on('click', '#agregar-destino-btn', function(e) {
-            let term = $('.select2-search__field').val();
-            $.post('agregar_destino.php', {
-                destino: term
-            }, function(data) {
-                let newOption = new Option(data.destino, data.id_destino, true, true);
-                $('#input-destino').append(newOption).trigger('change');
-                $('.select2-results__options').empty();
-            }, 'json');
-        });
-
-        // Modal de confirmación para salir
-        let salirA = null;
-        $('#btn-cancelar').on('click', function(e) {
-            e.preventDefault();
-            window.history.back();
-        });
-        $('#btn-volver-datos, #btn-volver-paquetes, .breadcrumb a, .sidebar .nav-link').on('click', function(e) {
-            if ($(this).attr('href') && !$(this).hasClass('active')) {
-                e.preventDefault();
-                salirA = $(this).attr('href');
-                let modal = new bootstrap.Modal(document.getElementById('modalSalir'));
-                modal.show();
-            }
-        });
-        $('#btnSalirConfirmado').on('click', function() {
-            if (salirA) window.location = salirA;
-        });
-
-        // Confirmar omitir servicio
-        $('#btn-omitir-servicio').on('click', function(e) {
-            e.preventDefault();
-            let modal = new bootstrap.Modal(document.getElementById('modalOmitirServicio'));
-            modal.show();
-        });
-        // Confirmar omitir cualquier componente
-        let tipoAomitir = null;
-        let btnAomitir = null;
-
-        $(document).on('click', '.btn-omitir', function(e) {
-            e.preventDefault();
-            tipoAomitir = $(this).data('omitir');
-            btnAomitir = $(this);
-            const modal = new bootstrap.Modal(document.getElementById('modalOmitirServicio'));
-            modal.show();
-        });
-
-        $('#btnConfirmarOmitirServicio').on('click', function() {
-            if (tipoAomitir && btnAomitir) {
-                // Cambia el botón a verde y desactiva el select
-                btnAomitir
-                    .removeClass('btn-outline-secondary')
-                    .addClass('btn-success')
-                    .text('Omitido')
-                    .prop('disabled', true);
-
-                // Desactiva el select correspondiente
-                btnAomitir.closest('.bloque-componente').find('select').prop('disabled', true);
-
-                // Marca el input hidden
-                $('#omitir_' + tipoAomitir).val('1');
-
-                // Cierra el modal
-                const modalEl = document.getElementById('modalOmitirServicio');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                modal.hide();
-            }
-        });
+        // Si hay etiquetas precargadas (por ejemplo, al volver atrás), puedes agregarlas aquí
+        // etiquetas = [...];
+        // renderEtiquetas();
     </script>
 </body>
-
 </html>
 <?php
-if (isset($_SESSION['id_usuario'])) {
-    registrar_bitacora(
-        $pdo,
-        $_SESSION['id_usuario'],
-        'Crear paquete',
-        "Paquete #$id_paquete creado: $nombre"
-    );
-}
 $conn->close();
 ?>
