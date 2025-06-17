@@ -1,1 +1,34 @@
-/vendor/
+# Ignorar archivos y carpetas generadas por Composer
+vendor/
+composer.lock
+
+# Ignorar archivos temporales o de caché
+tmp/
+cache/
+
+# Ignorar archivos de configuración con credenciales (si existen)
+config.php  # O cualquier otro archivo de configuración similar
+*.env       # Para archivos .env que contengan variables de entorno
+
+# Ignorar archivos de base de datos
+*.sql
+*.db
+
+# Ignorar archivos de logs
+logs/
+
+# Ignorar archivos de sesión (si se almacenan en el servidor)
+sessions/
+
+# Ignorar archivos de backup
+backup/
+
+# Ignorar archivos de la carpeta "order" si contiene información sensible
+order/descargar_ticket.php # Si este archivo genera o almacena información sensible
+
+# Ignorar archivos de ejemplo o pruebas
+examples/
+tests/
+
+# Ignorar archivos temporales de dompdf
+dompdf_cache/
