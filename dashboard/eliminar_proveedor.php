@@ -1,20 +1,34 @@
 <?php
+session_start();
 include 'conexion.php';
 include 'verificar_admin.php';
+
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
-    $conn->query("DELETE FROM proveedores WHERE id_proveedor = $id");
-}
 
-if (isset($_SESSION['id_usuario'])) {
-    registrar_bitacora(
-        $pdo,
-        $_SESSION['id_usuario'],
-        'Eliminar proveedor',
-        "proveedor', #$id eliminado"
-    );
-}
+    try {
+        $res = $conn->query("SELECT * FROM proveedores WHERE id_proveedor = $id");
+        if ($res->num_rows === 0) {
+            die("Proveedor no encontrado.");
+        }
 
-header("Location: proveedores.php");
-exit;
-?>
+        $conn->query("DELETE FROM proveedores WHERE id_proveedor = $id");
+
+        if (isset($_SESSION['id_usuario'])) {
+            registrar_bitacora(
+                $pdo,
+                $_SESSION['id_usuario'],
+                'Eliminar proveedor',
+                "Proveedor #$id eliminado"
+            );
+        }
+
+        header("Location: proveedores.php");
+        exit;
+
+    } catch (mysqli_sql_exception $e) {
+        die("Error al eliminar: " . $e->getMessage());
+    }
+} else {
+    die("No se recibió ningún ID");
+}

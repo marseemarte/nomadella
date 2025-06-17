@@ -15,6 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Paquete turístico (obligatorio)
     $conn->query("INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad) VALUES ($id_orden, 'paquete_turistico', $id_paquete, 1)");
 
+    // Bitácora
+    if (isset($_SESSION['id_usuario'])) {
+        registrar_bitacora(
+            $pdo,
+            $_SESSION['id_usuario'],
+            'Crear reserva',
+            "Nueva reserva creada por el usuario {$_SESSION['id_usuario']} con paquete ID {$id_paquete} y cliente ID {$id_usuario}"
+        );
+    }
+
     // Redirigir a reservas
     header("Location: reservas.php");
     exit;
@@ -129,16 +139,5 @@ $paquetes = $conn->query("SELECT id_paquete, nombre, destino FROM paquetes_turis
     </script>
 </body>
 </html>
-<?php 
+<?php $conn->close(); ?>
 
-if (isset($_SESSION['id_usuario'])) {
-    registrar_bitacora(
-        $pdo,
-        $_SESSION['id_usuario'],
-        'Crear reserva',
-        "Nueva reserva creada por el usuario {$_SESSION['id_usuario']} con paquete ID {$id_paquete} y cliente ID {$id_usuario}"
-    );
-}
-
-$conn->close();
-?>

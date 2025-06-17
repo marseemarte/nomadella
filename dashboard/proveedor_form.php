@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Redirección condicional
     if (!empty($_GET['id_paquete'])) {
         $id_paquete = intval($_GET['id_paquete']);
-        header("Location: nuevo_paquete.php?id_paquete=$id_paquete&asociar=1");
+        header("Location: nuevo_paquete.php?id_paquete=$id_paquete&asociar=1&nuevo=alojamiento&id_nuevo=$id_nuevo");
     } else {
         header("Location: proveedores.php?ok=1");
     }

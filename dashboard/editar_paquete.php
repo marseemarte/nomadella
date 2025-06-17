@@ -39,10 +39,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: paquetes.php?edit=1");
     exit;
 }
+
+// Obtener id_destino según el nombre de destino
+$id_destino = null;
+$res = $conn->query("SELECT id_destino FROM destinos WHERE destino = '" . $conn->real_escape_string($paquete['destino']) . "' LIMIT 1");
+if ($row = $res->fetch_assoc()) {
+    $id_destino = intval($row['id_destino']);
+}
+
+$alojamientos = $vuelos = $autos = $servicios = [];
+
+if ($id_destino) {
+    $res = $conn->query("SELECT id_alojamiento, nombre FROM alojamientos WHERE id_destino = $id_destino");
+    while ($row = $res->fetch_assoc()) $alojamientos[] = $row;
+
+    $res = $conn->query("SELECT id_vuelo, aerolinea FROM vuelos WHERE id_destino = $id_destino");
+    while ($row = $res->fetch_assoc()) $vuelos[] = $row;
+
+    $res = $conn->query("SELECT id_alquiler, proveedor FROM alquiler_autos WHERE id_destino = $id_destino");
+    while ($row = $res->fetch_assoc()) $autos[] = $row;
+
+    $res = $conn->query("SELECT id_servicio, nombre FROM servicios_adicionales WHERE id_destino = $id_destino");
+    while ($row = $res->fetch_assoc()) $servicios[] = $row;
+}
+
+
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Editar Paquete Turístico</title>
@@ -56,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             min-height: 100vh;
             background: #FFF6F8;
         }
+
         .card-paquete {
             background: #fff;
             border: 1px solid #6CE0B6;
@@ -67,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             position: relative;
             overflow: hidden;
         }
+
         .card-paquete:before {
             content: "";
             position: absolute;
@@ -78,10 +106,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             opacity: 0.18;
             z-index: 0;
         }
+
         .form-label {
             color: #750D37;
             font-weight: 500;
         }
+
         .btn-success {
             background: #3AB789 !important;
             border: none;
@@ -89,12 +119,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #fff !important;
             letter-spacing: 1px;
         }
+
         .btn-secondary {
             background: #5CC7ED !important;
             border: none;
             color: #1A001C !important;
             font-weight: bold;
         }
+
         .icon-circle {
             width: 60px;
             height: 60px;
@@ -108,12 +140,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #fff;
             box-shadow: 0 2px 8px #6CE0B633;
         }
+
         .breadcrumb-item a {
             color: #750D37;
             text-decoration: none;
         }
     </style>
 </head>
+
 <body>
     <?php include 'sidebar.php'; ?>
     <div class="main-content">
@@ -158,6 +192,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="checkbox" name="activo" class="form-check-input" id="activo" <?= $paquete['activo'] ? 'checked' : '' ?>>
                     <label class="form-check-label" for="activo">Activo</label>
                 </div>
+                <?php if ($id_destino): ?>
+                    <hr>
+                    <h5 class="mt-4 mb-3 text-primary">Componentes disponibles para el destino: <?= htmlspecialchars($paquete['destino']) ?></h5>
+
+                    <div class="mb-3">
+                        <label class="form-label">Alojamientos</label>
+                        <select class="form-select" name="alojamiento">
+                            <option value="">Seleccionar alojamiento</option>
+                            <?php foreach ($alojamientos as $a): ?>
+                                <option value="<?= $a['id_alojamiento'] ?>"><?= htmlspecialchars($a['nombre']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Vuelos</label>
+                        <select class="form-select" name="vuelo">
+                            <option value="">Seleccionar vuelo</option>
+                            <?php foreach ($vuelos as $v): ?>
+                                <option value="<?= $v['id_vuelo'] ?>"><?= htmlspecialchars($v['aerolinea']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Autos</label>
+                        <select class="form-select" name="auto">
+                            <option value="">Seleccionar alquiler de auto</option>
+                            <?php foreach ($autos as $au): ?>
+                                <option value="<?= $au['id_alquiler'] ?>"><?= htmlspecialchars($au['proveedor']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Servicios adicionales</label>
+                        <select class="form-select" name="servicio">
+                            <option value="">Seleccionar servicio adicional</option>
+                            <?php foreach ($servicios as $s): ?>
+                                <option value="<?= $s['id_servicio'] ?>"><?= htmlspecialchars($s['nombre']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
+
                 <div class="d-flex justify-content-between">
                     <a href="paquetes.php" class="btn btn-secondary px-4">Cancelar</a>
                     <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-circle"></i> Guardar cambios</button>
@@ -167,8 +246,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
-<?php 
+<?php
 
 if (isset($_SESSION['id_usuario'])) {
     registrar_bitacora(

@@ -21,7 +21,11 @@ try {
 }
 
 function registrar_bitacora($pdo, $id_usuario, $accion, $descripcion) {
-    $stmt = $pdo->prepare("INSERT INTO bitacora (id_usuario, accion, descripcion, fecha_hora) VALUES (?, ?, ?, NOW())");
-    $stmt->execute([$id_usuario, $accion, $descripcion]);
+    try {
+        $stmt = $pdo->prepare("INSERT INTO bitacora_sistema (id_usuario, accion, descripcion, fecha_hora) VALUES (?, ?, ?, NOW())");
+        $stmt->execute([$id_usuario, $accion, $descripcion]);
+    } catch (PDOException $e) {
+        echo "Error al registrar en bitácora: " . $e->getMessage();
+    }
 }
 ?>
