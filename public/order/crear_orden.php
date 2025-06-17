@@ -17,6 +17,10 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 $id_usuario = $_SESSION['usuario_id'];
+$nombreCompleto = $_POST['nombreCompleto'] ?? '';
+$dniCuit = $_POST['dniCuit'] ?? '';
+$medio_pago = $_POST['medioPago'] ?? '';
+$direccionFacturacion = $_POST['direccionFacturacion'] ?? '';
 $email_cliente = $_POST['email'] ?? null;
 
 $res = $conexion->query("SELECT id_carrito FROM carritos WHERE id_usuario=$id_usuario AND estado='activo' ORDER BY id_carrito DESC LIMIT 1");
@@ -32,9 +36,8 @@ while($item = $q->fetch_assoc()) {
     $total += $item['subtotal'];
 }
 
-// Simular pago
-$medio_pago = 'Tarjeta de Crédito';
-$datos_facturacion = 'Datos de ejemplo';
+// Simular pago: solo se guarda la info relevante
+$datos_facturacion = "Nombre: $nombreCompleto\nDNI/CUIT: $dniCuit\nDirección: $direccionFacturacion";
 
 // Crear orden
 $conexion->query("INSERT INTO ordenes (id_usuario, total, estado, medio_pago, datos_facturacion) VALUES ($id_usuario, $total, 'Confirmada', '$medio_pago', '$datos_facturacion')");
@@ -93,14 +96,13 @@ $ticketHtml .= '
 </body>
 </html>';
 
-// Generar PDF y guardarlo temporalmente
 $dompdf = new Dompdf();
 $dompdf->loadHtml($ticketHtml);
 $dompdf->setPaper([0,0,226.77,425.19], 'portrait');
 $dompdf->render();
-$pdfdoc = $dompdf->output(); // PDF en memoria
+$pdfdoc = $dompdf->output();
 
-// --- ENVIAR MAIL SOLO CON INFORMACIÓN, SIN PDF ---
+// --- ENVIAR MAIL REAL DESDE GMAIL ---
 if ($email_cliente) {
     $asunto = "¡Gracias por tu compra en Nomadella!";
     $mensajeHtml = '
@@ -117,7 +119,7 @@ if ($email_cliente) {
         }
         $mensajeHtml .= "<li><b>$nombre</b> x {$item['cantidad']} - Subtotal: $ {$item['subtotal']} USD</li>";
     }
-    $mensajeHtml .= '</ul>
+    $mensajeHtml .= '</ul>*
             <p style="font-size:1.1em;"><b>Total:</b> $' . $total . ' USD</p>
             <p style="color:#741d41;">¡Esperamos que disfrutes tu experiencia!</p>
         </div>';
@@ -125,25 +127,27 @@ if ($email_cliente) {
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host = 'localhost';
-        $mail->Port = 1025;
-        $mail->SMTPAuth = false;
-        $mail->SMTPSecure = false;
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'nomadellaturismo@gmail.com'; // TU CORREO
+        $mail->Password = 'tucontraseña_deapp'; // ← Reemplaza esto con la contraseña generada en Gmail
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
 
-        $mail->setFrom('no-reply@nomadella.com', 'Nomadella');
+        $mail->setFrom('nomadellaturismo@gmail.com', 'Nomadella Turismo');
         $mail->addAddress($email_cliente);
+
         $mail->isHTML(true);
         $mail->CharSet = 'UTF-8';
         $mail->Subject = $asunto;
         $mail->Body    = $mensajeHtml;
-        // No se adjunta PDF
+
         $mail->send();
     } catch (Exception $e) {
         error_log("Error al enviar correo: {$mail->ErrorInfo}");
     }
 }
 
-// --- RESPONDER CON JSON ---
 $response = [
     'success' => true,
     'mensaje' => '<div style="font-family:Arial,sans-serif;background:#faf6f8;padding:24px;max-width:500px;margin:40px auto;border-radius:8px;">
@@ -153,18 +157,9 @@ $response = [
         <a href="order/descargar_ticket.php?id_orden='.$id_orden.'" style="display:inline-block;padding:10px 18px;background:#b84e6f;color:#fff;text-decoration:none;border-radius:5px;font-weight:bold;margin-top:10px;">Descargar ticket PDF</a>
         <p style="color:#741d41;margin-top:18px;">¡Esperamos que disfrutes tu experiencia!</p>
         <a href="index.php" style="display:inline-block;margin-top:20px;padding:10px 18px;background:#b84e6f;color:#fff;text-decoration:none;border-radius:5px;font-weight:bold;">Volver al inicio</a>
-    </div>
-    
-    '
+    </div>'
 ];
 header('Content-Type: application/json');
 echo json_encode($response);
 exit;
 ?>
-<script>
-fetch('order/crear_orden.php', { ... })
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById('resultado').innerHTML = data.mensaje;
-  });
-</script>
