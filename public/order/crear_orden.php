@@ -119,7 +119,7 @@ if ($email_cliente) {
         }
         $mensajeHtml .= "<li><b>$nombre</b> x {$item['cantidad']} - Subtotal: $ {$item['subtotal']} USD</li>";
     }
-    $mensajeHtml .= '</ul>
+    $mensajeHtml .= '</ul>*
             <p style="font-size:1.1em;"><b>Total:</b> $' . $total . ' USD</p>
             <p style="color:#741d41;">¡Esperamos que disfrutes tu experiencia!</p>
         </div>';
@@ -130,7 +130,7 @@ if ($email_cliente) {
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'nomadellaturismo@gmail.com'; // TU CORREO
-        $mail->Password = 'ofsn sehc mvdz ucsa'; // ← Reemplaza esto con la contraseña generada en Gmail
+        $mail->Password = 'tucontraseña_deapp'; // ← Reemplaza esto con la contraseña generada en Gmail
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
