@@ -24,24 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // ENVIAR CORREO AL CLIENTE
-    $res = $conn->query("
-        SELECT u.email, u.nombre
-        FROM ordenes o
-        JOIN usuarios u ON o.id_usuario = u.id_usuario
-        WHERE o.id_orden = $id_orden
-    ");
-    $cliente = $res->fetch_assoc();
-    $email = $cliente['email'];
-    $nombre_cliente = $cliente['nombre'];
+//     $res = $conn->query("
+//         SELECT u.email, u.nombre
+//         FROM ordenes o
+//         JOIN usuarios u ON o.id_usuario = u.id_usuario
+//         WHERE o.id_orden = $id_orden
+//     ");
+//     $cliente = $res->fetch_assoc();
+//     $email = $cliente['email'];
+//     $nombre_cliente = $cliente['nombre'];
 
-    $asunto = "Actualización de su reserva";
+//     $asunto = "Actualización de su reserva";
 
-    $mensaje = "Hola $nombre_cliente,\n\n";
-    $mensaje .= "Se han realizado cambios en su reserva #$id_orden:\n";
-    $mensaje .= "- Nueva fecha: $fecha\n";
-    $mensaje .= "- Nuevo estado: $estado\n\n";
-    $mensaje .= "Por favor verifique los cambios. Muchas gracias por confiar en Nomadella.";
-;
+//     $mensaje = "Hola $nombre_cliente,\n\n";
+//     $mensaje .= "Se han realizado cambios en su reserva #$id_orden:\n";
+//     $mensaje .= "- Nueva fecha: $fecha\n";
+//     $mensaje .= "- Nuevo estado: $estado\n\n";
+//     $mensaje .= "Por favor verifique los cambios. Muchas gracias por confiar en Nomadella.";
+// ;
 
 
 // Obtener el id_usuario de la reserva
@@ -176,6 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </html>
 
 <?php
-require_once 'enviar_mail.php';
-enviarCorreo($email, $nombre_cliente, $asunto, nl2br($mensaje));
+// require_once 'enviar_mail.php';
+// enviarCorreo($email, $nombre_cliente, $asunto, nl2br($mensaje));
 ?>

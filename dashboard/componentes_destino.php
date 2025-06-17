@@ -76,7 +76,7 @@ if ($id_destino) {
     <?php else: ?>
         <select name="vuelos[]" class="form-select" multiple required>
             <?php foreach ($vuelos as $row): ?>
-                <option value="<?= $row['id_vuelo'] ?>"><?= htmlspecialchars($row['nombre']) ?></option>
+                <option value="<?= $row['id_vuelo'] ?>"><?= htmlspecialchars($row['aerolinea']) ?></option>
             <?php endforeach; ?>
         </select>
         <small class="text-muted">Puede seleccionar varios (Ctrl + click)</small>
@@ -142,13 +142,10 @@ if ($id_destino) {
     </a>
     <button type="submit" class="btn btn-success px-4">
         <i class="bi bi-check-circle"></i> Guardar destino
+                
     </button>
 </div>
 </div>
 
-
-<!-- Repite igual para vuelos, autos y servicios, cambiando los nombres y clases -->
-
-<!-- ... (Vuelos, Autos, Servicios, igual que arriba, solo cambia los nombres y campos) ... -->
 
 <!-- Modal y JS pueden ir en un archivo aparte o incluirse aquí -->

@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         email='$email',
         direccion='$direccion',
         descripcion='$descripcion',
-        destino='$destino'
+        id_destino='$destino'
         WHERE id_proveedor = $id
     ");
 
