@@ -30,13 +30,10 @@ El proyecto utiliza tecnologías como PHP, MySQL, PHPMailer y Dompdf.
 
 Proyecto realizado por estudiantes de **7° C** de la **Escuela de Educación Secundaria Técnica N°1** en el marco de las Olimpiadas de Programación 2025:
 
-- Martina Plandolit(Líder de equipo)
-- Franco Fernandez
-- Santiago Alvarez
-- Joaquín Sanchez 
+
 
 ## Instalación
 
 1. Clonar el repositorio:
 ```bash
-git clone https://github.com/usuario/proyecto-nomadella.git
+
