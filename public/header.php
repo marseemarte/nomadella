@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
   href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 />
   <link rel="stylesheet" href="../css/index.css">
-<base href="/pruebaasda/nomadella/public/">
+<base href="/nomadella/public/">
 </head>
 <body>
   <header class="bg-gradient p-0">
