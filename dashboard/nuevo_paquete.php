@@ -2,6 +2,8 @@
 include 'conexion.php';
 include 'verificar_admin.php';
 
+
+
 // Obtener destinos disponibles
 $destinos_disponibles = [];
 $res = $conn->query("SELECT id_destino, destino FROM destinos ORDER BY destino");
@@ -29,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['asociar'])) {
         foreach ($nuevas as $nombre_etiqueta) {
             $nombre_etiqueta = $conn->real_escape_string($nombre_etiqueta);
             $conn->query("INSERT IGNORE INTO etiquetas (nombre) VALUES ('$nombre_etiqueta')");
-            $res = $conn->query("SELECT id_etiqueta FROM etiquetas WHERE nombre='$nombre_etiqueta'");
+            $res = $conn->query("SELECT * FROM etiquetas WHERE nombre='$nombre_etiqueta'");
             $row = $res->fetch_assoc();
             $id_etiqueta = $row['id_etiqueta'];
             $conn->query("INSERT IGNORE INTO paquete_etiquetas (id_paquete, id_etiqueta) VALUES ($id_paquete, $id_etiqueta)");
@@ -399,6 +401,19 @@ if ($id_destino) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        $('form').on('submit', function(event) {
+            console.log("Se va a enviar: ", $('#etiquetas-hidden').val());
+            console.log("Form submission triggered.");
+            // Add a timeout to check if form submission proceeds
+            setTimeout(function() {
+                console.log("If you see this message and the page did not reload, form submission might be blocked.");
+            }, 3000);
+        });
+
+        window.addEventListener('error', function(event) {
+            console.error("JavaScript error detected: ", event.message, " at ", event.filename, ":", event.lineno);
+        });
+
         // Etiquetas nuevas
         let etiquetas = [];
 
@@ -532,7 +547,57 @@ if ($id_destino) {
         });
     </script>
 </body>
+<script>
+    $(document).ready(function() {
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const idNuevo = urlParams.get('id_nuevo');
+        const tipo = urlParams.get('tipo');
 
+        if (idNuevo && tipo) {
+            // Map tipo to select name attribute
+            const tipoMap = {
+                'alojamiento': 'alojamientos[]',
+                'vuelo': 'vuelos[]',
+                'auto': 'autos[]',
+                'servicio': 'servicios[]'
+            };
+
+            const selectName = tipoMap[tipo];
+            if (selectName) {
+                // Find the select element
+                const selectElem = $(`select[name="${selectName}"]`);
+                if (selectElem.length) {
+                    // Check if option with idNuevo exists
+                    let option = selectElem.find(`option[value="${idNuevo}"]`);
+                    if (option.length === 0) {
+                        // Option not found, fetch it via AJAX and append
+                        $.ajax({
+                            url: 'proveedor_search.php',
+                            method: 'GET',
+                            data: { id: idNuevo },
+                            dataType: 'json',
+                            success: function(data) {
+                                if (data && data.length > 0) {
+                                    const prov = data[0];
+                                    let optionText = prov.nombre || '';
+                                    if(optionText) {
+                                        const newOption = new Option(optionText, idNuevo, true, true);
+                                        selectElem.append(newOption).trigger('change');
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        // Option exists, select it
+                        option.prop('selected', true);
+                        selectElem.trigger('change');
+                    }
+                }
+            }
+        }
+    });
+</script>
 </html>
 <?php
 if (isset($_SESSION['id_usuario'])) {

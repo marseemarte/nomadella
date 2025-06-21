@@ -26,6 +26,10 @@ if ($reservas && $reservas->num_rows > 0):
         // Traemos info general del paquete, incluyendo fechas
         $q = $conn->query("SELECT nombre, destino, precio_base, fecha_inicio, fecha_fin FROM paquetes_turisticos WHERE id_paquete = $id_paquete");
         $p = $q->fetch_assoc();
+        if (!$p) {
+            // Paquete no encontrado, saltar esta reserva
+            continue;
+        }
         $paquete_mostrar = "{$p['nombre']} ({$p['destino']})";
         $fecha_inicio = new DateTime($p['fecha_inicio']);
         $fecha_fin = new DateTime($p['fecha_fin']);

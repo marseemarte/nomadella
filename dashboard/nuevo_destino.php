@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asociar'])) {
                         <input type="text" name="destino" class="form-control" required maxlength="100">
                     </div>
                     <div class="d-flex justify-content-between">
-                        <a href="paquetes.php" class="btn btn-secondary px-4">Cancelar</a>
+                        <a href="destino.php" class="btn btn-secondary px-4">Cancelar</a>
                         <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-circle"></i> Siguiente</button>
                     </div>
                 </form>
@@ -196,7 +196,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asociar'])) {
         </div>
     </div>
     <!-- Modal Alta Proveedor -->
-    <?php include 'modal_proveedor.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/js_componentes_desino.js"></script>
 </body>

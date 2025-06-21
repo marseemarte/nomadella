@@ -23,10 +23,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->query("INSERT INTO proveedores (nombre, tipo, contacto, telefono, email, direccion, descripcion, id_destino) 
                   VALUES ('$nombre', '$tipo', '$contacto', '$telefono', '$email', '$direccion', '$descripcion', $id_destino)");
 
+    $id_nuevo = $conn->insert_id;
+
+    // Insert into specific tables based on tipo
+    switch ($tipo) {
+        case 'alojamiento':
+            $conn->query("INSERT INTO alojamientos (id_proveedor, id_destino, nombre) VALUES ($id_nuevo, $id_destino, '$nombre')");
+            break;
+        case 'vuelo':
+            $conn->query("INSERT INTO vuelos (id_proveedor, id_destino, aerolinea) VALUES ($id_nuevo, $id_destino, '$nombre')");
+            break;
+        case 'auto':
+            $conn->query("INSERT INTO alquiler_autos (id_proveedor, id_destino, proveedor) VALUES ($id_nuevo, $id_destino, '$nombre')");
+            break;
+        case 'servicio':
+            $conn->query("INSERT INTO servicios_adicionales (id_proveedor, id_destino, nombre) VALUES ($id_nuevo, $id_destino, '$nombre')");
+            break;
+    }
+
     // Redirección condicional
     if (!empty($_GET['id_paquete'])) {
         $id_paquete = intval($_GET['id_paquete']);
-        header("Location: nuevo_paquete.php?id_paquete=$id_paquete&asociar=1&nuevo=alojamiento&id_nuevo=$id_nuevo");
+        header("Location: nuevo_paquete.php?id_paquete=$id_paquete&asociar=1&tipo=$tipo&id_nuevo=$id_nuevo");
     } else {
         header("Location: proveedores.php?ok=1");
     }

@@ -13,7 +13,7 @@ $total_ingresos_result = $conn->query($total_ingresos_query);
 $total_ingresos = $total_ingresos_result->fetch_assoc()['total'];
 
 // Como no tenemos egresos, dejamos en 0 (se puede agregar después)
-$saldo = $total_ingresos - $total_egresos;
+//$saldo = $total_ingresos - $total_egresos;
 
 // Movimientos financieros: solo ingresos (por ahora)
 $movimientos_query = "
@@ -71,7 +71,7 @@ $movimientos = $conn->query($movimientos_query);
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
             <div class="card card-kpi shadow-sm">
                 <div class="card-body">
                     <h6 class="card-title">Saldo</h6>
@@ -79,7 +79,7 @@ $movimientos = $conn->query($movimientos_query);
                     <small class="text-muted">Ingresos - Egresos</small>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="card shadow-sm">

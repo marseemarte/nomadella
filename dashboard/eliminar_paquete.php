@@ -1,27 +1,24 @@
 <?php
-include 'conexion.php'; // debe definir $pdo
-include 'verificar_admin.php'; // debe verificar si el usuario es admin
+include 'conexion.php';
+session_start(); // por si no está
 
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
+    $activo = 0;
 
-    // Elimina asociaciones primero (si no tienes ON DELETE CASCADE)
-    $pdo->prepare("DELETE FROM paquete_alojamientos WHERE id_paquete = ?")->execute([$id]);
-    $pdo->prepare("DELETE FROM paquete_vuelos WHERE id_paquete = ?")->execute([$id]);
-    $pdo->prepare("DELETE FROM paquete_autos WHERE id_paquete = ?")->execute([$id]);
-    $pdo->prepare("DELETE FROM paquete_servicios WHERE id_paquete = ?")->execute([$id]);
-    $pdo->prepare("DELETE FROM paquete_etiquetas WHERE id_paquete = ?")->execute([$id]);
+    $stmt = $conn->prepare("UPDATE paquetes_turisticos SET activo = ? WHERE id_paquete = ?");
+    $stmt->bind_param("ii", $activo, $id);
+    $stmt->execute();
 
-    // Ahora elimina el paquete
-    $pdo->prepare("DELETE FROM paquetes_turisticos WHERE id_paquete = ?")->execute([$id]);
-}
+    if (isset($_SESSION['id_usuario'])) {
+        registrar_bitacora(
+            $conn, // tu variable se llama $conn, no $pdo
+            $_SESSION['id_usuario'],
+            'Desactivar paquete',
+            "Paquete #$id desactivado"
+        );
+    }
 
-if (isset($_SESSION['id_usuario'])) {
-    registrar_bitacora(
-        $pdo,
-        $_SESSION['id_usuario'],
-        'Eliminar paquete',
-        "Paquete #$id eliminado"
-    );
+    echo "OK";
 }
 ?>

@@ -5,7 +5,7 @@ include 'verificar_admin.php';
 // Obtenemos proveedores por tipo
 function obtenerProveedores($conn, $tipo)
 {
-    $stmt = $conn->prepare("SELECT * FROM proveedores WHERE tipo = ?");
+    $stmt = $conn->prepare("SELECT * FROM proveedores WHERE tipo = ? AND estado = 'activo' ORDER BY nombre ASC");
     $stmt->bind_param("s", $tipo);
     $stmt->execute();
     return $stmt->get_result();
@@ -75,9 +75,15 @@ $servicios = obtenerProveedores($conn, 'servicio');
         </nav>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Proveedores</h2>
-            <a href="proveedor_form.php" class="btn btn-primary mb-3">
-                <i class="bi bi-plus-circle"></i> Nuevo Proveedor
-            </a>
+            <div>
+                <a href="historial_proveedores.php" class="btn btn-secondary mb-3">
+                    <i class="bi bi-book"> Proveedores Viejos</i>
+                </a>
+                <a href="proveedor_form.php" class="btn btn-primary mb-3">
+                    <i class="bi bi-plus-circle"></i> Nuevo Proveedor
+                </a>    
+            </div>
+            
         </div>
         <div class="mb-4 position-relative" style="z-index:10;">
             <input type="text" class="form-control w-50" id="buscador" placeholder="Buscar proveedor...">

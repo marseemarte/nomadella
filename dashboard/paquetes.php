@@ -1,7 +1,7 @@
 <?php
 include './sidebar.php';
 include './conexion.php'; // archivo de conexión PDO a tu base 'nomadella'
-include './verificar_admin.php'; // archivo para verificar si el usuario es admin
+//include './verificar_admin.php'; // archivo para verificar si el usuario es admin
 // Obtener paquetes
 $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -28,14 +28,11 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Paquetes Turísticos</h2>
             <div>
-                <a href="nuevo_destino.php"class="btn btn-primary mb-3" >
-                    <i class="bi bi-geo-alt"></i> Nuevo Destino
-                </a>
                 <a href="nuevo_paquete.php" class="btn btn-primary mb-3">
                     <i class="bi bi-plus-circle"></i> Nuevo Paquete
-                </a>    
+                </a>
             </div>
-            
+
         </div>
 
         <div class="row mb-3">
@@ -48,7 +45,7 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
                     <?php
                     $etiquetas = $pdo->query("SELECT id_etiqueta, nombre FROM etiquetas ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($etiquetas as $et) {
-                        echo '<option value="'.$et['id_etiqueta'].'">'.htmlspecialchars($et['nombre']).'</option>';
+                        echo '<option value="' . $et['id_etiqueta'] . '">' . htmlspecialchars($et['nombre']) . '</option>';
                     }
                     ?>
                 </select>
@@ -59,7 +56,7 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
                     <?php
                     $destinos = $pdo->query("SELECT id_destino, destino FROM destinos ORDER BY destino")->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($destinos as $d) {
-                        echo '<option value="'.$d['id_destino'].'">'.htmlspecialchars($d['destino']).'</option>';
+                        echo '<option value="' . $d['id_destino'] . '">' . htmlspecialchars($d['destino']) . '</option>';
                     }
                     ?>
                 </select>
@@ -142,7 +139,7 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
                             </div>
                             <div>
                                 <div>
-                                    <p>Precio: <b>$<?= number_format($paquete['precio_base'], 2) ?></b></p>
+                                    <p>Precio Base: <b>$<?= number_format($paquete['precio_base'], 2) ?></b></p>
                                     <p>Destino: <?= htmlspecialchars($paquete['destino']) ?></p>
                                     <p>Fecha: <?= date("d/m/Y", strtotime($paquete['fecha_inicio'])) ?> - <?= date("d/m/Y", strtotime($paquete['fecha_fin'])) ?></p>
                                 </div>
@@ -157,9 +154,17 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
                                 </div>
 
                                 <a href="editar_paquete.php?id=<?= $id_paquete ?>" class="btn btn-editar"><i class="bi bi-pencil-square"></i> EDITAR</a>
-                                <a href="#" class="btn btn-danger ms-2" onclick="confirmarEliminacion(<?= $id_paquete ?>); return false;">
-                                    <i class="bi bi-x-circle"></i> ELIMINAR
-                                </a>
+                                <?php if ($paquete['activo']): ?>
+                                    <a href="#" id="btn-toggle-<?= $paquete['id_paquete'] ?>" class="btn btn-danger ms-2"
+                                        onclick="confirmarEliminacion(<?= $paquete['id_paquete'] ?>); return false;">
+                                        <i class="bi bi-x-circle"></i> Desactivar
+                                    </a>
+                                <?php else: ?>
+                                    <a href="#" id="btn-toggle-<?= $paquete['id_paquete'] ?>" class="btn btn-success ms-2"
+                                        onclick="confirmarReactivacion(<?= $paquete['id_paquete'] ?>); return false;">
+                                        <i class="bi bi-check-circle"></i> Reactivar
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -171,96 +176,148 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
 
     <!-- Modal de confirmación de eliminación -->
     <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-labelledby="modalConfirmarEliminarLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-          <div class="modal-body py-4">
-            <div class="mb-3">
-              <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2.5rem;"></i>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2.5rem;"></i>
+                    </div>
+                    <h5 class="mb-3" id="modalConfirmarEliminarLabel">¿Estás seguro de que quieres desactivar?</h5>
+                    <p class="mb-4">Este paquete pasara a estar inactivo.</p>
+                    <button type="button" class="btn btn-danger px-4 me-2" id="btnEliminarConfirmado"><i class="bi bi-x-circle"></i> Desactivar</button>
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+                </div>
             </div>
-            <h5 class="mb-3" id="modalConfirmarEliminarLabel">¿Estás seguro de que quieres eliminar?</h5>
-            <p class="mb-4">Esta acción no se puede deshacer.</p>
-            <button type="button" class="btn btn-danger px-4 me-2" id="btnEliminarConfirmado"><i class="bi bi-x-circle"></i> Eliminar</button>
-            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
-          </div>
         </div>
-      </div>
     </div>
+    <!-- Modal de confirmación de reactivación -->
+    <div class="modal fade" id="modalConfirmarReactivar" tabindex="-1" aria-labelledby="modalConfirmarReactivarLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size:2.5rem;"></i>
+                    </div>
+                    <h5 class="mb-3" id="modalConfirmarReactivarLabel">¿Estás seguro de que quieres reactivar?</h5>
+                    <p class="mb-4">Este paquete volverá a estar activo.</p>
+                    <button type="button" class="btn btn-success px-4 me-2" id="btnReactivarConfirmado"><i class="bi bi-check-circle"></i> Reactivar</button>
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Modal de éxito ABM -->
     <div class="modal fade" id="modalAbmOk" tabindex="-1" aria-labelledby="modalAbmOkLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-          <div class="modal-body py-4">
-            <div class="mb-3">
-              <i class="bi bi-check-circle-fill text-success" style="font-size:2.5rem;"></i>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size:2.5rem;"></i>
+                    </div>
+                    <h5 class="mb-3" id="modalAbmOkLabel">¡Operación realizada correctamente!</h5>
+                    <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal" onclick="location.reload()">Aceptar</button>
+                </div>
             </div>
-            <h5 class="mb-3" id="modalAbmOkLabel">¡Operación realizada correctamente!</h5>
-            <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal" onclick="location.reload()">Aceptar</button>
-          </div>
         </div>
-      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    let paqueteAEliminar = null;
+        let paqueteAEliminar = null;
+        let paqueteAReactivar = null;
 
-    function confirmarEliminacion(id) {
-        paqueteAEliminar = id;
-        let modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminar'));
-        modal.show();
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Confirmar eliminación
-        document.getElementById('btnEliminarConfirmado').onclick = function() {
-            if (paqueteAEliminar) {
-                // AJAX para eliminar sin recargar
-                $.get('eliminar_paquete.php', {id: paqueteAEliminar}, function() {
-                    let modalConfirm = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarEliminar'));
-                    modalConfirm.hide();
-                    let modalOk = new bootstrap.Modal(document.getElementById('modalAbmOk'));
-                    $('#modalAbmOkLabel').text('¡Se ha eliminado correctamente!');
-                    modalOk.show();
-                });
-            }
-        };
-
-        // Modal de éxito para alta y edición
-        <?php if (isset($_GET['ok']) && $_GET['ok'] == 1): ?>
-            setTimeout(function() {
-                $('#modalAbmOkLabel').text('¡Se ha cargado correctamente!');
-                var modalOk = new bootstrap.Modal(document.getElementById('modalAbmOk'));
-                modalOk.show();
-                if (window.history.replaceState) {
-                    const url = new URL(window.location);
-                    url.searchParams.delete('ok');
-                    window.history.replaceState({}, document.title, url.pathname + url.search);
-                }
-            }, 300);
-        <?php endif; ?>
-        <?php if (isset($_GET['edit']) && $_GET['edit'] == 1): ?>
-            setTimeout(function() {
-                $('#modalAbmOkLabel').text('¡Se ha editado correctamente!');
-                var modalOk = new bootstrap.Modal(document.getElementById('modalAbmOk'));
-                modalOk.show();
-                if (window.history.replaceState) {
-                    const url = new URL(window.location);
-                    url.searchParams.delete('edit');
-                    window.history.replaceState({}, document.title, url.pathname + url.search);
-                }
-            }, 300);
-        <?php endif; ?>
-    });
-
-    function renderPaquetes(paquetes) {
-        let html = '';
-        if (paquetes.length === 0) {
-            html = '<div class="alert alert-warning">No se encontraron paquetes.</div>';
+        function confirmarEliminacion(id) {
+            paqueteAEliminar = id;
+            let modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminar'));
+            modal.show();
         }
-        paquetes.forEach(function(paquete) {
-            html += `
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnEliminarConfirmado').onclick = function() {
+                if (paqueteAEliminar) {
+                    $.get('eliminar_paquete.php', {
+                        id: paqueteAEliminar
+                    }, function(response) {
+                        if (response.trim() === 'OK') {
+                            bootstrap.Modal.getInstance(document.getElementById('modalConfirmarEliminar')).hide();
+                            new bootstrap.Modal(document.getElementById('modalAbmOk')).show();
+                            $('#modalAbmOkLabel').text('¡Se ha desactivado correctamente!');
+
+                            // Cambiar botón a "Reactivar"
+                            $('#btn-toggle-' + paqueteAEliminar)
+                                .removeClass('btn-danger')
+                                .addClass('btn-success')
+                                .html('<i class="bi bi-check-circle"></i> Reactivar')
+                                .attr('onclick', `confirmarReactivacion(${paqueteAEliminar}); return false;`);
+                        } else {
+                            alert('Error al desactivar');
+                        }
+                    });
+                }
+            };
+            // Confirmar reactivación
+            document.getElementById('btnReactivarConfirmado').onclick = function() {
+                if (paqueteAReactivar) {
+                    $.get('reactivar_paquete.php', {
+                        id: paqueteAReactivar
+                    }, function(response) {
+                        if (response.trim() === 'OK') {
+                            bootstrap.Modal.getInstance(document.getElementById('modalConfirmarReactivar')).hide();
+                            new bootstrap.Modal(document.getElementById('modalAbmOk')).show();
+                            $('#modalAbmOkLabel').text('¡Se ha reactivado correctamente!');
+
+                            // Cambiar dinámicamente el botón a "Desactivar"
+                            $('#btn-toggle-' + paqueteAReactivar)
+                                .removeClass('btn-success')
+                                .addClass('btn-danger')
+                                .html('<i class="bi bi-x-circle"></i> Desactivar')
+                                .attr('onclick', `confirmarEliminacion(${paqueteAReactivar}); return false;`);
+                        } else {
+                            alert("Error al reactivar.");
+                        }
+                    });
+                }
+            };
+
+
+
+            // Modal de éxito para alta y edición
+            <?php if (isset($_GET['ok']) && $_GET['ok'] == 1): ?>
+                setTimeout(function() {
+                    $('#modalAbmOkLabel').text('¡Se ha cargado correctamente!');
+                    var modalOk = new bootstrap.Modal(document.getElementById('modalAbmOk'));
+                    modalOk.show();
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('ok');
+                        window.history.replaceState({}, document.title, url.pathname + url.search);
+                    }
+                }, 300);
+            <?php endif; ?>
+            <?php if (isset($_GET['edit']) && $_GET['edit'] == 1): ?>
+                setTimeout(function() {
+                    $('#modalAbmOkLabel').text('¡Se ha editado correctamente!');
+                    var modalOk = new bootstrap.Modal(document.getElementById('modalAbmOk'));
+                    modalOk.show();
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('edit');
+                        window.history.replaceState({}, document.title, url.pathname + url.search);
+                    }
+                }, 300);
+            <?php endif; ?>
+        });
+
+        function renderPaquetes(paquetes) {
+            let html = '';
+            if (paquetes.length === 0) {
+                html = '<div class="alert alert-warning">No se encontraron paquetes.</div>';
+            }
+            paquetes.forEach(function(paquete) {
+                html += `
             <div class="card-paquete mb-3">
                 <div class="row">
                     <div class="col-md-6">
@@ -288,41 +345,77 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
                             <p>Fecha: ${new Date(paquete.fecha_inicio).toLocaleDateString()} - ${new Date(paquete.fecha_fin).toLocaleDateString()}</p>
                             <p>Estado: ${paquete.activo == 1 ? '<span class="text-success fw-bold">Activo</span>' : '<span class="text-danger fw-bold">Inactivo</span>'}</p>
                             <a href="editar_paquete.php?id=${paquete.id_paquete}" class="btn btn-editar"><i class="bi bi-pencil-square"></i> EDITAR</a>
-                            <a href="#" class="btn btn-danger ms-2" onclick="confirmarEliminacion(${paquete.id_paquete}); return false;">
-                                <i class="bi bi-x-circle"></i> ELIMINAR
-                            </a>
+                        <a href="#"
+                            id="btn-toggle-${paquete.id_paquete}"
+                            class="btn ${paquete.activo == 1 ? 'btn-danger' : 'btn-success'} ms-2"
+                            onclick="${paquete.activo == 1 ? `confirmarEliminacion(${paquete.id_paquete})` : `confirmarReactivacion(${paquete.id_paquete})`}; return false;">
+                            <i class="bi ${paquete.activo == 1 ? 'bi-x-circle' : 'bi-check-circle'}"></i>
+                            ${paquete.activo == 1 ? 'Desactivar' : 'Reactivar'}
+                        </a>
                         </div>
                     </div>
                 </div>
             </div>
             `;
+            });
+            $('#paquetes-lista').html(html);
+        }
+
+        function buscarPaquetes() {
+            let q = $('#buscador-paquete').val();
+            let etiqueta = $('#filtro-etiqueta').val();
+            let destino = $('#filtro-destino').val();
+            let estado = $('#filtro-estado').val();
+            $.get('buscar_paquetes.php', {
+                q: q,
+                etiqueta: etiqueta,
+                destino: destino,
+                estado: estado
+            }, function(data) {
+                renderPaquetes(data);
+            }, 'json');
+        }
+
+        $('#buscador-paquete, #filtro-etiqueta, #filtro-destino, #filtro-estado').on('input change', function() {
+            buscarPaquetes();
         });
-        $('#paquetes-lista').html(html);
-    }
 
-    function buscarPaquetes() {
-        let q = $('#buscador-paquete').val();
-        let etiqueta = $('#filtro-etiqueta').val();
-        let destino = $('#filtro-destino').val();
-        let estado = $('#filtro-estado').val();
-        $.get('buscar_paquetes.php', {
-            q: q,
-            etiqueta: etiqueta,
-            destino: destino,
-            estado: estado
-        }, function(data) {
-            renderPaquetes(data);
-        }, 'json');
-    }
+        // Carga inicial
+        $(document).ready(function() {
+            buscarPaquetes();
+        });
 
-    $('#buscador-paquete, #filtro-etiqueta, #filtro-destino, #filtro-estado').on('input change', function() {
-        buscarPaquetes();
-    });
+        function confirmarEliminacion(id) {
+            paqueteAEliminar = id;
+            let modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminar'));
+            modal.show();
+        }
 
-    // Carga inicial
-    $(document).ready(function() {
-        buscarPaquetes();
-    });
+        function confirmarReactivacion(id) {
+            paqueteAReactivar = id;
+            let modal = new bootstrap.Modal(document.getElementById('modalConfirmarReactivar'));
+            modal.show();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Confirmar eliminación
+            document.getElementById('btnEliminarConfirmado').onclick = function() {
+                if (paqueteAEliminar) {
+                    // AJAX para desactivar sin recargar
+                    $.get('eliminar_paquete.php', {
+                        id: paqueteAEliminar
+                    }, function() {
+                        let modalConfirm = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarEliminar'));
+                        modalConfirm.hide();
+                        let modalOk = new bootstrap.Modal(document.getElementById('modalAbmOk'));
+                        $('#modalAbmOkLabel').text('¡Se ha desactivado correctamente!');
+                        modalOk.show();
+                        // Recargar lista o página para reflejar cambios
+                        setTimeout(() => location.reload(), 1500);
+                    });
+                }
+            };
+        });
     </script>
 </body>
 

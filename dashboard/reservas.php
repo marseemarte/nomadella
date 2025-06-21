@@ -121,10 +121,20 @@ $reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre, 
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Gestionar Reservas</h2>
-            <a href="nueva_reserva.php" class="btn btn-primary mb-3">
-                <i class="bi bi-plus-circle"></i> Nueva reserva
-            </a>
+            <div>
+                <a href="historial.php" class="btn btn-secondary mb-3">
+                    <i class="bi bi-book"></i> Historial
+                </a>    
+                <a href="nueva_reserva.php" class="btn btn-primary mb-3">
+                    <i class="bi bi-plus-circle"></i> Nueva reserva
+                </a>
+            </div>
         </div>
+
+        <p class="text-muted">
+            Aquí puedes gestionar todas las reservas realizadas por los usuarios. Puedes buscar, filtrar y ordenar las reservas según tus necesidades.
+            Utiliza el buscador para encontrar reservas específicas por nombre de cliente o destino del paquete turístico.
+        </p>
 
         <form class="d-flex mb-4" onsubmit="return false;">
             <input type="text" id="busqueda-reserva" name="search" class="form-control me-2" placeholder="Buscar...">

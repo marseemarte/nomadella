@@ -25,7 +25,21 @@ $usuarios = $conn->query("SELECT * FROM usuarios WHERE estado='inactivo' AND rol
                 <li class="breadcrumb-item active" aria-current="page">Usuarios Desactivados</li>
             </ol>
         </nav>
-    <h2 class="mb-4">Usuarios desactivados</h2>
+    <div>
+        <div class="d-flex justify-content-between align-items-center">  
+            <h2 class="mb-4">Usuarios desactivados</h2>     
+            <a href="clientes.php" class="btn btn-secondary mb-3">
+                <i class="bi bi-arrow-left"></i> Volver a Usuarios
+            </a>  
+        </div>
+        
+        
+        <div>
+            <p class="text-muted">Aquí puedes reactivar cuentas de empleados y usuarios que han sido desactivados.
+                    Para reactivar una cuenta, haz clic en el botón <b>"Reactivar"</b> junto al usuario deseado.</p>
+        </div> 
+    </div>
+    
     <ul class="nav nav-tabs mb-3" id="tabUsuarios" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="empleados-tab" data-bs-toggle="tab" data-bs-target="#empleados" type="button" role="tab">Empleados</button>
@@ -58,9 +72,6 @@ $usuarios = $conn->query("SELECT * FROM usuarios WHERE estado='inactivo' AND rol
                         <td><?= date('d/m/Y H:i', strtotime($e['fecha_registro'])) ?></td>
                         <td><span class="badge bg-secondary">Inactivo</span></td>
                         <td>
-                            <a href="editar_usuario.php?id=<?= $e['id_usuario'] ?>" class="btn btn-sm btn-primary me-1">
-                                <i class="bi bi-pencil-square"></i> Editar
-                            </a>
                             <button class="btn btn-success btn-sm btn-reactivar" data-id="<?= $e['id_usuario'] ?>" data-nombre="<?= htmlspecialchars($e['nombre']) ?>">
                                 <i class="bi bi-person-check"></i> Reactivar
                             </button>
@@ -74,19 +85,29 @@ $usuarios = $conn->query("SELECT * FROM usuarios WHERE estado='inactivo' AND rol
         </div>
         <div class="tab-pane fade" id="usuarios" role="tabpanel">
             <table class="table table-bordered">
-                <thead>
+                <table class="table table-bordered">
+                <thead class="table-dark">
                     <tr>
-                        <th>Nombre</th><th>Email</th><th>Teléfono</th><th>Acciones</th>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Fecha de Registro</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                 <?php foreach ($usuarios as $u): ?>
                     <tr>
+                        <td><?= $u['id_usuario'] ?></td>
                         <td><?= htmlspecialchars($u['nombre']) ?></td>
                         <td><?= htmlspecialchars($u['email']) ?></td>
                         <td><?= htmlspecialchars($u['telefono']) ?></td>
+                        <td><?= date('d/m/Y H:i', strtotime($u['fecha_registro'])) ?></td>
+                        <td><span class="badge bg-secondary">Inactivo</span></td>
                         <td>
-                            <button class="btn btn-success btn-sm btn-reactivar" data-id="<?= $u['id_usuario'] ?>">
+                            <button class="btn btn-success btn-sm btn-reactivar" data-id="<?= $u['id_usuario'] ?>" data-nombre="<?= htmlspecialchars($u['nombre']) ?>">
                                 <i class="bi bi-person-check"></i> Reactivar
                             </button>
                         </td>
