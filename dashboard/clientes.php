@@ -63,13 +63,16 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
         <div class="container-fluid mt-4">
             <div class="row">
                 <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="mb-2">Usuarios</h2>
-                        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="">Usuarios</h2>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
                             <i class="bi bi-plus-circle"></i> Nuevo Usuario
                         </button>
                     </div>
-
+                    <p class="text-muted">
+                        Aquí puedes gestionar los usuarios de la plataforma. Puedes buscar, filtrar por rol y paginar los resultados.
+                        Utiliza el botón <b>"Nuevo Usuario"</b> para agregar un nuevo usuario a la plataforma.
+                    </p>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <form class="d-flex align-items-center" method="get" action="">
                             <input type="text" id="busqueda-cliente" name="search" class="form-control me-2" placeholder="Buscar cliente..." value="<?= htmlspecialchars($search) ?>">

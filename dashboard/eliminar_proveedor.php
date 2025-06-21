@@ -12,13 +12,13 @@ if (isset($_GET['id'])) {
             die("Proveedor no encontrado.");
         }
 
-        $conn->query("DELETE FROM proveedores WHERE id_proveedor = $id");
+        $conn->query("UPDATE `proveedores` SET `estado`='inactivo' WHERE id_proveedor = $id");
 
         if (isset($_SESSION['id_usuario'])) {
             registrar_bitacora(
                 $pdo,
                 $_SESSION['id_usuario'],
-                'Eliminar proveedor',
+                'Desactivar proveedor',
                 "Proveedor #$id eliminado"
             );
         }

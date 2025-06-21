@@ -29,6 +29,12 @@ $paquetes_activos = [
     'editar_paquete.php'
 ];
 
+$destinos_activos = [
+    'destinos.php',
+    'nuevo_destino.php',
+    'editar_destino.php'
+];
+
 ?>
 <link rel="stylesheet" href="/nomadella/css/apartados.css">
 <div class="sidebar d-flex flex-column justify-content-between">
@@ -47,6 +53,9 @@ $paquetes_activos = [
       </a>
       <a class="nav-link px-4 py-2 <?= in_array($current, $paquetes_activos) == 'paquetes.php' ? 'active' : '' ?>" href="./paquetes.php">
         <i class="bi bi-postcard"></i> Paquetes
+      </a>
+      <a class="nav-link px-4 py-2 <?= in_array($current, $destinos_activos) == 'destinos.php' ? 'active' : '' ?>" href="./destinos.php">
+        <i class="bi bi-geo-alt"></i> Destinos
       </a>
       <a class="nav-link px-4 py-2 <?= in_array($current, $reservas_activos) ? 'active' : '' ?>" href="./reservas.php">
         <i class="bi bi-cart"></i> Reservas

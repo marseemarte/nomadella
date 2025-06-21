@@ -1,0 +1,67 @@
+-- SQL Queries and PHP code snippets to handle insertion, update, and total calculation for orden_items and ordenes tables
+
+-- 1. Insert or update orden_items for additional services and car rental when creating or editing an order
+
+-- Example PHP code snippet for inserting selected additional services and car rental into orden_items:
+
+/*
+Assuming:
+- $id_orden: the order ID
+- $servicios_adicionales: array of selected additional service IDs
+- $alquiler_auto: selected car rental ID or null
+- $conn: MySQLi connection
+*/
+
+function saveOrderItems($conn, $id_orden, $servicios_adicionales, $alquiler_auto) {
+    // Delete existing additional services and car rental for the order
+    $conn->query("DELETE FROM orden_items WHERE id_orden=$id_orden AND tipo_producto IN ('servicio_adicional', 'alquiler_auto')");
+
+    // Insert additional services
+    if (!empty($servicios_adicionales)) {
+        foreach ($servicios_adicionales as $id_servicio) {
+            $id_servicio = intval($id_servicio);
+            // Fetch price for the service
+            $res = $conn->query("SELECT precio FROM servicios_adicionales WHERE id_servicio = $id_servicio LIMIT 1");
+            $precio_unitario = 0;
+            if ($row = $res->fetch_assoc()) {
+                $precio_unitario = floatval($row['precio']);
+            }
+            $subtotal = $precio_unitario * 1; // cantidad = 1
+            $conn->query("INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad, precio_unitario, subtotal) VALUES ($id_orden, 'servicio_adicional', $id_servicio, 1, $precio_unitario, $subtotal)");
+        }
+    }
+
+    // Insert car rental
+    if (!empty($alquiler_auto)) {
+        $id_auto = intval($alquiler_auto);
+        // Fetch price for the car rental (e.g., price per day)
+        $res = $conn->query("SELECT precio_por_dia FROM alquiler_autos WHERE id_alquiler = $id_auto LIMIT 1");
+        $precio_unitario = 0;
+        if ($row = $res->fetch_assoc()) {
+            $precio_unitario = floatval($row['precio_por_dia']);
+        }
+        $subtotal = $precio_unitario * 1; // cantidad = 1, adjust if needed for days
+        $conn->query("INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad, precio_unitario, subtotal) VALUES ($id_orden, 'alquiler_auto', $id_auto, 1, $precio_unitario, $subtotal)");
+    }
+}
+
+-- 2. Calculate total order amount and update ordenes.total
+
+function updateOrderTotal($conn, $id_orden) {
+    $res = $conn->query("SELECT SUM(subtotal) as total FROM orden_items WHERE id_orden = $id_orden");
+    $total = 0;
+    if ($row = $res->fetch_assoc()) {
+        $total = floatval($row['total']);
+    }
+    $conn->query("UPDATE ordenes SET total = $total WHERE id_orden = $id_orden");
+}
+
+-- Usage example after saving order items:
+
+// saveOrderItems($conn, $id_orden, $servicios_adicionales, $alquiler_auto);
+// updateOrderTotal($conn, $id_orden);
+
+-- 3. Notes:
+-- - Adjust quantity and subtotal calculations as needed (e.g., rental days).
+-- - Ensure to handle transactions if multiple queries must be atomic.
+-- - Validate inputs to prevent SQL injection or errors.

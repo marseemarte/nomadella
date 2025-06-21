@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $precio_base = floatval($_POST['precio_base']);
     $fecha_inicio = $conn->real_escape_string($_POST['fecha_inicio']);
     $fecha_fin = $conn->real_escape_string($_POST['fecha_fin']);
-    $activo = isset($_POST['activo']) ? 1 : 0;
 
     $conn->query("UPDATE paquetes_turisticos SET 
         nombre='$nombre',
@@ -32,9 +31,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         precio_base=$precio_base,
         fecha_inicio='$fecha_inicio',
         fecha_fin='$fecha_fin',
-        activo=$activo
         WHERE id_paquete = $id
     ");
+
+    // Procesar componentes seleccionados
+    $alojamiento = isset($_POST['alojamiento']) ? intval($_POST['alojamiento']) : null;
+    $vuelo = isset($_POST['vuelo']) ? intval($_POST['vuelo']) : null;
+    $auto = isset($_POST['auto']) ? intval($_POST['auto']) : null;
+    $servicio = isset($_POST['servicio']) ? intval($_POST['servicio']) : null;
+
+    // Alojamientos
+    if ($alojamiento) {
+        $conn->query("REPLACE INTO paquete_alojamientos (id_paquete, id_alojamiento) VALUES ($id, $alojamiento)");
+    } else {
+        $conn->query("DELETE FROM paquete_alojamientos WHERE id_paquete = $id");
+    }
+
+    // Vuelos
+    if ($vuelo) {
+        $conn->query("REPLACE INTO paquete_vuelos (id_paquete, id_vuelo) VALUES ($id, $vuelo)");
+    } else {
+        $conn->query("DELETE FROM paquete_vuelos WHERE id_paquete = $id");
+    }
+
+    // Autos
+    if ($auto) {
+        $conn->query("REPLACE INTO paquete_autos (id_paquete, id_alquiler) VALUES ($id, $auto)");
+    } else {
+        $conn->query("DELETE FROM paquete_autos WHERE id_paquete = $id");
+    }
+
+    // Servicios
+    if ($servicio) {
+        $conn->query("REPLACE INTO paquete_servicios (id_paquete, id_servicio) VALUES ($id, $servicio)");
+    } else {
+        $conn->query("DELETE FROM paquete_servicios WHERE id_paquete = $id");
+    }
 
     header("Location: paquetes.php?edit=1");
     exit;
@@ -49,6 +81,11 @@ if ($row = $res->fetch_assoc()) {
 
 $alojamientos = $vuelos = $autos = $servicios = [];
 
+$current_alojamiento = null;
+$current_vuelo = null;
+$current_auto = null;
+$current_servicio = null;
+
 if ($id_destino) {
     $res = $conn->query("SELECT id_alojamiento, nombre FROM alojamientos WHERE id_destino = $id_destino");
     while ($row = $res->fetch_assoc()) $alojamientos[] = $row;
@@ -61,6 +98,27 @@ if ($id_destino) {
 
     $res = $conn->query("SELECT id_servicio, nombre FROM servicios_adicionales WHERE id_destino = $id_destino");
     while ($row = $res->fetch_assoc()) $servicios[] = $row;
+
+    // mostrar los componentes actuales del paquete
+    $res = $conn->query("SELECT id_alojamiento FROM paquete_alojamientos WHERE id_paquete = $id LIMIT 1");
+    if ($row = $res->fetch_assoc()) {
+        $current_alojamiento = $row['id_alojamiento'];
+    }
+
+    $res = $conn->query("SELECT id_vuelo FROM paquete_vuelos WHERE id_paquete = $id LIMIT 1");
+    if ($row = $res->fetch_assoc()) {
+        $current_vuelo = $row['id_vuelo'];
+    }
+
+    $res = $conn->query("SELECT id_alquiler FROM paquete_autos WHERE id_paquete = $id LIMIT 1");
+    if ($row = $res->fetch_assoc()) {
+        $current_auto = $row['id_alquiler'];
+    }
+
+    $res = $conn->query("SELECT id_servicio FROM paquete_servicios WHERE id_paquete = $id LIMIT 1");
+    if ($row = $res->fetch_assoc()) {
+        $current_servicio = $row['id_servicio'];
+    }
 }
 
 
@@ -188,10 +246,6 @@ if ($id_destino) {
                     <label class="form-label">Fecha de fin</label>
                     <input type="date" name="fecha_fin" class="form-control" required value="<?= htmlspecialchars($paquete['fecha_fin']) ?>">
                 </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" name="activo" class="form-check-input" id="activo" <?= $paquete['activo'] ? 'checked' : '' ?>>
-                    <label class="form-check-label" for="activo">Activo</label>
-                </div>
                 <?php if ($id_destino): ?>
                     <hr>
                     <h5 class="mt-4 mb-3 text-primary">Componentes disponibles para el destino: <?= htmlspecialchars($paquete['destino']) ?></h5>
@@ -201,7 +255,7 @@ if ($id_destino) {
                         <select class="form-select" name="alojamiento">
                             <option value="">Seleccionar alojamiento</option>
                             <?php foreach ($alojamientos as $a): ?>
-                                <option value="<?= $a['id_alojamiento'] ?>"><?= htmlspecialchars($a['nombre']) ?></option>
+                                <option value="<?= $a['id_alojamiento'] ?>" <?= ($a['id_alojamiento'] == $current_alojamiento) ? 'selected' : '' ?>><?= htmlspecialchars($a['nombre']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -211,7 +265,7 @@ if ($id_destino) {
                         <select class="form-select" name="vuelo">
                             <option value="">Seleccionar vuelo</option>
                             <?php foreach ($vuelos as $v): ?>
-                                <option value="<?= $v['id_vuelo'] ?>"><?= htmlspecialchars($v['aerolinea']) ?></option>
+                                <option value="<?= $v['id_vuelo'] ?>" <?= ($v['id_vuelo'] == $current_vuelo) ? 'selected' : '' ?>><?= htmlspecialchars($v['aerolinea']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -221,7 +275,7 @@ if ($id_destino) {
                         <select class="form-select" name="auto">
                             <option value="">Seleccionar alquiler de auto</option>
                             <?php foreach ($autos as $au): ?>
-                                <option value="<?= $au['id_alquiler'] ?>"><?= htmlspecialchars($au['proveedor']) ?></option>
+                                <option value="<?= $au['id_alquiler'] ?>" <?= ($au['id_alquiler'] == $current_auto) ? 'selected' : '' ?>><?= htmlspecialchars($au['proveedor']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -231,7 +285,7 @@ if ($id_destino) {
                         <select class="form-select" name="servicio">
                             <option value="">Seleccionar servicio adicional</option>
                             <?php foreach ($servicios as $s): ?>
-                                <option value="<?= $s['id_servicio'] ?>"><?= htmlspecialchars($s['nombre']) ?></option>
+                                <option value="<?= $s['id_servicio'] ?>" <?= ($s['id_servicio'] == $current_servicio) ? 'selected' : '' ?>><?= htmlspecialchars($s['nombre']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

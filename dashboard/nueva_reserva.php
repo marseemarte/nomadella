@@ -15,6 +15,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Paquete turístico (obligatorio)
     $conn->query("INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad) VALUES ($id_orden, 'paquete_turistico', $id_paquete, 1)");
 
+    // Servicios adicionales (opcionales)
+    if (!empty($_POST['servicios_adicionales'])) {
+        foreach ($_POST['servicios_adicionales'] as $id_servicio) {
+            $id_servicio = intval($id_servicio);
+            $conn->query("INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad) VALUES ($id_orden, 'servicio_adicional', $id_servicio, 1)");
+        }
+    }
+
+    // Alquiler de auto (opcional, solo uno)
+    if (!empty($_POST['alquiler_auto'])) {
+        $id_auto = intval($_POST['alquiler_auto']);
+        $conn->query("INSERT INTO orden_items (id_orden, tipo_producto, id_producto, cantidad) VALUES ($id_orden, 'alquiler_auto', $id_auto, 1)");
+    }
+
     // Bitácora
     if (isset($_SESSION['id_usuario'])) {
         registrar_bitacora(
@@ -32,6 +46,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Traer paquetes turísticos
 $paquetes = $conn->query("SELECT id_paquete, nombre, destino FROM paquetes_turisticos");
+
+// Traer servicios adicionales y autos para el paquete seleccionado (si hay)
+$servicios_adicionales = [];
+$alquiler_autos = [];
+$id_paquete_sel = null;
+if (isset($_POST['id_paquete'])) {
+    $id_paquete_sel = intval($_POST['id_paquete']);
+    // Servicios adicionales
+    $res_serv = $conn->query("SELECT s.id_servicio, s.nombre FROM servicios_adicionales s JOIN paquete_servicios ps ON s.id_servicio = ps.id_servicio WHERE ps.id_paquete = $id_paquete_sel");
+    while ($row = $res_serv->fetch_assoc()) {
+        $servicios_adicionales[] = $row;
+    }
+    // Autos
+    $res_autos = $conn->query("SELECT aa.id_alquiler, aa.proveedor FROM alquiler_autos aa JOIN paquete_autos pa ON aa.id_alquiler = pa.id_alquiler WHERE pa.id_paquete = $id_paquete_sel");
+    while ($row = $res_autos->fetch_assoc()) {
+        $alquiler_autos[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -72,13 +104,38 @@ $paquetes = $conn->query("SELECT id_paquete, nombre, destino FROM paquetes_turis
                 </div>
                 <div class="mb-3">
                     <label for="id_paquete" class="form-label">Paquete turístico</label>
-                    <select name="id_paquete" id="id_paquete" class="form-select" required>
+                    <select name="id_paquete" id="id_paquete" class="form-select" required onchange="this.form.submit()">
                         <option value="">Seleccione un paquete</option>
                         <?php while($p = $paquetes->fetch_assoc()): ?>
-                            <option value="<?= $p['id_paquete'] ?>"><?= htmlspecialchars($p['nombre'] . ' (' . $p['destino'] . ')') ?></option>
+                            <option value="<?= $p['id_paquete'] ?>" <?= ($id_paquete_sel == $p['id_paquete']) ? 'selected' : '' ?>><?= htmlspecialchars($p['nombre'] . ' (' . $p['destino'] . ')') ?></option>
                         <?php endwhile; ?>
                     </select>
                 </div>
+
+                <?php if (!empty($servicios_adicionales)): ?>
+                <div class="mb-3">
+                    <label class="form-label">Servicios adicionales (opcional)</label>
+                    <?php foreach ($servicios_adicionales as $serv): ?>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="servicios_adicionales[]" value="<?= $serv['id_servicio'] ?>" id="servicio_<?= $serv['id_servicio'] ?>">
+                            <label class="form-check-label" for="servicio_<?= $serv['id_servicio'] ?>"><?= htmlspecialchars($serv['nombre']) ?></label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($alquiler_autos)): ?>
+                <div class="mb-3">
+                    <label class="form-label">Alquiler de auto (opcional)</label>
+                    <select name="alquiler_auto" class="form-select">
+                        <option value="">No alquilar auto</option>
+                        <?php foreach ($alquiler_autos as $auto): ?>
+                            <option value="<?= $auto['id_alquiler'] ?>"><?= htmlspecialchars($auto['proveedor']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <?php endif; ?>
+
                 <div class="mb-3">
                     <label class="form-label">Fecha de orden</label>
                     <input type="text" class="form-control" value="<?= date('d/m/Y H:i') ?>" disabled>
@@ -140,4 +197,3 @@ $paquetes = $conn->query("SELECT id_paquete, nombre, destino FROM paquetes_turis
 </body>
 </html>
 <?php $conn->close(); ?>
-
