@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-06-2025 a las 00:20:27
+-- Tiempo de generación: 21-06-2025 a las 22:51:39
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -138,11 +138,8 @@ INSERT INTO `carritos` (`id_carrito`, `id_usuario`, `fecha_creacion`, `estado`) 
 (18, 18, '2025-06-10 18:17:53', 'activo'),
 (19, 19, '2025-06-10 18:17:53', 'activo'),
 (20, 20, '2025-06-10 18:17:53', 'activo'),
-(21, 43, '2025-06-13 21:31:42', 'cerrado'),
-(22, 43, '2025-06-13 21:49:39', 'cerrado'),
-(23, 43, '2025-06-13 23:33:12', 'cerrado'),
-(24, 45, '2025-06-15 03:18:07', 'activo'),
-(25, 46, '2025-06-15 03:40:16', 'cerrado');
+(26, 43, '2025-06-17 21:30:49', 'cerrado'),
+(27, 43, '2025-06-18 00:22:08', 'cerrado');
 
 -- --------------------------------------------------------
 
@@ -186,9 +183,7 @@ INSERT INTO `carrito_items` (`id_item`, `id_carrito`, `tipo_producto`, `id_produ
 (19, 11, 'paquete_turistico', 2, 1, 1200.00, 1200.00),
 (20, 11, 'paquete_turistico', 3, 1, 1850.00, 1850.00),
 (21, 12, 'paquete_turistico', 1, 1, 950.00, 950.00),
-(22, 12, 'paquete_turistico', 2, 1, 1200.00, 1200.00),
-(23, 12, 'paquete_turistico', 3, 1, 1850.00, 1850.00),
-(29, 24, 'paquete_turistico', 2, 1, 6900.00, 6900.00);
+(22, 12, 'paquete_turistico', 2, 1, 1200.00, 1200.00);
 
 -- --------------------------------------------------------
 
@@ -225,18 +220,22 @@ INSERT INTO `comentarios_paquetes` (`id_comentario`, `id_paquete`, `id_usuario`,
 
 CREATE TABLE `destinos` (
   `id_destino` int(11) NOT NULL,
-  `destino` varchar(100) NOT NULL
+  `destino` varchar(100) NOT NULL,
+  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `destinos`
 --
 
-INSERT INTO `destinos` (`id_destino`, `destino`) VALUES
-(1, 'Patagonia'),
-(2, 'Europa'),
-(3, 'Punta Cana'),
-(4, 'Paris');
+INSERT INTO `destinos` (`id_destino`, `destino`, `fecha_registro`) VALUES
+(1, 'Patagonia', '2025-06-21 05:28:06'),
+(2, 'Europa', '2025-06-21 05:28:06'),
+(3, 'Punta Cana', '2025-06-21 05:28:06'),
+(4, 'Paris', '2025-06-21 05:28:06'),
+(5, 'Francia', '2025-06-21 05:28:06'),
+(6, 'Turquia', '2025-06-21 05:28:06'),
+(7, 'China', '2025-06-21 05:28:06');
 
 -- --------------------------------------------------------
 
@@ -246,41 +245,42 @@ INSERT INTO `destinos` (`id_destino`, `destino`) VALUES
 
 CREATE TABLE `etiquetas` (
   `id_etiqueta` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `descripcion` text DEFAULT NULL
+  `nombre` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `etiquetas`
 --
 
-INSERT INTO `etiquetas` (`id_etiqueta`, `nombre`, `descripcion`) VALUES
-(1, 'Familiar', 'Ideal para familias con niños.'),
-(2, 'Todo Incluido', 'Alojamiento, comidas y actividades incluidas.'),
-(3, 'Aventura', 'Actividades extremas y deportes al aire libre.'),
-(4, 'Exclusivo', 'Experiencia premium para pocos pasajeros.'),
-(5, 'Cultural', 'Enfocado en cultura, historia y arte.'),
-(6, 'Relax', 'Enfoque en descanso, spa y bienestar.'),
-(7, 'Romántico', 'Escapadas en pareja con servicios especiales.'),
-(8, 'Naturaleza', 'Contacto directo con entornos naturales.'),
-(9, 'Crucero', 'Viaje marítimo de varios días.'),
-(10, 'Nieve', 'Destinos de ski y deportes de invierno.'),
-(11, 'Playa', 'Sol, arena y mar como protagonistas.'),
-(12, 'Montaña', 'Excursiones en zonas de alta montaña.'),
-(13, 'Safari', 'Observación de fauna salvaje en hábitat natural.'),
-(14, 'Gastronómico', 'Experiencias culinarias y degustaciones.'),
-(15, 'Económico', 'Alternativas accesibles para todos los presupuestos.'),
-(16, 'Lujo', 'Alta gama de servicios y hospedajes premium.'),
-(17, 'Bienestar', 'Programas de spa, yoga y relajación integral.'),
-(18, 'City Tour', 'Recorridos por las principales ciudades del mundo.'),
-(19, 'Fotográfico', 'Diseñado para capturar las mejores fotos.'),
-(20, 'Ecoturismo', 'Respetuoso con el medio ambiente y sostenible.'),
-(21, 'Religioso', 'Visitas a lugares de interés espiritual.'),
-(22, 'Deportivo', 'Eventos y prácticas de deportes en vivo.'),
-(23, 'Estudio', 'Programas de idiomas, talleres o universidades.'),
-(24, 'Aventura Extrema', 'Rafting, escalada, paracaidismo, etc.'),
-(25, 'Festival', 'Paquetes orientados a eventos culturales y musicales.'),
-(26, 'Business', 'Viajes corporativos, conferencias y networking.');
+INSERT INTO `etiquetas` (`id_etiqueta`, `nombre`) VALUES
+(1, 'Familiar'),
+(2, 'Todo Incluido'),
+(3, 'Aventura'),
+(4, 'Exclusivo'),
+(5, 'Cultural'),
+(6, 'Relax'),
+(7, 'Romántico'),
+(8, 'Naturaleza'),
+(9, 'Crucero'),
+(10, 'Nieve'),
+(11, 'Playa'),
+(12, 'Montaña'),
+(13, 'Safari'),
+(14, 'Gastronómico'),
+(15, 'Económico'),
+(16, 'Lujo'),
+(17, 'Bienestar'),
+(18, 'City Tour'),
+(19, 'Fotográfico'),
+(20, 'Ecoturismo'),
+(21, 'Religioso'),
+(22, 'Deportivo'),
+(23, 'Estudio'),
+(24, 'Aventura Extrema'),
+(25, 'Festival'),
+(26, 'Business'),
+(32, 'Misterioso'),
+(33, 'Temático');
 
 -- --------------------------------------------------------
 
@@ -302,34 +302,56 @@ CREATE TABLE `notificaciones` (
 --
 
 INSERT INTO `notificaciones` (`id`, `id_usuario`, `mensaje`, `tipo`, `leido`, `fecha`) VALUES
-(1, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:44:59'),
-(2, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:47:26'),
-(3, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:52'),
-(4, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:52'),
-(5, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:52'),
-(6, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:53'),
-(7, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:53'),
-(8, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:55'),
-(9, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:48:56'),
-(10, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:49:09'),
-(11, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:49:12'),
-(12, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:50:41'),
-(13, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:50:45'),
-(14, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 03:50:50'),
-(15, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 03:50:53'),
-(16, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 03:54:22'),
-(17, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 03:54:26'),
-(18, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 04:09:30'),
-(19, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:11:07'),
-(20, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:17:33'),
-(21, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:18:04'),
-(22, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:18:08'),
-(23, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:20:04'),
-(24, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:20:06'),
-(25, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 04:20:13'),
-(26, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 04:22:08'),
-(27, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 0, '2025-06-15 04:22:11'),
-(28, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 0, '2025-06-15 04:25:00');
+(1, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:44:59'),
+(2, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:47:26'),
+(3, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:48:52'),
+(4, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:48:52'),
+(5, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:48:52'),
+(6, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:48:53'),
+(7, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:48:53'),
+(8, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:48:55'),
+(9, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:48:56'),
+(10, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:49:09'),
+(11, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:49:12'),
+(12, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:50:41'),
+(13, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:50:45'),
+(14, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 03:50:50'),
+(15, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 03:50:53'),
+(16, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 03:54:22'),
+(17, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 03:54:26'),
+(18, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 04:09:30'),
+(19, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 04:11:07'),
+(20, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 04:17:33'),
+(21, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 04:18:04'),
+(22, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 04:18:08'),
+(23, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 04:20:04'),
+(24, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 04:20:06'),
+(25, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 04:20:13'),
+(26, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 04:22:08'),
+(27, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 04:22:11'),
+(28, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 04:25:00'),
+(29, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 23:21:29'),
+(30, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 23:37:24'),
+(31, 46, 'La fecha de su reserva ha sido modificada a 2025-06-15. Por favor confirme si acepta el cambio.', '', 1, '2025-06-15 23:37:24'),
+(32, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 23:40:05'),
+(33, 46, 'La fecha de su reserva ha sido modificada a 2025-06-15. Por favor confirme si acepta el cambio.', '', 1, '2025-06-15 23:40:05'),
+(34, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 23:40:30'),
+(35, 46, 'La fecha de su reserva ha sido modificada a 2025-06-15. Por favor confirme si acepta el cambio.', '', 1, '2025-06-15 23:40:30'),
+(36, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 23:42:43'),
+(37, 46, 'La fecha de su reserva ha sido modificada a 2025-06-15. Por favor confirme si acepta el cambio.', '', 1, '2025-06-15 23:42:43'),
+(38, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 23:42:47'),
+(39, 46, 'La fecha de su reserva ha sido modificada a 2025-06-15. Por favor confirme si acepta el cambio.', '', 1, '2025-06-15 23:42:47'),
+(40, 46, 'Su reserva ha sido actualizada al estado Confirmada', 'confirmada', 1, '2025-06-15 23:43:07'),
+(41, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 23:43:11'),
+(42, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 23:51:36'),
+(43, 46, 'Su reserva ha sido actualizada al estado Pendiente', 'pendiente', 1, '2025-06-15 23:51:39'),
+(44, 46, 'El estado de su reserva ha cambiado a \'Confirmada\'.', 'confirmada', 1, '2025-06-16 00:03:55'),
+(45, 46, 'El estado de su reserva #16 ha cambiado a \'Confirmada\'. Por favor verifique los cambios en <a href=\'public/carrito.php\'>Mis Reservas</a>.', 'confirmada', 1, '2025-06-16 00:14:14'),
+(46, 11, 'El estado de su reserva #17 ha cambiado a \'Confirmada\'. Por favor verifique los cambios en Mis Reservas.', 'confirmada', 0, '2025-06-17 05:27:32'),
+(47, 43, 'El estado de su reserva #15 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', 'pendiente', 1, '2025-06-17 22:17:07'),
+(48, 43, 'El estado de su reserva #19 ha cambiado a \'Confirmada\'. Por favor verifique los cambios en Mis Reservas.', 'confirmada', 1, '2025-06-18 00:31:39'),
+(49, 46, 'El estado de su reserva #22 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', 'pendiente', 0, '2025-06-21 20:46:08'),
+(50, 46, 'El estado de su reserva #22 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', 'pendiente', 0, '2025-06-21 20:46:17');
 
 -- --------------------------------------------------------
 
@@ -365,8 +387,13 @@ INSERT INTO `ordenes` (`id_orden`, `id_usuario`, `fecha_orden`, `total`, `estado
 (12, 11, '2025-06-13 09:19:27', 0.00, 'Pendiente', NULL, NULL),
 (13, 43, '2025-06-13 21:31:42', 7040.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
 (14, 43, '2025-06-13 21:49:39', 10410.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
-(15, 43, '2025-06-13 23:33:12', 6900.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
-(16, 46, '2025-06-15 03:00:00', 3510.00, 'Pendiente', 'Tarjeta de Crédito', 'Datos de ejemplo');
+(15, 43, '2025-06-14 03:00:00', 6900.00, 'Pendiente', 'Tarjeta de Crédito', 'Datos de ejemplo'),
+(16, 46, '2025-06-20 03:00:00', 3510.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
+(17, 11, '2025-06-17 03:00:00', 0.00, 'Confirmada', NULL, NULL),
+(18, 43, '2025-06-17 21:31:26', 3510.00, 'Cancelada', 'Tarjeta de Crédito', 'Nombre: pepe\nDNI/CUIT: 64353655435\nDirección: 50'),
+(19, 43, '2025-06-17 03:00:00', 6900.00, 'Confirmada', 'Tarjeta de Crédito', 'Nombre: wsdad\nDNI/CUIT: 24324324343\nDirección: 50'),
+(20, 46, '2025-06-21 22:29:41', 0.00, 'Pendiente', NULL, NULL),
+(22, 46, '2025-06-22 01:19:14', 0.00, 'Pendiente', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -405,7 +432,12 @@ INSERT INTO `orden_items` (`id_item`, `id_orden`, `tipo_producto`, `id_producto`
 (16, 14, 'paquete_turistico', 2, 1, 6900.00, 6900.00),
 (17, 14, 'paquete_turistico', 1, 1, 3510.00, 3510.00),
 (18, 15, 'paquete_turistico', 2, 1, 6900.00, 6900.00),
-(19, 16, 'paquete_turistico', 1, 1, 3510.00, 3510.00);
+(19, 16, 'paquete_turistico', 1, 1, 3510.00, 3510.00),
+(20, 17, 'paquete_turistico', 2, 1, NULL, NULL),
+(21, 18, 'paquete_turistico', 1, 1, 3510.00, 3510.00),
+(22, 19, 'paquete_turistico', 2, 1, 6900.00, 6900.00),
+(23, 20, 'paquete_turistico', 32, 1, NULL, NULL),
+(24, 22, 'paquete_turistico', 1, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -432,8 +464,8 @@ CREATE TABLE `paquetes_turisticos` (
 --
 
 INSERT INTO `paquetes_turisticos` (`id_paquete`, `nombre`, `descripcion`, `id_destino`, `precio_base`, `fecha_inicio`, `fecha_fin`, `cupo_disponible`, `destino`, `tipo_paquete`, `activo`) VALUES
-(1, 'Aventura en Patagonia', 'Una semana de trekking, glaciares y naturaleza.', 1, 3510.00, '2025-12-01', '2025-12-08', 13, 'Patagonia', 'Aventura', 1),
-(2, 'Relax en el Caribe', 'Resort all-inclusive con actividades acuáticas.', 3, 6900.00, '2025-07-15', '2025-07-22', 28, 'Punta Cana', 'Playa', 1),
+(1, 'Aventura en Patagonia', 'Una semana de trekking, glaciares y naturaleza.', 1, 3510.00, '2025-12-09', '2025-12-21', 12, 'Patagonia', 'Aventura', 1),
+(2, 'Relax en el Caribe', 'Resort all-inclusive con actividades acuáticas.', 3, 6900.00, '2025-07-17', '2025-07-22', 27, 'Punta Cana', 'Playa', 1),
 (3, 'Turismo Cultural en Europa', 'Recorrido por las capitales europeas.', 2, 7040.00, '2025-09-05', '2025-09-20', 19, 'Europa', 'Cultural', 1);
 
 -- --------------------------------------------------------
@@ -453,7 +485,7 @@ CREATE TABLE `paquete_alojamientos` (
 --
 
 INSERT INTO `paquete_alojamientos` (`id`, `id_paquete`, `id_alojamiento`) VALUES
-(1, 1, 1),
+(20, 1, 1),
 (2, 2, 2),
 (3, 3, 3),
 (4, 5, 3),
@@ -476,7 +508,6 @@ CREATE TABLE `paquete_autos` (
 --
 
 INSERT INTO `paquete_autos` (`id`, `id_paquete`, `id_alquiler`) VALUES
-(1, 1, 1),
 (2, 2, 2),
 (3, 3, 3),
 (4, 5, 3),
@@ -537,7 +568,7 @@ CREATE TABLE `paquete_servicios` (
 --
 
 INSERT INTO `paquete_servicios` (`id`, `id_paquete`, `id_servicio`) VALUES
-(1, 1, 1),
+(15, 1, 1),
 (2, 2, 2),
 (3, 3, 3),
 (4, 5, 2),
@@ -560,7 +591,7 @@ CREATE TABLE `paquete_vuelos` (
 --
 
 INSERT INTO `paquete_vuelos` (`id`, `id_paquete`, `id_vuelo`) VALUES
-(1, 1, 1),
+(20, 1, 1),
 (2, 2, 2),
 (3, 3, 3),
 (4, 5, 3),
@@ -588,7 +619,8 @@ CREATE TABLE `promociones` (
 
 INSERT INTO `promociones` (`id_promocion`, `nombre`, `descripcion`, `descuento_porcentaje`, `fecha_inicio`, `fecha_fin`, `activo`) VALUES
 (1, 'Promo Verano', '10% en paquetes al Caribe', 10.00, '2025-06-01', '2025-08-31', 1),
-(2, 'Europa Week', '15% para reservas en junio', 15.00, '2025-06-01', '2025-06-15', 1);
+(2, 'Europa Week', '15% para reservas en junio', 15.00, '2025-06-01', '2025-06-22', 1),
+(3, 'Punta Cana Express', '10% en reservas 3 dias o menos a Punta Cana', 10.00, '2025-06-16', '2025-06-30', 1);
 
 -- --------------------------------------------------------
 
@@ -604,29 +636,30 @@ CREATE TABLE `proveedores` (
   `telefono` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `direccion` varchar(150) DEFAULT NULL,
-  `origen` varchar(100) DEFAULT NULL,
   `descripcion` text DEFAULT NULL,
-  `id_destino` int(11) DEFAULT NULL
+  `id_destino` int(11) DEFAULT NULL,
+  `estado` varchar(11) NOT NULL DEFAULT 'activo',
+  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `proveedores`
 --
 
-INSERT INTO `proveedores` (`id_proveedor`, `nombre`, `tipo`, `contacto`, `telefono`, `email`, `direccion`, `origen`, `descripcion`, `id_destino`) VALUES
-(1, 'Los Andes Group', 'alojamiento', 'Carlos Mendoza', '2901-111223', 'contacto@losandesgroup.com', 'El Calafate nro 2', NULL, 'Operador hotelero en Patagonia', NULL),
-(2, 'Caribe Luxury Resorts', 'alojamiento', 'Lucía Paredes', '809-9998888', 'reservas@caribeluxury.com', 'Punta Cana', NULL, 'Resorts 5 estrellas en el Caribe', NULL),
-(3, 'Europa Hostels SA', 'alojamiento', 'Jean Dupont', '+33 1 55667788', 'contact@europahostels.fr', 'París', NULL, 'Hostales económicos europeos', NULL),
-(4, 'Aerolíneas Argentinas', 'vuelo', 'Oficina Central', '011-12345678', 'info@aerolineas.com', 'Buenos Aires', NULL, 'Operador nacional argentino', NULL),
-(5, 'LATAM Airlines', 'vuelo', 'Central LATAM', '011-87654321', 'info@latam.com', 'Santiago de Chile', NULL, 'Conexiones a América Latina', NULL),
-(6, 'Air France', 'vuelo', 'Central Europa', '+33 1 23456789', 'info@airfrance.fr', 'París', NULL, 'Vuelos intercontinentales', NULL),
-(7, 'Hertz Rent-a-Car', 'auto', 'Soporte Hertz', '0800-123456', 'contacto@hertz.com', 'Aeropuerto El Calafate', NULL, 'Alquiler internacional de autos', NULL),
-(8, 'Avis Rent-a-Car', 'auto', 'Oficina Avis', '0800-987654', 'contacto@avis.com', 'Aeropuerto Punta Cana', NULL, 'Flota Premium internacional', NULL),
-(9, 'Sixt Rent-a-Car', 'auto', 'Soporte Europa', '+33 1 98765432', 'info@sixt.com', 'París', NULL, 'Alquiler premium Europa', NULL),
-(10, 'Glaciares Patagonia Excursiones', 'servicio', 'Jorge Quiroga', '2901-333444', 'info@glaciarespatagonia.com', 'El Calafate', NULL, 'Excursiones sobre hielo', NULL),
-(11, 'Caribe Spa & Wellness', 'servicio', 'Maria López', '809-555555', 'spa@caribewellness.com', 'Punta Cana', NULL, 'Masajes y tratamientos de relax', NULL),
-(12, 'Tour Europa Histórica', 'servicio', 'Giuseppe Moretti', '+33 1 44556677', 'tours@europahistorica.com', 'París', NULL, 'Tours guiados por museos y castillos', NULL),
-(14, 'Hotel Calimera', 'alojamiento', 'Oficina Central', '2246 551122', 'calimera@gmail.com', 'calle 4 nro 521', NULL, 'Hotel 3 estrellas con desayuno+cena incluidos', NULL);
+INSERT INTO `proveedores` (`id_proveedor`, `nombre`, `tipo`, `contacto`, `telefono`, `email`, `direccion`, `descripcion`, `id_destino`, `estado`, `fecha_registro`) VALUES
+(1, 'Los Andes Grupo', 'alojamiento', 'Carlos Mendoza', '2901-111223', 'contacto@losandesgroup.com', 'El Calafate nro 2', 'Operador hotelero en Patagonia', 7, 'activo', '2025-06-21 18:37:44'),
+(2, 'Caribe Luxury Resorts', 'alojamiento', 'Lucía Paredes', '809-9998888', 'reservas@caribeluxury.com', 'Punta Cana', 'Resorts 5 estrellas en el Caribe', NULL, 'activo', '2025-06-21 18:37:44'),
+(3, 'Europa Hostels SA', 'alojamiento', 'Jean Dupont', '+33 1 55667788', 'contact@europahostels.fr', 'París', 'Hostales económicos europeos', NULL, 'activo', '2025-06-21 18:37:44'),
+(4, 'Aerolíneas Argentinas', 'vuelo', 'Oficina Central', '011-12345678', 'info@aerolineas.com', 'Buenos Aires', 'Operador nacional argentino', NULL, 'activo', '2025-06-21 18:37:44'),
+(5, 'LATAM Airlines', 'vuelo', 'Central LATAM', '011-87654321', 'info@latam.com', 'Santiago de Chile', 'Conexiones a América Latina', NULL, 'activo', '2025-06-21 18:37:44'),
+(6, 'Air France', 'vuelo', 'Central Europa', '+33 1 23456789', 'info@airfrance.fr', 'París', 'Vuelos intercontinentales', NULL, 'activo', '2025-06-21 18:37:44'),
+(7, 'Hertz Rent-a-Car', 'auto', 'Soporte Hertz', '0800-123456', 'contacto@hertz.com', 'Aeropuerto El Calafate', 'Alquiler internacional de autos', NULL, 'activo', '2025-06-21 18:37:44'),
+(8, 'Avis Rent-a-Car', 'auto', 'Oficina Avis', '0800-987654', 'contacto@avis.com', 'Aeropuerto Punta Cana', 'Flota Premium internacional', NULL, 'activo', '2025-06-21 18:37:44'),
+(9, 'Sixt Rent-a-Car', 'auto', 'Soporte Europa', '+33 1 98765432', 'info@sixt.com', 'París', 'Alquiler premium Europa', NULL, 'activo', '2025-06-21 18:37:44'),
+(10, 'Glaciares Patagonia Excursiones', 'servicio', 'Jorge Quiroga', '2901-333444', 'info@glaciarespatagonia.com', 'El Calafate', 'Excursiones sobre hielo', NULL, 'activo', '2025-06-21 18:37:44'),
+(11, 'Caribe Spa & Wellness', 'servicio', 'Maria López', '809-555555', 'spa@caribewellness.com', 'Punta Cana', 'Masajes y tratamientos de relax', NULL, 'activo', '2025-06-21 18:37:44'),
+(12, 'Tour Europa Histórica', 'servicio', 'Giuseppe Moretti', '+33 1 44556677', 'tours@europahistorica.com', 'París', 'Tours guiados por museos y castillos', NULL, 'activo', '2025-06-21 18:37:44'),
+(33, 'dfdsf', 'servicio', 'dsfsdf', '2323', 'dfsd@asda', 'sdasd', 'asdad', 4, 'inactivo', '2025-06-21 18:42:01');
 
 -- --------------------------------------------------------
 
@@ -672,7 +705,8 @@ CREATE TABLE `servicios_adicionales` (
 INSERT INTO `servicios_adicionales` (`id_servicio`, `nombre`, `id_destino`, `ciudad`, `descripcion`, `tipo`, `precio`, `id_proveedor`) VALUES
 (1, 'Excursión glacial', 1, NULL, 'Caminata sobre el glaciar Perito Moreno.', 'Actividad', 120.00, 7),
 (2, 'Spa en resort', 2, NULL, 'Masajes y tratamientos de relax.', 'Bienestar', 150.00, 8),
-(3, 'Tour histórico', 3, NULL, 'Visita guiada por castillos y museos en Europa.', 'Cultural', 80.00, 9);
+(3, 'Tour histórico', 3, NULL, 'Visita guiada por castillos y museos en Europa.', 'Cultural', 80.00, 9),
+(4, 'dfdsf', 4, NULL, NULL, NULL, NULL, 33);
 
 -- --------------------------------------------------------
 
@@ -697,30 +731,32 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `email`, `contraseña`, `telefono`, `fecha_registro`, `rol`, `estado`) VALUES
-(1, 'Super', 'Admin', 'super@admin.com', '1234', 0, '2025-06-10 18:30:45', 1, 'activo'),
-(2, 'Ana', 'Admin', 'ana@admin.com', '1234', 0, '2025-06-10 18:30:45', 2, 'activo'),
-(3, 'Luis', 'Admin', 'luis@admin.com', '1234', 0, '2025-06-10 18:30:45', 2, 'activo'),
-(11, 'Cliente4', 'Apellido', 'cliente4@correo.com', '1234', 0, '2025-06-14 05:23:37', 3, 'activo'),
-(12, 'Cliente5', 'Apellido', 'cliente5@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(13, 'Cliente6', 'Apellido', 'cliente6@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(14, 'Cliente7', 'Apellido', 'cliente7@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(15, 'Cliente8', 'Apellido', 'cliente8@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(16, 'Cliente9', 'Apellido', 'cliente9@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(17, 'Cliente10', 'Apellido', 'cliente10@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(18, 'Cliente11', 'Apellido', 'cliente11@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(19, 'Cliente12', 'Apellido', 'cliente12@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(20, 'Cliente13', 'Apellido', 'cliente13@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(21, 'Cliente14', 'Apellido', 'cliente14@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(22, 'Cliente15', 'Apellido', 'cliente15@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
+(1, 'Super', 'Admin', 'super@admin.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 1, 'activo'),
+(2, 'Ana', 'Admin', 'ana@admin.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 565665, '2025-06-21 04:55:07', 2, 'activo'),
+(3, 'Luis', 'Admin', 'luis@admin.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 2, 'activo'),
+(11, 'Cliente4', 'Apellido', 'cliente4@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
+(12, 'Cliente5', 'Apellido', 'cliente5@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
+(13, 'Cliente6', 'Apellido', 'cliente6@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
+(14, 'Cliente7', 'Apellido', 'cliente7@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
+(15, 'Cliente8', 'Apellido', 'cliente8@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
+(16, 'Cliente9', 'Apellido', 'cliente9@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
+(17, 'Cliente10', 'Apellido', 'cliente10@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
+(18, 'Cliente11', 'Apellido', 'cliente11@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-18 00:31:50', 3, 'inactivo'),
+(19, 'Cliente12', 'Apellido', 'cliente12@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 22222, '2025-06-21 17:31:12', 3, 'activo'),
+(20, 'Cliente13', 'Apellido', 'cliente13@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'activo'),
+(21, 'Cliente14', 'Apellido', 'cliente14@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'activo'),
+(22, 'Cliente15', 'Apellido', 'cliente15@correo.com', '', 0, '2025-06-16 03:20:06', 3, 'activo'),
 (23, 'Cliente16', 'Apellido', 'cliente16@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
 (24, 'Cliente17', 'Apellido', 'cliente17@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
 (25, 'Cliente18', 'Apellido', 'cliente18@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
 (26, 'Cliente19', 'Apellido', 'cliente19@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
 (27, 'Cliente20', 'Apellido', 'cliente20@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(43, 'Martina ', 'Plandolit', 'plandomartu1@gmail.com', '$2y$10$WgvIECr4srQwy8yWsOJ3runGshhLjg0b5BvCP2ydMz31cfhIrdl6C', 0, '2025-06-14 04:29:40', 1, 'activo'),
-(44, 'admin', 'nuevo', 'admin@3', '$2y$10$p.OnOR/Dd6dYimOSTIaIKuJ0rdzVtzJk51zfiNLQSYTcULQyKQtla', 12312, '2025-06-14 05:24:19', 2, 'activo'),
-(45, 'cliente', 'comun', 'cliente@comun', '$2y$10$S4XOnhzysb.n9LT8TpFXCOeiLNNoyY7N3QXMvFs4G3nlLTAkCOdCG', 0, '2025-06-15 03:17:54', 3, 'activo'),
-(46, 'usuario', 'comun', 'mplandolit1@gmail', '$2y$10$JQetC3.7rfnxsYF.06phye2J6RcdQ5KY3nilw1vJjtOk3t1CN1XPm', 0, '2025-06-15 03:25:19', 3, 'activo');
+(43, 'Marti', 'Plandolit', 'plandomartu1@gmail.com', '$2y$10$WgvIECr4srQwy8yWsOJ3runGshhLjg0b5BvCP2ydMz31cfhIrdl6C', 0, '2025-06-18 00:23:43', 1, 'inactivo'),
+(44, 'admin', 'nuevo', 'admin@3', '$2y$10$p.OnOR/Dd6dYimOSTIaIKuJ0rdzVtzJk51zfiNLQSYTcULQyKQtla', 123, '2025-06-16 03:02:56', 2, 'activo'),
+(45, 'cliente', 'comun', 'cliente@comun', '$2y$10$S4XOnhzysb.n9LT8TpFXCOeiLNNoyY7N3QXMvFs4G3nlLTAkCOdCG', 123456, '2025-06-16 03:02:56', 3, 'activo'),
+(46, 'usuario', 'normal', 'mplandolit1@gmail', '$2y$10$JQetC3.7rfnxsYF.06phye2J6RcdQ5KY3nilw1vJjtOk3t1CN1XPm', 2246558, '2025-06-16 03:02:56', 3, 'activo'),
+(47, 'usuario', 'tres', '1234@gmail.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:18:43', 3, 'activo'),
+(48, 'dvdsf', 'sdfsdf', 'sdfsdf@asdfas', '$2y$10$0kNrcXkgAG5knmXcKfo8Reb7b1Gv.3xq78h/mr//k0srrz.3lPN7y', 0, '2025-06-21 17:31:36', 3, 'activo');
 
 -- --------------------------------------------------------
 
@@ -843,6 +879,7 @@ ALTER TABLE `paquetes_turisticos`
 --
 ALTER TABLE `paquete_alojamientos`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_paquete_alojamiento` (`id_paquete`,`id_alojamiento`),
   ADD KEY `id_paquete` (`id_paquete`),
   ADD KEY `id_alojamiento` (`id_alojamiento`);
 
@@ -851,6 +888,7 @@ ALTER TABLE `paquete_alojamientos`
 --
 ALTER TABLE `paquete_autos`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_paquete_auto` (`id_paquete`,`id_alquiler`),
   ADD KEY `id_paquete` (`id_paquete`),
   ADD KEY `id_alquiler` (`id_alquiler`);
 
@@ -867,6 +905,7 @@ ALTER TABLE `paquete_etiquetas`
 --
 ALTER TABLE `paquete_servicios`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_paquete_servicio` (`id_paquete`,`id_servicio`),
   ADD KEY `id_paquete` (`id_paquete`),
   ADD KEY `id_servicio` (`id_servicio`);
 
@@ -875,6 +914,7 @@ ALTER TABLE `paquete_servicios`
 --
 ALTER TABLE `paquete_vuelos`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_paquete_vuelo` (`id_paquete`,`id_vuelo`),
   ADD KEY `id_paquete` (`id_paquete`),
   ADD KEY `id_vuelo` (`id_vuelo`);
 
@@ -928,13 +968,13 @@ ALTER TABLE `vuelos`
 -- AUTO_INCREMENT de la tabla `alojamientos`
 --
 ALTER TABLE `alojamientos`
-  MODIFY `id_alojamiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_alojamiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `alquiler_autos`
 --
 ALTER TABLE `alquiler_autos`
-  MODIFY `id_alquiler` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_alquiler` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `bitacora_sistema`
@@ -946,13 +986,13 @@ ALTER TABLE `bitacora_sistema`
 -- AUTO_INCREMENT de la tabla `carritos`
 --
 ALTER TABLE `carritos`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `carrito_items`
 --
 ALTER TABLE `carrito_items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `comentarios_paquetes`
@@ -964,79 +1004,79 @@ ALTER TABLE `comentarios_paquetes`
 -- AUTO_INCREMENT de la tabla `destinos`
 --
 ALTER TABLE `destinos`
-  MODIFY `id_destino` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_destino` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `etiquetas`
 --
 ALTER TABLE `etiquetas`
-  MODIFY `id_etiqueta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id_etiqueta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
-  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `orden_items`
 --
 ALTER TABLE `orden_items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `paquetes_turisticos`
 --
 ALTER TABLE `paquetes_turisticos`
-  MODIFY `id_paquete` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_paquete` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_alojamientos`
 --
 ALTER TABLE `paquete_alojamientos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_autos`
 --
 ALTER TABLE `paquete_autos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_etiquetas`
 --
 ALTER TABLE `paquete_etiquetas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_servicios`
 --
 ALTER TABLE `paquete_servicios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete_vuelos`
 --
 ALTER TABLE `paquete_vuelos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `promociones`
 --
 ALTER TABLE `promociones`
-  MODIFY `id_promocion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_promocion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `id_proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -1048,19 +1088,19 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `servicios_adicionales`
 --
 ALTER TABLE `servicios_adicionales`
-  MODIFY `id_servicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_servicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT de la tabla `vuelos`
 --
 ALTER TABLE `vuelos`
-  MODIFY `id_vuelo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_vuelo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
