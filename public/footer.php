@@ -1,9 +1,16 @@
-<footer class="bg-light py-3 mt-5 border-top">
-  <div class="container d-flex justify-content-between align-items-center">
-    <span class="text-muted">&copy; Nomadella 2025</span>
-    <span class="text-muted">Términos | Política | FAQ</span>
+<footer class="bg-light py-4 mt-5 border-top">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start">
+    <div class="mb-2 mb-md-0">
+      <span class="text-muted">&copy; 2025 Nomadella. Todos los derechos reservados.</span>
+    </div>
+    <div>
+      <a href="terminos.php" class="text-muted text-decoration-none me-3">Términos y Condiciones</a>
+      <a href="privacidad.php" class="text-muted text-decoration-none me-3">Política de Privacidad</a>
+      <a href="faq.php" class="text-muted text-decoration-none">Preguntas Frecuentes</a>
+    </div>
   </div>
 </footer>
+
 <!-- Bootstrap 5 JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -21,11 +28,10 @@ async function actualizarBadgeCarrito() {
         badge.style.display = 'none';
       }
     }
-  } catch(e) {}
+  } catch(e) {
+    console.error('Error al actualizar el carrito:', e);
+  }
 }
 
-// Llama al cargar la página
 actualizarBadgeCarrito();
-
-// Si usas SPA o AJAX para agregar al carrito, llama a actualizarBadgeCarrito() después de agregar
 </script>
