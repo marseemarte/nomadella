@@ -1,6 +1,8 @@
 <?php
 include 'conexion.php';
 include 'verificar_admin.php';
+$totalIngresosConfirmados = $pdo->query("SELECT COALESCE(SUM(total), 0) AS total FROM ordenes WHERE LOWER(estado) = 'confirmada'")->fetch()['total'];
+
 // KPIs
 $totalVentas = $pdo->query("SELECT COALESCE(SUM(total), 0) AS total FROM ordenes")->fetch()['total'];
 $reservasHoy = $pdo->query("SELECT COUNT(*) AS total FROM ordenes WHERE DATE(fecha_orden) = CURDATE()")->fetch()['total'];
@@ -35,7 +37,7 @@ $reservas = $pdo->query("
   JOIN usuarios u ON u.id_usuario = o.id_usuario
   JOIN orden_items oi ON oi.id_orden = o.id_orden
   LEFT JOIN paquetes_turisticos pt ON pt.id_paquete = oi.id_producto
-  
+  WHERE LOWER(o.estado) = 'confirmada'
   ORDER BY o.fecha_orden DESC
   LIMIT 4
 ")->fetchAll(PDO::FETCH_ASSOC);
@@ -146,10 +148,10 @@ $comentarios = $pdo->query("
               <tbody>
                 <?php foreach ($reservas as $r): ?>
                   <tr>
-                    <td><?= htmlspecialchars($r['cliente']) ?></td>
-                    <td><?= htmlspecialchars($r['destino']) ?></td>
-                    <td><?= date('d/m/Y', strtotime($r['fecha'])) ?></td>
-                    <td>$<?= number_format($r['precio'], 2) ?></td>
+                    <td><?= !empty($r['cliente']) ? htmlspecialchars($r['cliente']) : 'no definido' ?></td>
+                    <td><?= !empty($r['destino']) ? htmlspecialchars($r['destino']) : 'no definido' ?></td>
+                    <td><?= !empty($r['fecha']) ? date('d/m/Y', strtotime($r['fecha'])) : 'no definido' ?></td>
+                    <td><?= isset($r['precio']) ? '$' . number_format($r['precio'], 2) : 'no definido' ?></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>

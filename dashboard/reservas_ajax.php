@@ -43,8 +43,6 @@ if ($reservas && $reservas->num_rows > 0) {
         elseif ($estado_lower == 'pendiente') $badge = 'bg-warning';
         elseif ($estado_lower == 'cancelada') $badge = 'bg-danger';
 
-
-
         $html .= '<tr>';
         $html .= '<td>' . $id_orden . '</td>';
         $html .= '<td>' . htmlspecialchars($r['nombre'] . ' ' . $r['apellido']) . '</td>';
@@ -52,11 +50,11 @@ if ($reservas && $reservas->num_rows > 0) {
         $html .= '<td><span class="badge ' . $badge . '">' . ucfirst($estado_lower) . '</span></td>';
         $html .= '<td>$' . number_format($r['total'], 2) . '</td>';
 
-$html .= '<td>
-                    <button class="btn btn-sm btn-info btn-ver-detalle" data-id="' . $id_orden . '" type="button">Ver detalles</button>
-                    <button class="btn btn-sm btn-danger" onclick="confirmarCancelacion(' . $id_orden . ')" type="button">Cancelar</button>
-                    <a class="btn btn-sm btn-primary" href="editar_reserva.php?id=' . $id_orden . '">Editar</a>
-                </td>';
+        $html .= "<td>
+    <button class='btn btn-sm btn-info' onclick='verDetalles($id_orden)' type='button'>Detalles</button>
+    <button class='btn btn-sm btn-danger' onclick='confirmarCancelacion($id_orden)' type='button'>Cancelar</button>
+    <a class='btn btn-sm btn-primary' href='editar_reserva.php?id=$id_orden'>Editar</a>
+</td>";
         $html .= '</tr>';
     }
 } else {
