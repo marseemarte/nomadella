@@ -30,7 +30,7 @@ $destinos = $pdo->query("
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 $reservas = $pdo->query("
-  SELECT CONCAT(u.nombre, ' ', u.apellido) AS cliente, pt.destino, o.fecha_orden AS fecha, oi.subtotal AS monto
+  SELECT CONCAT(u.nombre, ' ', u.apellido) AS cliente, pt.destino, o.fecha_orden AS fecha, oi.subtotal AS precio
   FROM ordenes o
   JOIN usuarios u ON u.id_usuario = o.id_usuario
   JOIN orden_items oi ON oi.id_orden = o.id_orden
@@ -129,8 +129,8 @@ $comentarios = $pdo->query("
       </div>
     </div>
 
-    <div class="row g-4 mt-4">
-      <div class="col-md-6">
+    <div >
+      <div >
         <div class="card shadow-sm">
           <div class="card-header">Últimas Reservas</div>
           <div class="card-body">
@@ -149,7 +149,7 @@ $comentarios = $pdo->query("
                     <td><?= htmlspecialchars($r['cliente']) ?></td>
                     <td><?= htmlspecialchars($r['destino']) ?></td>
                     <td><?= date('d/m/Y', strtotime($r['fecha'])) ?></td>
-                    <td>$<?= number_format($r['monto'], 2) ?></td>
+                    <td>$<?= number_format($r['precio'], 2) ?></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
@@ -158,7 +158,7 @@ $comentarios = $pdo->query("
         </div>
       </div>
 
-      <div class="col-md-6">
+      <!-- <div class="col-md-6">
         <div class="card shadow-sm">
           <div class="card-header">Comentarios Recientes</div>
           <ul class="list-group list-group-flush">
@@ -167,7 +167,7 @@ $comentarios = $pdo->query("
             <?php endforeach; ?>
           </ul>
         </div>
-      </div>
+      </div> -->
     </div>
 
   </div>

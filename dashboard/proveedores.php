@@ -232,9 +232,9 @@ $servicios = obtenerProveedores($conn, 'servicio');
                     <div class="mb-3">
                         <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2.5rem;"></i>
                     </div>
-                    <h5 class="mb-3" id="modalConfirmarEliminarLabel">¿Estás seguro de que quieres eliminar?</h5>
-                    <p class="mb-4">Esta acción no se puede deshacer.</p>
-                    <button type="button" class="btn btn-danger px-4 me-2" id="btnEliminarConfirmado"><i class="bi bi-x-circle"></i> Eliminar</button>
+                    <h5 class="mb-3" id="modalConfirmarEliminarLabel">¿Estás seguro de que quieres desactivar?</h5>
+                    <p class="mb-4">Esta información seguirá disponible en el registro.</p>
+                    <button type="button" class="btn btn-danger px-4 me-2" id="btnEliminarConfirmado"><i class="bi bi-x-circle"></i> Desactivar</button>
                     <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
                 </div>
             </div>
@@ -249,7 +249,7 @@ $servicios = obtenerProveedores($conn, 'servicio');
                     <div class="mb-3">
                         <i class="bi bi-check-circle-fill text-success" style="font-size:2.5rem;"></i>
                     </div>
-                    <h5 class="mb-3" id="modalEliminadoOkLabel">¡Se ha eliminado correctamente!</h5>
+                    <h5 class="mb-3" id="modalEliminadoOkLabel">¡Se ha desactivado correctamente!</h5>
                     <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal" onclick="location.reload()">Aceptar</button>
                 </div>
             </div>

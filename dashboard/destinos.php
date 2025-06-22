@@ -166,9 +166,15 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
                                                 <a href="editar_destino.php?id=<?= $row['id_destino'] ?>" class="btn btn-sm btn-primary me-1">
                                                     <i class="bi bi-pencil-square"></i> Editar
                                                 </a>
-                                                <a href="#" class="btn btn-sm btn-danger" onclick="confirmarDesactivacionDestino(<?= $row['id_destino'] ?>); return false;">
-                                                    <i class="bi bi-x-circle"></i> Desactivar
-                                                </a>
+                                                <?php if ($row['estado'] == 'activo'): ?>
+                                                    <a href="#" class="btn btn-sm btn-danger" onclick="confirmarDesactivacionDestino(<?= $row['id_destino'] ?>); return false;">
+                                                        <i class="bi bi-x-circle"></i> Desactivar
+                                                    </a>
+                                                <?php else: ?>
+                                                    <a href="#" class="btn btn-sm btn-success" onclick="confirmarActivacionDestino(<?= $row['id_destino'] ?>); return false;">
+                                                        <i class="bi bi-check-circle"></i> Activar
+                                                    </a>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -219,7 +225,7 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
             </div>
         </div>
     </div>
-    <!-- Modal de confirmación -->
+    <!-- Modal de confirmación para desactivar -->
     <div class="modal fade" id="modalDesactivarDestino" tabindex="-1" aria-labelledby="modalDesactivarLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-center">
@@ -232,6 +238,26 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
                     <form method="post" action="desactivar_destino.php">
                         <input type="hidden" name="id_destino" id="desactivar-id">
                         <button type="submit" class="btn btn-danger px-4 me-2">Sí, desactivar</button>
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para activar -->
+    <div class="modal fade" id="modalActivarDestino" tabindex="-1" aria-labelledby="modalActivarLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-exclamation-triangle-fill text-success" style="font-size:2.5rem;"></i>
+                    </div>
+                    <h5 class="mb-3" id="modalActivarLabel">¿Estás seguro de que deseas activar este destino?</h5>
+                    <p class="mb-4">El destino estará disponible para nuevos paquetes.</p>
+                    <form method="post" action="activar_destino.php">
+                        <input type="hidden" name="id_destino" id="activar-id">
+                        <button type="submit" class="btn btn-success px-4 me-2">Sí, activar</button>
                         <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
                     </form>
                 </div>
@@ -262,18 +288,30 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
             modal.show();
         }
 
+        function confirmarActivacionDestino(id) {
+            document.getElementById('activar-id').value = id;
+            const modal = new bootstrap.Modal(document.getElementById('modalActivarDestino'));
+            modal.show();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('desactivado') === '1') {
                 const modalOk = new bootstrap.Modal(document.getElementById('modalOperacionOk'));
+                document.getElementById('modalOperacionOkLabel').textContent = '¡Se ha desactivado correctamente!';
                 modalOk.show();
+            } else if (urlParams.get('activado') === '1') {
+                const modalOk = new bootstrap.Modal(document.getElementById('modalOperacionOk'));
+                document.getElementById('modalOperacionOkLabel').textContent = '¡Se ha activado correctamente!';
+                modalOk.show();
+            }
 
-                // Limpiar el parámetro de la URL
-                if (window.history.replaceState) {
-                    const url = new URL(window.location);
-                    url.searchParams.delete('desactivado');
-                    window.history.replaceState({}, document.title, url.pathname);
-                }
+            // Limpiar los parámetros de la URL
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('desactivado');
+                url.searchParams.delete('activado');
+                window.history.replaceState({}, document.title, url.pathname);
             }
         });
     </script>

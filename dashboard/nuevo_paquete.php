@@ -2,8 +2,6 @@
 include 'conexion.php';
 include 'verificar_admin.php';
 
-
-
 // Obtener destinos disponibles
 $destinos_disponibles = [];
 $res = $conn->query("SELECT id_destino, destino FROM destinos ORDER BY destino");
@@ -16,13 +14,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['asociar'])) {
     $nombre = $conn->real_escape_string($_POST['nombre']);
     $descripcion = $conn->real_escape_string($_POST['descripcion']);
     $precio_base = floatval($_POST['precio_base']);
+    $cupo = intval($_POST['cupo']);
     $fecha_inicio = $conn->real_escape_string($_POST['fecha_inicio']);
     $fecha_fin = $conn->real_escape_string($_POST['fecha_fin']);
+    if ($fecha_inicio > $fecha_fin) {
+        die("La fecha de inicio no puede ser posterior a la fecha de fin.");
+    }
+    $destino= $conn->real_escape_string($_POST['id_destino']);
+
     $activo = isset($_POST['activo']) ? 1 : 0;
     $id_destino = intval($_POST['id_destino']);
 
-    $conn->query("INSERT INTO paquetes_turisticos (nombre, descripcion, id_destino, precio_base, fecha_inicio, fecha_fin, activo)
-                  VALUES ('$nombre', '$descripcion', $id_destino, $precio_base, '$fecha_inicio', '$fecha_fin', $activo)");
+    $conn->query("INSERT INTO paquetes_turisticos (nombre, descripcion, id_destino, precio_base, cupo_disponible, destino, fecha_inicio, fecha_fin, activo)
+                  VALUES ('$nombre', '$descripcion', $id_destino, $precio_base, $cupo, '$destino', '$fecha_inicio', '$fecha_fin', $activo)");
     $id_paquete = $conn->insert_id;
 
     // Guardar etiquetas nuevas
@@ -201,6 +205,10 @@ if ($id_destino) {
                     <div class="mb-3">
                         <label class="form-label">Precio base</label>
                         <input type="number" name="precio_base" class="form-control" required min="0" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cupo Disponible</label>
+                        <input type="number" name="cupo" class="form-control" required min="1" step="1" value="1">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Fecha de inicio</label>

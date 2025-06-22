@@ -32,11 +32,6 @@ body {
 
 }
 
-.sidebar .nav-link.active {
-  background-color: #47031e !important;
-  color: #FFF6F8 !important;
-}
-
 .content {
   margin-left: 260px;
   padding: 20px;

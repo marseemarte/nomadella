@@ -46,7 +46,7 @@ $destinos_activos = [
     </div>
     <nav class="nav flex-column">
       <a class="nav-link px-4 py-2 <?= $current == 'dashboard.php' ? 'active' : '' ?>" href="./dashboard.php">
-        <i class="bi bi-house-door"></i> Dashboard
+        <i class="bi bi-bar-chart"></i> Dashboard
       </a>
       <a class="nav-link px-4 py-2 <?= in_array($current, $proveedores_activos) == 'proveedores.php' ? 'active' : '' ?>" href="./proveedores.php">
         <i class="bi bi-truck"></i> Proveedores

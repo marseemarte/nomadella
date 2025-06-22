@@ -57,7 +57,7 @@ $reservas = $stmt->get_result();
                         <div class="card-footer text-muted small">
                             Reservado el <?= date('d/m/Y H:i', strtotime($r['fecha_orden'])) ?>
                         </div>
-                         <a href="perfil/edit_reservas.php?id=<?= $r['id_orden'] ?>" class="btn btn-outline-primary btn-sm mt-3">
+<a href="edit_reservas.php?id=<?= $r['id_orden'] ?>" class="btn btn-outline-primary btn-sm mt-3">
     Editar / Cancelar
 </a>
                         

@@ -181,6 +181,10 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                     <textarea name="descripcion" class="form-control" rows="3" maxlength="255"></textarea>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Ciudad ()</label>
+                    <input type="text" name="direccion" class="form-control" maxlength="150">
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Destino</label>
                     <select name="id_destino" class="form-select" required>
                         <option value="">Seleccione destino</option>

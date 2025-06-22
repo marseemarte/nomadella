@@ -141,6 +141,7 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
                                 <div>
                                     <p>Precio Base: <b>$<?= number_format($paquete['precio_base'], 2) ?></b></p>
                                     <p>Destino: <?= htmlspecialchars($paquete['destino']) ?></p>
+                                    <p>Cupo: <?= $paquete['cupo_disponible']?></p>
                                     <p>Fecha: <?= date("d/m/Y", strtotime($paquete['fecha_inicio'])) ?> - <?= date("d/m/Y", strtotime($paquete['fecha_fin'])) ?></p>
                                 </div>
                                 <div>

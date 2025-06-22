@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         destino='$destino',
         precio_base=$precio_base,
         fecha_inicio='$fecha_inicio',
-        fecha_fin='$fecha_fin',
+        fecha_fin='$fecha_fin'
         WHERE id_paquete = $id
     ");
 
@@ -237,6 +237,10 @@ if ($id_destino) {
                 <div class="mb-3">
                     <label class="form-label">Precio base</label>
                     <input type="number" name="precio_base" class="form-control" required min="0" step="0.01" value="<?= htmlspecialchars($paquete['precio_base']) ?>">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Cupo disponible</label>
+                    <input type="number" name="cupo_disponible" class="form-control" required min="1" value="<?= htmlspecialchars($paquete['cupo_disponible']) ?>">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Fecha de inicio</label>

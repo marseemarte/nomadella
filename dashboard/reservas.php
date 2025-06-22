@@ -71,6 +71,33 @@ $totalPages = ceil($totalRows / $limit);
             color: #ccc;
             pointer-events: none;
         }
+
+        /* Fix modal visibility */
+        #detalleModal {
+            display: block !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            z-index: 1050 !important;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+        }
+
+        #detalleModal.show {
+            display: block !important;
+            opacity: 1 !important;
+        }
+
+        .modal-backdrop {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            z-index: 1040 !important;
+        }
     </style>
 </head>
 
@@ -117,7 +144,7 @@ $totalPages = ceil($totalRows / $limit);
                         <th>Fecha</th>
                         <th>Estado</th>
                         <th>Total</th>
-                        <th>Acciones</th> <!-- antes decía Ver detalles -->
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tabla-reservas">
@@ -136,6 +163,7 @@ $totalPages = ceil($totalRows / $limit);
         </div>
     </div>
 
+    
     <!-- Modal de confirmación -->
     <div class="modal fade" id="modalCancelarReserva" tabindex="-1" aria-labelledby="modalConfirmarEliminarLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -151,6 +179,21 @@ $totalPages = ceil($totalRows / $limit);
                         <button type="submit" class="btn btn-danger px-4 me-2">Sí, cancelar</button>
                         <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">No</button>
                     </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalle Reserva -->
+    <div class="modal" id="detalleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalle de la Reserva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detalleContenido">
+                    Cargando...
+                </div>
             </div>
         </div>
     </div>
@@ -186,16 +229,34 @@ $totalPages = ceil($totalRows / $limit);
                 $('#total-records').text(data.total);
                 totalPages = data.pages;
                 renderPagination();
-            }, 'json');
+            }, 'json').fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('Error loading reservations:', textStatus, errorThrown);
+            });
         }
 
         function renderPagination() {
             let html = '';
-            for (let i = 1; i <= totalPages; i++) {
-                html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link" href="#" onclick="cargarReservas(${i}); return false;">${i}</a>
-                     </li>`;
+
+            if (currentPage > 1) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="cargarReservas(1); return false;">&laquo;</a></li>`;
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="cargarReservas(${currentPage - 1}); return false;">&lsaquo;</a></li>`;
+            } else {
+                html += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
+                html += `<li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>`;
             }
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="cargarReservas(${i}); return false;">${i}</a></li>`;
+            }
+
+            if (currentPage < totalPages) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="cargarReservas(${currentPage + 1}); return false;">&rsaquo;</a></li>`;
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="cargarReservas(${totalPages}); return false;">&raquo;</a></li>`;
+            } else {
+                html += `<li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>`;
+                html += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
+            }
+
             $('#pagination').html(html);
         }
 
@@ -205,89 +266,24 @@ $totalPages = ceil($totalRows / $limit);
                 cargarReservas(1);
             });
         });
+        
+        var detalleModal = new bootstrap.Modal(document.getElementById('detalleModal'));
 
-        function cargarDetalleReserva(id) {
+        $(document).on('click', '.btn-ver-detalle', function() {
+            var id = $(this).attr('data-id');
+            console.log('Ver detalles clicked for id:', id);
             $('#detalleContenido').html('Cargando...');
-            $.get('detalle_reserva.php', {
-                id: id
-            }, function(html) {
-                $('#detalleContenido').html(html);
+            $.get('detalle_reserva.php', {id: id}, function(data) {
+                console.log('AJAX success, data received:', data);
+                $('#detalleContenido').html(data);
+                detalleModal.show();
+                $('#detalleModal').addClass('show').css('display', 'block');
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('AJAX error:', textStatus, errorThrown);
+                $('#detalleContenido').html('<div class="alert alert-danger">Error al cargar el detalle de la reserva.</div>');
             });
-        }
-
-        function renderPagination() {
-            let html = '';
-
-            // Botón "Primera página"
-            if (currentPage > 1) {
-                html += `<li class="page-item">
-                    <a class="page-link" href="#" onclick="cargarReservas(1); return false;">&laquo;</a>
-                 </li>`;
-            } else {
-                html += `<li class="page-item disabled">
-                    <span class="page-link">&laquo;</span>
-                 </li>`;
-            }
-
-            // Botón "Anterior"
-            if (currentPage > 1) {
-                html += `<li class="page-item">
-                    <a class="page-link" href="#" onclick="cargarReservas(${currentPage - 1}); return false;">&lsaquo;</a>
-                 </li>`;
-            } else {
-                html += `<li class="page-item disabled">
-                    <span class="page-link">&lsaquo;</span>
-                 </li>`;
-            }
-
-            // Números
-            for (let i = 1; i <= totalPages; i++) {
-                html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="cargarReservas(${i}); return false;">${i}</a>
-                 </li>`;
-            }
-
-            // Botón "Siguiente"
-            if (currentPage < totalPages) {
-                html += `<li class="page-item">
-                    <a class="page-link" href="#" onclick="cargarReservas(${currentPage + 1}); return false;">&rsaquo;</a>
-                 </li>`;
-            } else {
-                html += `<li class="page-item disabled">
-                    <span class="page-link">&rsaquo;</span>
-                 </li>`;
-            }
-
-            // Botón "Última página"
-            if (currentPage < totalPages) {
-                html += `<li class="page-item">
-                    <a class="page-link" href="#" onclick="cargarReservas(${totalPages}); return false;">&raquo;</a>
-                 </li>`;
-            } else {
-                html += `<li class="page-item disabled">
-                    <span class="page-link">&raquo;</span>
-                 </li>`;
-            }
-
-            $('#pagination').html(html);
-        }
+        });
     </script>
-
-    <!-- Modal Detalle Reserva -->
-    <div class="modal fade" id="detalleModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detalle de la Reserva</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="detalleContenido">
-                    Cargando...
-                </div>
-            </div>
-        </div>
-    </div>
-
 
 </body>
 

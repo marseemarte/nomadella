@@ -52,9 +52,9 @@ if ($reservas && $reservas->num_rows > 0) {
         $html .= '<td><span class="badge ' . $badge . '">' . ucfirst($estado_lower) . '</span></td>';
         $html .= '<td>$' . number_format($r['total'], 2) . '</td>';
 
-        $html .= '<td>
-                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detalleModal" onclick="cargarDetalleReserva(' . $id_orden . ')">Ver detalles</button>
-                    <button class="btn btn-sm btn-danger" onclick="confirmarCancelacion(' . $id_orden . ')">Cancelar</button>
+$html .= '<td>
+                    <button class="btn btn-sm btn-info btn-ver-detalle" data-id="' . $id_orden . '" type="button">Ver detalles</button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmarCancelacion(' . $id_orden . ')" type="button">Cancelar</button>
                     <a class="btn btn-sm btn-primary" href="editar_reserva.php?id=' . $id_orden . '">Editar</a>
                 </td>';
         $html .= '</tr>';
