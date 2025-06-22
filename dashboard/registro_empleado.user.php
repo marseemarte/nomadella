@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contraseña = password_hash($contraseña_raw, PASSWORD_DEFAULT);
     $telefono = $conn->real_escape_string($_POST['telefono']);
     $fecha_registro = date('Y-m-d H:i:s');
-    $rol = 2; // rol por defecto
+    $rol = $conn->real_escape_string($_POST['rol']);
     $estado = $conn->real_escape_string($_POST['estado']);
 
     $conn->query("INSERT INTO usuarios (nombre, apellido, email, contraseña, telefono, fecha_registro, rol, estado) 
@@ -103,14 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="clientes.php">Empleados</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Registro de Empleado</li>
+                <li class="breadcrumb-item active" aria-current="page">Registro de Usuario</li>
             </ol>
         </nav>
         <div class="card-empleado mt-4">
             <div class="icon-circle mb-3">
                 <i class="bi bi-person-badge"></i>
             </div>
-            <h2 class="text-center mb-4" style="color:#750D37;font-weight:700;letter-spacing:1px;">Registro de Empleado</h2>
+            <h2 class="text-center mb-4" style="color:#750D37;font-weight:700;letter-spacing:1px;">Registro de Usuario</h2>
             <form method="post" autocomplete="off">
                 <div class="mb-3">
                     <label class="form-label">Nombre</label>
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Teléfono</label>
-                    <input type="text" name="telefono" class="form-control" maxlength="30">
+                    <input type="number" name="telefono" class="form-control" maxlength="30">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Fecha de Registro</label>
@@ -142,6 +142,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="">Seleccione estado</option>
                         <option value="activo">Activo</option>
                         <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tipo de registro</label>
+                    <select name="rol" class="form-select" required>
+                        <option value="">Seleccione registro</option>
+                        <option value="2">Administrador</option>
+                        <option value="3">Usuario</option>
                     </select>
                 </div>
                 <div class="d-flex justify-content-between">

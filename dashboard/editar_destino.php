@@ -3,24 +3,31 @@ include 'conexion.php';
 include 'verificar_admin.php';
 
 $msg = '';
-if (isset($_POST['submit'])) {
-    $destino = $_POST['destino'];
-    
-    $smt = $conn->prepare("INSERT INTO destinos (destino, estado) VALUES (?, 'activo')");
-    $smt->bind_param("s", $destino);
-    $smt->execute();
-    $smt->close();
-    header("Location: destinos.php?creado=1");
-    exit;
+$destino = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_destino'])) {
+    $id = intval($_POST['id_destino']);
+    $nombre = $conn->real_escape_string(trim($_POST['nombre']));
+
+    if ($nombre) {
+        $conn->query("UPDATE destinos SET destino = '$nombre' WHERE id_destino = $id");
+        header("Location: destinos.php?editado=1");
+        exit;
+    }
 }
 
+if (isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $res = $conn->query("SELECT * FROM destinos WHERE id_destino = $id AND estado = 'activo'");
+    $destino = $res->fetch_assoc();
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nuevo Destino</title>
+    <title>Editar Destino</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -40,26 +47,29 @@ if (isset($_POST['submit'])) {
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="destinos.php">Destinos</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Nuevo Destino</li>
+            <li class="breadcrumb-item active" aria-current="page">Editar Destino</li>
         </ol>
     </nav>
 
-    <h2 class="mb-4">Nuevo Destino</h2>
+    <h2 class="mb-4">Editar Destino</h2>
 
+    <?php if ($destino): ?>
     <form method="post" class="card">
+        <input type="hidden" name="id_destino" value="<?= $destino['id_destino'] ?>">
         <div class="mb-3">
             <label class="form-label">Nombre del destino</label>
-            <input type="text" name="destino" class="form-control" required>
+            <input type="text" name="nombre" class="form-control" value="<?= htmlspecialchars($destino['destino']) ?>" required>
         </div>
-        <i> <i class="bi bi-alert"></i>Recuerda agregar proveedores luego para cada destino, en <a href="proveedor_form.php">Alta de Proveedor</a></i>
         <div class="mt-4">
-            <button type="submit" name="submit" class="btn btn-primary me-2"><i class="bi bi-save"></i> Guardar Nuevo Destino</button>
+            <button type="submit" class="btn btn-primary me-2"><i class="bi bi-save"></i> Guardar cambios</button>
             <a href="destinos.php" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
+    <?php else: ?>
+        <div class="alert alert-warning">Destino no encontrado.</div>
+    <?php endif; ?>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
 </body>
 </html>

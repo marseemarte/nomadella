@@ -65,7 +65,7 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2 class="">Usuarios</h2>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
+                        <button type="button" class="btn btn-primary" onclick="location.href='registro_empleado.user.php'">
                             <i class="bi bi-plus-circle"></i> Nuevo Usuario
                         </button>
                     </div>
@@ -196,27 +196,6 @@ $highlight = isset($_GET['highlight']) ? intval($_GET['highlight']) : 0;
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Modal Nuevo Usuario -->
-    <div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-          <div class="modal-header">
-            <h5 class="modal-title w-100" id="modalNuevoUsuarioLabel">¿Qué tipo de usuario desea ingresar?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-          </div>
-          <div class="modal-body py-4">
-            <div class="d-grid gap-3">
-              <a href="/nomadella/public/registro.php" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-person-plus"></i> Nuevo Cliente
-              </a>
-              <a href="registro_empleado.php" class="btn btn-outline-success btn-lg">
-                <i class="bi bi-person-badge"></i> Nuevo Empleado
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
     <!-- Modal Desactivar Usuario -->
     <div class="modal fade" id="modalDesactivarUsuario" tabindex="-1" aria-labelledby="modalDesactivarUsuarioLabel" aria-hidden="true">

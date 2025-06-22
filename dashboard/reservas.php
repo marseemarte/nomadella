@@ -5,37 +5,23 @@ include 'verificar_admin.php';
 $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
-$order_by = isset($_GET['order_by']) ? $_GET['order_by'] : 'id';
-$order_dir = (isset($_GET['order_dir']) && strtolower($_GET['order_dir']) === 'asc') ? 'ASC' : 'DESC';
+$estado = isset($_GET['estado']) ? $conn->real_escape_string($_GET['estado']) : '';
 $offset = ($page - 1) * $limit;
 
-$validColumns = [
-    'id' => 'o.id_orden',
-    'cliente' => 'u.nombre',
-    'fecha' => 'o.fecha_orden',
-    'estado' => 'o.estado'
-];
-$orderColumn = isset($validColumns[$order_by]) ? $validColumns[$order_by] : 'o.id_orden';
-
-$where = $search ? "WHERE u.nombre LIKE '%$search%' OR pt.destino LIKE '%$search%'" : "";
+$where = "WHERE 1";
+if (!empty($search)) {
+    $where .= " AND (u.nombre LIKE '%$search%' OR u.apellido LIKE '%$search%' OR o.id_orden LIKE '%$search%')";
+}
+if (!empty($estado)) {
+    $where .= " AND o.estado = '$estado'";
+}
 
 $totalQuery = $conn->query("SELECT COUNT(*) as total
     FROM ordenes o
     JOIN usuarios u ON u.id_usuario = o.id_usuario
-    JOIN orden_items oi ON oi.id_orden = o.id_orden
-    JOIN paquetes_turisticos pt ON pt.id_paquete = oi.id_producto
     $where");
 $totalRows = $totalQuery->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
-
-$reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre, u.apellido AS cliente, pt.destino, oi.cantidad
-    FROM ordenes o
-    JOIN usuarios u ON u.id_usuario = o.id_usuario
-    JOIN orden_items oi ON oi.id_orden = o.id_orden
-    JOIN paquetes_turisticos pt ON pt.id_paquete = oi.id_producto
-    $where
-    ORDER BY $orderColumn $order_dir
-    LIMIT $limit OFFSET $offset");
 ?>
 
 <!DOCTYPE html>
@@ -63,54 +49,33 @@ $reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre, 
             color: #750D37;
         }
 
-        .btn-primary {
-            background-color: #3AB789;
-            border-color: #3AB789;
-            font-weight: bold;
-        }
-
-        .btn-secondary {
-            background-color: #5CC7ED;
-            border-color: #5CC7ED;
-            color: #1A001C;
-            font-weight: bold;
-        }
-
-        .card {
-            background: #fff;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(117, 13, 55, 0.1);
-            padding: 20px;
-        }
-
-        .accordion-button {
-            font-weight: 600;
-            color: #1A001C;
-            background-color: #F8F9FA;
-        }
-
-        .accordion-button:focus {
-            box-shadow: none;
-        }
-
-        .accordion-item {
-            border: 1px solid #DDD;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
         .table thead {
             background-color: #750D37;
             color: #FFF6F8;
+        }
+
+        .pagination .page-link {
+            border-radius: 0.5rem;
+            margin: 0 0.2rem;
+            color: #750D37;
+            border-color: #ddd;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #24c58c;
+            border-color: #24c58c;
+            color: #fff;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #ccc;
+            pointer-events: none;
         }
     </style>
 </head>
 
 <body>
-
-    <?php include './sidebar.php' ?>
-
+    <?php include './sidebar.php'; ?>
     <div class="main-content">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -118,66 +83,212 @@ $reservas = $conn->query("SELECT o.id_orden, o.fecha_orden, o.estado, u.nombre, 
                 <li class="breadcrumb-item active" aria-current="page">Gestión de Reservas</li>
             </ol>
         </nav>
-
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Gestionar Reservas</h2>
+            <h2 class="mb-2">Gestión de Reservas</h2>
+
             <div>
-                <a href="historial.php" class="btn btn-secondary mb-3">
-                    <i class="bi bi-book"></i> Historial
-                </a>    
                 <a href="nueva_reserva.php" class="btn btn-primary mb-3">
-                    <i class="bi bi-plus-circle"></i> Nueva reserva
+                    <i class="bi bi-plus-circle"></i> Nueva Reserva
                 </a>
             </div>
         </div>
+        <p class="text-muted">Aquí puedes ver y gestionar todas las reservas realizadas por los clientes.</p>
 
-        <p class="text-muted">
-            Aquí puedes gestionar todas las reservas realizadas por los usuarios. Puedes buscar, filtrar y ordenar las reservas según tus necesidades.
-            Utiliza el buscador para encontrar reservas específicas por nombre de cliente o destino del paquete turístico.
-        </p>
-
-        <form class="d-flex mb-4" onsubmit="return false;">
-            <input type="text" id="busqueda-reserva" name="search" class="form-control me-2" placeholder="Buscar...">
+        <form class="row g-3 mb-4">
+            <div class="col-md-4">
+                <input type="text" id="busqueda-reserva" class="form-control" placeholder="Buscar por cliente o ID...">
+            </div>
+            <div class="col-md-3">
+                <select id="filtro-estado" class="form-select">
+                    <option value="">Todos los estados</option>
+                    <option value="confirmada">Confirmada</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="cancelada">Cancelada</option>
+                </select>
+            </div>
         </form>
 
-        <div class="accordion" id="reservasAccordion">
-            <!-- Aquí se cargan las reservas por AJAX -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                        <th>Acciones</th> <!-- antes decía Ver detalles -->
+                    </tr>
+                </thead>
+                <tbody id="tabla-reservas">
+                    <!-- AJAX -->
+                </tbody>
+            </table>
         </div>
 
-        <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-                <?php for ($i = 1; $i <= $totalPages; $i++):
-                    $class = ($i == $page) ? 'active' : '';
-                    $params = array_merge($_GET, ['page' => $i]); ?>
-                    <li class="page-item <?= $class ?>">
-                        <a class="page-link" href="?<?= http_build_query($params) ?>"><?= $i ?></a>
-                    </li>
-                <?php endfor; ?>
-            </ul>
-        </nav>
-
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                Mostrando <strong id="start-record">0</strong> a <strong id="end-record">0</strong> de <strong id="total-records"><?php echo $totalRows; ?></strong> registros
+            </div>
+            <nav>
+                <ul class="pagination mb-0" id="pagination"></ul>
+            </nav>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="modalCancelarReserva" tabindex="-1" aria-labelledby="modalConfirmarEliminarLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2.5rem;"></i>
+                    </div>
+                    <h5 class="mb-3" id="modalConfirmarEliminarLabel">¿Estás seguro de que deseas cancelar esta reserva?</h5>
+                    <p class="mb-4">Se notificará al cliente del cambio de estado.</p>
+                    <form method="post" action="cancelar_reserva.php">
+                        <input type="hidden" name="id_orden" id="cancelar-id">
+                        <button type="submit" class="btn btn-danger px-4 me-2">Sí, cancelar</button>
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">No</button>
+                    </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        function cargarReservas(q) {
-            $.get('reservas_ajax.php', {
-                search: q
-            }, function(data) {
-                $('#reservasAccordion').html(data);
-            });
+        let currentPage = 1;
+        let limit = <?= $limit ?>;
+        let totalPages = <?= $totalPages ?>;
+
+        function confirmarCancelacion(id) {
+            document.getElementById('cancelar-id').value = id;
+            const modal = new bootstrap.Modal(document.getElementById('modalCancelarReserva'));
+            modal.show();
         }
+
+        function cargarReservas(page = 1) {
+            currentPage = page;
+            const search = $('#busqueda-reserva').val();
+            const estado = $('#filtro-estado').val();
+
+            $.get('reservas_ajax.php', {
+                page,
+                limit,
+                search,
+                estado
+            }, function(data) {
+                $('#tabla-reservas').html(data.html);
+                $('#start-record').text(data.start);
+                $('#end-record').text(data.end);
+                $('#total-records').text(data.total);
+                totalPages = data.pages;
+                renderPagination();
+            }, 'json');
+        }
+
+        function renderPagination() {
+            let html = '';
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="cargarReservas(${i}); return false;">${i}</a>
+                     </li>`;
+            }
+            $('#pagination').html(html);
+        }
+
         $(document).ready(function() {
-            cargarReservas('');
-            $('#busqueda-reserva').on('input', function() {
-                cargarReservas($(this).val());
+            cargarReservas();
+            $('#busqueda-reserva, #filtro-estado').on('input change', function() {
+                cargarReservas(1);
             });
         });
+
+        function cargarDetalleReserva(id) {
+            $('#detalleContenido').html('Cargando...');
+            $.get('detalle_reserva.php', {
+                id: id
+            }, function(html) {
+                $('#detalleContenido').html(html);
+            });
+        }
+
+        function renderPagination() {
+            let html = '';
+
+            // Botón "Primera página"
+            if (currentPage > 1) {
+                html += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="cargarReservas(1); return false;">&laquo;</a>
+                 </li>`;
+            } else {
+                html += `<li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                 </li>`;
+            }
+
+            // Botón "Anterior"
+            if (currentPage > 1) {
+                html += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="cargarReservas(${currentPage - 1}); return false;">&lsaquo;</a>
+                 </li>`;
+            } else {
+                html += `<li class="page-item disabled">
+                    <span class="page-link">&lsaquo;</span>
+                 </li>`;
+            }
+
+            // Números
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="cargarReservas(${i}); return false;">${i}</a>
+                 </li>`;
+            }
+
+            // Botón "Siguiente"
+            if (currentPage < totalPages) {
+                html += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="cargarReservas(${currentPage + 1}); return false;">&rsaquo;</a>
+                 </li>`;
+            } else {
+                html += `<li class="page-item disabled">
+                    <span class="page-link">&rsaquo;</span>
+                 </li>`;
+            }
+
+            // Botón "Última página"
+            if (currentPage < totalPages) {
+                html += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="cargarReservas(${totalPages}); return false;">&raquo;</a>
+                 </li>`;
+            } else {
+                html += `<li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                 </li>`;
+            }
+
+            $('#pagination').html(html);
+        }
     </script>
+
+    <!-- Modal Detalle Reserva -->
+    <div class="modal fade" id="detalleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalle de la Reserva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detalleContenido">
+                    Cargando...
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </body>
 
 </html>
-
-<?php $conn->close(); ?>
