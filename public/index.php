@@ -87,54 +87,106 @@ if (!isset($_SESSION['usuario_id'])) {
 
 <!-- Promociones -->
 <section class="container my-5">
-  <h2 class="text-center mb-4" style="color:#741d41;">Promociones Exclusivas</h2>
-  <?php
-    $hoy = date('Y-m-d');
-    $sql_promos = "SELECT * FROM promociones 
-                   WHERE activo = 1 
-                   AND fecha_inicio <= '$hoy' 
-                   AND fecha_fin >= '$hoy'
-                   ORDER BY fecha_inicio DESC";
-    $res_promos = $conexion->query($sql_promos);
-    $promos = [];
-    while ($row = $res_promos->fetch_assoc()) {
-      $promos[] = $row;
-    }
-  ?>
-  <?php if (count($promos) > 0): ?>
-    <div class="swiper promoSwiper">
-      <div class="swiper-wrapper text-center">
-        <?php foreach ($promos as $promo): ?>
-          <div class="swiper-slide d-flex justify-content-center">
-            <div class="card shadow-sm text-center" style="width:350px;background:linear-gradient(90deg,#f8e1e7 60%,#e0f7fa 100%);border:2px solid #b84e6f; height: 200px;">
-              <div class="card-body d-flex flex-column justify-content-between">
-                <h4 class="card-title mb-2" style="color:#b84e6f;">
-                  <i class="bi bi-stars"></i> <?= htmlspecialchars($promo['nombre']) ?>
-                </h4>
-                <p class="card-text mb-2"><?= htmlspecialchars($promo['descripcion']) ?></p>
-                <div class="mb-2">
-                  <span class="badge bg-success fs-5">
-                    <?= intval($promo['descuento_porcentaje']) ?>% OFF
-                  </span>
-                </div>
-                <small class="text-muted">
-                  Válido del <?= date('d/m/Y', strtotime($promo['fecha_inicio'])) ?>
-                  al <?= date('d/m/Y', strtotime($promo['fecha_fin'])) ?>
-                </small>
-              </div>
-            </div>
-          </div>
-        <?php endforeach; ?>
-      </div>
-      <!-- Swiper Pagination & Navigation -->
-      <div class="swiper-pagination mt-3"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
-  <?php else: ?>
-    <div class="alert alert-info text-center">No hay promociones activas en este momento.</div>
-  <?php endif; ?>
+  <h2 class="text-center mb-4" style="color:#741d41;">🧳 ¿Qué tipo de viajero sos?</h2>
+  <div id="quiz-container" class="card shadow-sm p-4" style="border: 1px solid #b84e6f;">
+    <div id="question-step"></div>
+    <button id="next-button" class="btn mt-4 w-100" style="background: linear-gradient(90deg,#741d41 60%,#b84e6f 100%); border:none; color:white;" disabled>Siguiente</button>
+  </div>
+  <div id="result" class="card shadow-sm p-4 mt-4 text-center" style="border: 1px solid #b84e6f; display: none;">
+    <h4 style="color:#741d41;">✨ Tu tipo de viajero es:</h4>
+    <p id="recommendation" class="lead my-3" style="color:#333;"></p>
+    <a href="paquetes.php" class="btn" style="background: linear-gradient(90deg,#741d41 60%,#b84e6f 100%); border:none; color:white;">Ver paquetes recomendados</a>
+  </div>
 </section>
+
+<script>
+const questions = [
+  {
+    question: "✈️ ¿Qué buscás en tus vacaciones?",
+    options: ["Relajación total", "Aventura extrema", "Cultura y ciudad"]
+  },
+  {
+    question: "👥 ¿Con quién viajás?",
+    options: ["En pareja", "Con amigos", "Solo/a"]
+  },
+  {
+    question: "🌎 ¿Qué destino te atrae más?",
+    options: ["🏖️ Playa", "⛰️ Montañas", "🏙️ Museos y ciudades"]
+  }
+];
+
+let currentStep = 0;
+const answers = [];
+
+const stepContainer = document.getElementById("question-step");
+const nextButton = document.getElementById("next-button");
+const resultBox = document.getElementById("result");
+const recommendationText = document.getElementById("recommendation");
+
+function showStep() {
+  const q = questions[currentStep];
+  let html = `<h5 class="mb-3" style="color:#741d41;">${q.question}</h5>`;
+  q.options.forEach((option, index) => {
+    html += `
+      <div class="form-check text-start">
+        <input class="form-check-input" type="radio" name="option" id="opt${index}" value="${option}">
+        <label class="form-check-label" for="opt${index}">${option}</label>
+      </div>
+    `;
+  });
+  stepContainer.innerHTML = html;
+  nextButton.disabled = true;
+}
+
+stepContainer.addEventListener("change", () => {
+  nextButton.disabled = false;
+});
+
+nextButton.addEventListener("click", () => {
+  const selected = document.querySelector('input[name="option"]:checked');
+  if (selected) {
+    answers.push(selected.value);
+    currentStep++;
+    if (currentStep < questions.length) {
+      showStep();
+    } else {
+      showResult();
+    }
+  }
+});
+function showResult() {
+  document.getElementById("quiz-container").style.display = "none";
+  resultBox.style.display = "block";
+
+  const counts = { Playa: 0, Aventura: 0, Cultural: 0 };
+  answers.forEach(a => {
+    if (a.includes("Playa") || a === "Relajación total" || a === "En pareja") counts.Playa++;
+    if (a.includes("Montañas") || a === "Aventura extrema" || a === "Con amigos") counts.Aventura++;
+    if (a.includes("Museos") || a === "Cultura y ciudad" || a === "Solo/a") counts.Cultural++;
+  });
+
+  const max = Math.max(counts.Playa, counts.Aventura, counts.Cultural);
+  let tipo = "";
+
+  if (counts.Playa === max) tipo = "Playa";
+  else if (counts.Aventura === max) tipo = "Aventura";
+  else tipo = "Cultural";
+
+  // Buscar paquete recomendado en base a tipo
+  fetch("paquete_recomendado.php?tipo=" + encodeURIComponent(tipo))
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.id_paquete) {
+        recommendationText.innerHTML = `🔗 Encontramos un paquete ideal para vos: <strong>${data.nombre}</strong>`;
+        recommendationText.innerHTML += `<br><a href="paquetes_info.php?id=${data.id_paquete}" class="btn btn-success mt-3">Ver paquete</a>`;
+      } else {
+        recommendationText.innerHTML = "😞 No tenemos paquetes acorde a tu tipo de viajero en este momento.";
+      }
+    });
+}
+
+showStep();
+</script>
 
 <!-- Preguntas Frecuentes (FAQ) -->
 <section class="container my-5">
