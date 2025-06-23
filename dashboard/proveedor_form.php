@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->query("INSERT INTO alojamientos (id_proveedor, id_destino, nombre, precio_por_dia, categoria) VALUES ($id_nuevo, $id_destino, '$nombre', $precio_por_dia, '$categoria')");
             break;
         case 'vuelo':
-            $id_vuelo = isset($_POST['id_vuelo']) ? $conn->real_escape_string($_POST['id_vuelo']) : '';
             $codigo_vuelo = isset($_POST['codigo_vuelo']) ? $conn->real_escape_string($_POST['codigo_vuelo']) : '';
             $aerolinea = isset($_POST['aerolinea_vuelo']) ? $conn->real_escape_string($_POST['aerolinea_vuelo']) : '';
             $origen = isset($_POST['origen_vuelo']) ? $conn->real_escape_string($_POST['origen_vuelo']) : '';
@@ -46,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->query("INSERT INTO vuelos (id_proveedor, id_destino, id_vuelo, codigo_vuelo, aerolinea, origen, destino, id_destino, fecha_salida, fecha_llegada, precio_base) VALUES ($id_nuevo, $id_destino, '$id_vuelo', '$codigo_vuelo', '$aerolinea', '$origen', '$destino_vuelo', $id_destino_vuelo, '$fecha_salida', '$fecha_llegada', $precio_base)");
             break;
         case 'auto':
-            $id_alquiler = isset($_POST['id_alquiler']) ? $conn->real_escape_string($_POST['id_alquiler']) : '';
             $proveedor_auto = isset($_POST['proveedor_auto']) ? $conn->real_escape_string($_POST['proveedor_auto']) : '';
             $tipo_vehiculo = isset($_POST['tipo_vehiculo']) ? $conn->real_escape_string($_POST['tipo_vehiculo']) : '';
             $ubicacion_retiro = isset($_POST['ubicacion_retiro']) ? $conn->real_escape_string($_POST['ubicacion_retiro']) : '';
@@ -58,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->query("INSERT INTO alquiler_autos (id_proveedor, id_destino, id_alquiler, proveedor, tipo_vehiculo, ubicacion_retiro, id_destino, ubicacion_entrega, precio_por_dia, condiciones, id_proveedor) VALUES ($id_nuevo, $id_destino, '$id_alquiler', '$proveedor_auto', '$tipo_vehiculo', '$ubicacion_retiro', $id_destino_auto, '$ubicacion_entrega', $precio_por_dia_auto, '$condiciones', $id_proveedor_auto)");
             break;
         case 'servicio':
-            $id_servicio = isset($_POST['id_servicio']) ? $conn->real_escape_string($_POST['id_servicio']) : '';
             $nombre_servicio = isset($_POST['nombre_servicio']) ? $conn->real_escape_string($_POST['nombre_servicio']) : '';
             $id_destino_servicio = isset($_POST['id_destino_servicio']) ? intval($_POST['id_destino_servicio']) : 0;
             $ciudad_servicio = isset($_POST['ciudad_servicio']) ? $conn->real_escape_string($_POST['ciudad_servicio']) : '';
@@ -209,10 +206,6 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                 <!-- Additional fields for vuelo -->
                 <div id="fields-vuelo" style="display:none;">
                     <div class="mb-3">
-                        <label class="form-label">ID Vuelo</label>
-                        <input type="text" name="id_vuelo" class="form-control" maxlength="50">
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Código Vuelo</label>
                         <input type="text" name="codigo_vuelo" class="form-control" maxlength="50">
                     </div>
@@ -249,10 +242,6 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                 <!-- Additional fields for auto -->
                 <div id="fields-auto" style="display:none;">
                     <div class="mb-3">
-                        <label class="form-label">ID Alquiler</label>
-                        <input type="text" name="id_alquiler" class="form-control" maxlength="50">
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Proveedor</label>
                         <input type="text" name="proveedor_auto" class="form-control" maxlength="100">
                     </div>
@@ -288,10 +277,6 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
 
                 <!-- Additional fields for servicio -->
                 <div id="fields-servicio" style="display:none;">
-                    <div class="mb-3">
-                        <label class="form-label">ID Servicio</label>
-                        <input type="text" name="id_servicio" class="form-control" maxlength="50">
-                    </div>
                     <div class="mb-3">
                         <label class="form-label">Nombre</label>
                         <input type="text" name="nombre_servicio" class="form-control" maxlength="100">
