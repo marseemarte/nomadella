@@ -1,6 +1,7 @@
 <?php
 include 'conexion.php';
 include 'verificar_admin.php';
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 $totalIngresosConfirmados = $pdo->query("SELECT COALESCE(SUM(total), 0) AS total FROM ordenes WHERE LOWER(estado) = 'confirmada'")->fetch()['total'];
 
 // KPIs
@@ -108,7 +109,7 @@ $comentarios = $pdo->query("
       </div>
     </div>
 
-    <div class="row g-4 mt-4">
+    <div class="row g-4 mt-4 mb-3">
       <div class="col-md-8">
         <div class="card shadow-sm">
           <div class="card-header">Gráfico de Ventas (Últimos 7 días)</div>
