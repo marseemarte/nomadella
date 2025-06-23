@@ -18,7 +18,16 @@ if (session_status() === PHP_SESSION_NONE) session_start();
   href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 />
   <link rel="stylesheet" href="../css/index.css">
-<base href="/nomadella/public/">
+<?php
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'];
+$script_name = dirname($_SERVER['SCRIPT_NAME']);
+
+// Ajustar según la ruta que necesitas:
+$base_url = $protocol . $host . $script_name . '/';
+?>
+
+<base href="<?= $base_url ?>">
 </head>
 <body>
   <header class="bg-gradient p-0">
