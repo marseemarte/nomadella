@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $conn->real_escape_string($_POST['email']);
     $direccion = $conn->real_escape_string($_POST['direccion']);
     $descripcion = $conn->real_escape_string($_POST['descripcion']);
+    $ciudad = isset($_POST['ciudad']) ? $conn->real_escape_string($_POST['ciudad']) : '';
     $id_destino = intval($_POST['id_destino']);
 
     $conn->query("INSERT INTO proveedores (nombre, tipo, contacto, telefono, email, direccion, descripcion, id_destino) 
@@ -28,16 +29,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Insert into specific tables based on tipo
     switch ($tipo) {
         case 'alojamiento':
-            $conn->query("INSERT INTO alojamientos (id_proveedor, id_destino, nombre) VALUES ($id_nuevo, $id_destino, '$nombre')");
+            $precio_por_dia = isset($_POST['precio_por_dia_alojamiento']) ? floatval($_POST['precio_por_dia_alojamiento']) : 0;
+            $categoria = isset($_POST['categoria_alojamiento']) ? $conn->real_escape_string($_POST['categoria_alojamiento']) : '';
+            $conn->query("INSERT INTO alojamientos (id_proveedor, id_destino, nombre, precio_por_dia, categoria) VALUES ($id_nuevo, $id_destino, '$nombre', $precio_por_dia, '$categoria')");
             break;
         case 'vuelo':
-            $conn->query("INSERT INTO vuelos (id_proveedor, id_destino, aerolinea) VALUES ($id_nuevo, $id_destino, '$nombre')");
+            $codigo_vuelo = isset($_POST['codigo_vuelo']) ? $conn->real_escape_string($_POST['codigo_vuelo']) : '';
+            $aerolinea = isset($_POST['aerolinea_vuelo']) ? $conn->real_escape_string($_POST['aerolinea_vuelo']) : '';
+            $origen = isset($_POST['origen_vuelo']) ? $conn->real_escape_string($_POST['origen_vuelo']) : '';
+            $destino_vuelo = isset($_POST['destino_vuelo']) ? $conn->real_escape_string($_POST['destino_vuelo']) : '';
+            $id_destino_vuelo = isset($_POST['id_destino_vuelo']) ? intval($_POST['id_destino_vuelo']) : 0;
+            $fecha_salida = isset($_POST['fecha_salida']) ? $conn->real_escape_string($_POST['fecha_salida']) : '';
+            $fecha_llegada = isset($_POST['fecha_llegada']) ? $conn->real_escape_string($_POST['fecha_llegada']) : '';
+            $precio_base = isset($_POST['precio_base']) ? floatval($_POST['precio_base']) : 0;
+            $conn->query("INSERT INTO vuelos (id_proveedor, id_destino, id_vuelo, codigo_vuelo, aerolinea, origen, destino, id_destino, fecha_salida, fecha_llegada, precio_base) VALUES ($id_nuevo, $id_destino, '$id_vuelo', '$codigo_vuelo', '$aerolinea', '$origen', '$destino_vuelo', $id_destino_vuelo, '$fecha_salida', '$fecha_llegada', $precio_base)");
             break;
         case 'auto':
-            $conn->query("INSERT INTO alquiler_autos (id_proveedor, id_destino, proveedor) VALUES ($id_nuevo, $id_destino, '$nombre')");
+            $proveedor_auto = isset($_POST['proveedor_auto']) ? $conn->real_escape_string($_POST['proveedor_auto']) : '';
+            $tipo_vehiculo = isset($_POST['tipo_vehiculo']) ? $conn->real_escape_string($_POST['tipo_vehiculo']) : '';
+            $ubicacion_retiro = isset($_POST['ubicacion_retiro']) ? $conn->real_escape_string($_POST['ubicacion_retiro']) : '';
+            $id_destino_auto = isset($_POST['id_destino_auto']) ? intval($_POST['id_destino_auto']) : 0;
+            $ubicacion_entrega = isset($_POST['ubicacion_entrega']) ? $conn->real_escape_string($_POST['ubicacion_entrega']) : '';
+            $precio_por_dia_auto = isset($_POST['precio_por_dia_auto']) ? floatval($_POST['precio_por_dia_auto']) : 0;
+            $condiciones = isset($_POST['condiciones']) ? $conn->real_escape_string($_POST['condiciones']) : '';
+            $id_proveedor_auto = isset($_POST['id_proveedor_auto']) ? intval($_POST['id_proveedor_auto']) : 0;
+            $conn->query("INSERT INTO alquiler_autos (id_proveedor, id_destino, id_alquiler, proveedor, tipo_vehiculo, ubicacion_retiro, id_destino, ubicacion_entrega, precio_por_dia, condiciones, id_proveedor) VALUES ($id_nuevo, $id_destino, '$id_alquiler', '$proveedor_auto', '$tipo_vehiculo', '$ubicacion_retiro', $id_destino_auto, '$ubicacion_entrega', $precio_por_dia_auto, '$condiciones', $id_proveedor_auto)");
             break;
         case 'servicio':
-            $conn->query("INSERT INTO servicios_adicionales (id_proveedor, id_destino, nombre) VALUES ($id_nuevo, $id_destino, '$nombre')");
+            $nombre_servicio = isset($_POST['nombre_servicio']) ? $conn->real_escape_string($_POST['nombre_servicio']) : '';
+            $id_destino_servicio = isset($_POST['id_destino_servicio']) ? intval($_POST['id_destino_servicio']) : 0;
+            $ciudad_servicio = isset($_POST['ciudad_servicio']) ? $conn->real_escape_string($_POST['ciudad_servicio']) : '';
+            $descripcion_servicio = isset($_POST['descripcion_servicio']) ? $conn->real_escape_string($_POST['descripcion_servicio']) : '';
+            $tipo_servicio = isset($_POST['tipo_servicio']) ? $conn->real_escape_string($_POST['tipo_servicio']) : '';
+            $precio_servicio = isset($_POST['precio_servicio']) ? floatval($_POST['precio_servicio']) : 0;
+            $id_proveedor_servicio = isset($_POST['id_proveedor_servicio']) ? intval($_POST['id_proveedor_servicio']) : 0;
+            $conn->query("INSERT INTO servicios_adicionales (id_proveedor, id_destino, id_servicio, nombre, id_destino, ciudad, descripcion, tipo, precio, id_proveedor) VALUES ($id_nuevo, $id_destino, '$id_servicio', '$nombre_servicio', $id_destino_servicio, '$ciudad_servicio', '$descripcion_servicio', '$tipo_servicio', $precio_servicio, $id_proveedor_servicio)");
             break;
     }
 
@@ -152,7 +178,7 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Tipo</label>
-                    <select name="tipo" class="form-select" required>
+                    <select name="tipo" id="tipo-select" class="form-select" required>
                         <option value="">Seleccione tipo</option>
                         <option value="alojamiento" <?= $tipo=='alojamiento'?'selected':'' ?>>Alojamiento</option>
                         <option value="vuelo" <?= $tipo=='vuelo'?'selected':'' ?>>Vuelo</option>
@@ -163,6 +189,122 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                 <div class="mb-3">
                     <label class="form-label">Contacto (Nombre del encargado, empresa, etc)</label>
                     <input type="text" name="contacto" class="form-control" maxlength="100">
+                </div>
+
+                <!-- Additional fields for alojamiento -->
+                <div id="fields-alojamiento" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Precio por día</label>
+                        <input type="number" step="0.01" name="precio_por_dia_alojamiento" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Categoría</label>
+                        <input type="text" name="categoria_alojamiento" class="form-control" maxlength="100">
+                    </div>
+                </div>
+
+                <!-- Additional fields for vuelo -->
+                <div id="fields-vuelo" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Código Vuelo</label>
+                        <input type="text" name="codigo_vuelo" class="form-control" maxlength="50">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Aerolínea</label>
+                        <input type="text" name="aerolinea_vuelo" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Origen</label>
+                        <input type="text" name="origen_vuelo" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Destino</label>
+                        <input type="text" name="destino_vuelo" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ID Destino</label>
+                        <input type="number" name="id_destino_vuelo" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha Salida</label>
+                        <input type="datetime-local" name="fecha_salida" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha Llegada</label>
+                        <input type="datetime-local" name="fecha_llegada" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Precio Base</label>
+                        <input type="number" step="0.01" name="precio_base" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Additional fields for auto -->
+                <div id="fields-auto" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Proveedor</label>
+                        <input type="text" name="proveedor_auto" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo Vehículo</label>
+                        <input type="text" name="tipo_vehiculo" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ubicación Retiro</label>
+                        <input type="text" name="ubicacion_retiro" class="form-control" maxlength="150">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ID Destino</label>
+                        <input type="number" name="id_destino_auto" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ubicación Entrega</label>
+                        <input type="text" name="ubicacion_entrega" class="form-control" maxlength="150">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Precio por día</label>
+                        <input type="number" step="0.01" name="precio_por_dia_auto" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Condiciones</label>
+                        <textarea name="condiciones" class="form-control" rows="3" maxlength="255"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ID Proveedor</label>
+                        <input type="number" name="id_proveedor_auto" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Additional fields for servicio -->
+                <div id="fields-servicio" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" name="nombre_servicio" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ID Destino</label>
+                        <input type="number" name="id_destino_servicio" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ciudad</label>
+                        <input type="text" name="ciudad_servicio" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea name="descripcion_servicio" class="form-control" rows="3" maxlength="255"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo</label>
+                        <input type="text" name="tipo_servicio" class="form-control" maxlength="50">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Precio</label>
+                        <input type="number" step="0.01" name="precio_servicio" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ID Proveedor</label>
+                        <input type="number" name="id_proveedor_servicio" class="form-control">
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Teléfono</label>
@@ -250,6 +392,20 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
         }
     }, 'json');
     <?php endif; ?>
+    </script>
+    <script>
+    $(document).ready(function() {
+        $('#tipo-select').change(function() {
+            var tipo = $(this).val();
+            // Hide all dynamic fields containers
+            $('#fields-alojamiento, #fields-vuelo, #fields-auto, #fields-servicio').hide();
+            if (tipo) {
+                $('#fields-' + tipo).show();
+            }
+        });
+        // Trigger change on page load to show fields if tipo is preselected
+        $('#tipo-select').trigger('change');
+    });
     </script>
 </body>
 </html>
