@@ -2,6 +2,16 @@
 session_start();
 require '../conexion.php';
 require __DIR__ . '/../../vendor/autoload.php';
+function loadEnv($path) {
+    if (!file_exists($path)) return;
+    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0 || !str_contains($line, '=')) continue;
+        list($key, $value) = explode('=', $line, 2);
+        putenv(trim($key) . '=' . trim($value));
+    }
+}
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -123,29 +133,29 @@ if ($email_cliente) {
             <p style="font-size:1.1em;"><b>Total:</b> $' . $total . ' USD</p>
             <p style="color:#741d41;">¡Esperamos que disfrutes tu experiencia!</p>
         </div>';
-
+    loadEnv(__DIR__ . '/../../config.env');
     $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'nomadellaturismo@gmail.com'; // TU CORREO
-        $mail->Password = 'tucontraseña_deapp'; // ← Reemplaza esto con la contraseña generada en Gmail
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
+try {
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = getenv('GMAIL_USERNAME');
+    $mail->Password = getenv('GMAIL_APP_PASSWORD');
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 587;
 
-        $mail->setFrom('nomadellaturismo@gmail.com', 'Nomadella Turismo');
-        $mail->addAddress($email_cliente);
+    $mail->setFrom(getenv('GMAIL_USERNAME'), 'Nomadella Turismo');
+    $mail->addAddress($email_cliente);
 
-        $mail->isHTML(true);
-        $mail->CharSet = 'UTF-8';
-        $mail->Subject = $asunto;
-        $mail->Body    = $mensajeHtml;
+    $mail->isHTML(true);
+    $mail->CharSet = 'UTF-8';
+    $mail->Subject = $asunto;
+    $mail->Body    = $mensajeHtml;
 
-        $mail->send();
-    } catch (Exception $e) {
-        error_log("Error al enviar correo: {$mail->ErrorInfo}");
-    }
+    $mail->send();
+} catch (Exception $e) {
+    error_log("Error al enviar correo: {$mail->ErrorInfo}");
+}
 }
 
 $response = [

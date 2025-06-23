@@ -34,3 +34,5 @@ tests/
 dompdf_cache/
 
 nomadella.sql
+
+config.env
