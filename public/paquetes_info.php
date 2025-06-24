@@ -53,9 +53,13 @@ $comentarios = $conexion->query("SELECT c.*, u.nombre FROM comentarios_paquetes 
     }
     .badge {
         font-size: 0.9rem;
+        white-space: normal;
+        margin-bottom: 0.3rem;
+        display: inline-block;
     }
     h1 {
         font-weight: 700;
+        font-size: 2.5rem;
     }
     h4 {
         font-size: 1.8rem;
@@ -64,11 +68,35 @@ $comentarios = $conexion->query("SELECT c.*, u.nombre FROM comentarios_paquetes 
         font-size: 1.1rem;
         margin-bottom: 0.5rem;
     }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .detalle-main {
+            padding: 15px;
+        }
+        h1 {
+            font-size: 1.8rem;
+        }
+        h4 {
+            font-size: 1.4rem;
+        }
+        .detalle-main p {
+            font-size: 1rem;
+        }
+        #cantidad {
+            width: 60% !important;
+            max-width: 100% !important;
+        }
+        .btn {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
 </style>
 
 <main class="detalle-main container my-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
+        <div class="col-lg-8 col-md-10 col-sm-12 text-center">
             <h2 class="mb-4 text-dark">Detalles del Paquete Turístico</h2>
             <h1 class="text-primary"><?= htmlspecialchars($paquete['nombre']) ?></h1>
 
@@ -89,7 +117,7 @@ $comentarios = $conexion->query("SELECT c.*, u.nombre FROM comentarios_paquetes 
 
             <?php if(isset($_SESSION['usuario_id'])): ?>
                 <div class="d-flex justify-content-center align-items-center gap-2 mt-3">
-                    <input type="number" id="cantidad" value="1" min="1" max="<?= $paquete['cupo_disponible'] ?>" class="form-control w-25 text-center">
+                    <input type="number" id="cantidad" value="1" min="1" max="<?= $paquete['cupo_disponible'] ?>" class="form-control text-center" style="max-width: 80px;">
                     <button class="btn btn-primary" onclick="agregarAlCarrito(<?= $paquete['id_paquete'] ?>)">
                         <i class="bi bi-cart-plus"></i> Agregar al carrito
                     </button>
@@ -276,12 +304,7 @@ function agregarAlCarrito(id_paquete) {
     })
     .then(res => res.text())
     .then(txt => {
-        if(txt === 'ok') {
-            alert('Agregado al carrito');
-            actualizarBadgeCarrito();
-        } else {
-            alert('Error: ' + txt);
-        }
+        
     });
 }
 </script>

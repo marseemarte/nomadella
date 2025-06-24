@@ -31,39 +31,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'alojamiento':
             $precio_por_dia = isset($_POST['precio_por_dia_alojamiento']) ? floatval($_POST['precio_por_dia_alojamiento']) : 0;
             $categoria = isset($_POST['categoria_alojamiento']) ? $conn->real_escape_string($_POST['categoria_alojamiento']) : '';
-            $conn->query("INSERT INTO alojamientos (id_proveedor, id_destino, nombre, precio_por_dia, categoria) VALUES ($id_nuevo, $id_destino, '$nombre', $precio_por_dia, '$categoria')");
+            $conn->query("INSERT INTO alojamientos (id_proveedor, id_destino, nombre, precio_dia, categoria) VALUES ($id_nuevo, $id_destino, '$nombre', $precio_por_dia, '$categoria')");
             break;
         case 'vuelo':
             $codigo_vuelo = isset($_POST['codigo_vuelo']) ? $conn->real_escape_string($_POST['codigo_vuelo']) : '';
             $aerolinea = isset($_POST['aerolinea_vuelo']) ? $conn->real_escape_string($_POST['aerolinea_vuelo']) : '';
             $origen = isset($_POST['origen_vuelo']) ? $conn->real_escape_string($_POST['origen_vuelo']) : '';
             $destino_vuelo = isset($_POST['destino_vuelo']) ? $conn->real_escape_string($_POST['destino_vuelo']) : '';
-            $id_destino_vuelo = isset($_POST['id_destino_vuelo']) ? intval($_POST['id_destino_vuelo']) : 0;
             $fecha_salida = isset($_POST['fecha_salida']) ? $conn->real_escape_string($_POST['fecha_salida']) : '';
             $fecha_llegada = isset($_POST['fecha_llegada']) ? $conn->real_escape_string($_POST['fecha_llegada']) : '';
             $precio_base = isset($_POST['precio_base']) ? floatval($_POST['precio_base']) : 0;
-            $conn->query("INSERT INTO vuelos (id_proveedor, id_destino, id_vuelo, codigo_vuelo, aerolinea, origen, destino, id_destino, fecha_salida, fecha_llegada, precio_base) VALUES ($id_nuevo, $id_destino, '$id_vuelo', '$codigo_vuelo', '$aerolinea', '$origen', '$destino_vuelo', $id_destino_vuelo, '$fecha_salida', '$fecha_llegada', $precio_base)");
+            $conn->query("INSERT INTO vuelos ( codigo_vuelo, aerolinea, origen, destino, fecha_salida, fecha_llegada, precio_base) VALUES ( '$codigo_vuelo', '$aerolinea', '$origen', '$destino_vuelo', '$fecha_salida', '$fecha_llegada', $precio_base)");
             break;
         case 'auto':
             $proveedor_auto = isset($_POST['proveedor_auto']) ? $conn->real_escape_string($_POST['proveedor_auto']) : '';
             $tipo_vehiculo = isset($_POST['tipo_vehiculo']) ? $conn->real_escape_string($_POST['tipo_vehiculo']) : '';
             $ubicacion_retiro = isset($_POST['ubicacion_retiro']) ? $conn->real_escape_string($_POST['ubicacion_retiro']) : '';
-            $id_destino_auto = isset($_POST['id_destino_auto']) ? intval($_POST['id_destino_auto']) : 0;
             $ubicacion_entrega = isset($_POST['ubicacion_entrega']) ? $conn->real_escape_string($_POST['ubicacion_entrega']) : '';
             $precio_por_dia_auto = isset($_POST['precio_por_dia_auto']) ? floatval($_POST['precio_por_dia_auto']) : 0;
+            $id_destino = isset($_POST['id_destino']) ? intval($_POST['id_destino']) : 0;
             $condiciones = isset($_POST['condiciones']) ? $conn->real_escape_string($_POST['condiciones']) : '';
-            $id_proveedor_auto = isset($_POST['id_proveedor_auto']) ? intval($_POST['id_proveedor_auto']) : 0;
-            $conn->query("INSERT INTO alquiler_autos (id_proveedor, id_destino, id_alquiler, proveedor, tipo_vehiculo, ubicacion_retiro, id_destino, ubicacion_entrega, precio_por_dia, condiciones, id_proveedor) VALUES ($id_nuevo, $id_destino, '$id_alquiler', '$proveedor_auto', '$tipo_vehiculo', '$ubicacion_retiro', $id_destino_auto, '$ubicacion_entrega', $precio_por_dia_auto, '$condiciones', $id_proveedor_auto)");
+
+            $conn->query("INSERT INTO alquiler_autos (proveedor, tipo_vehiculo, id_destino, ubicacion_retiro, ubicacion_entrega, precio_por_dia, condiciones) VALUES ('$proveedor_auto', '$tipo_vehiculo', '$id_destino', '$ubicacion_retiro', '$ubicacion_entrega', $precio_por_dia_auto, '$condiciones')");
             break;
         case 'servicio':
             $nombre_servicio = isset($_POST['nombre_servicio']) ? $conn->real_escape_string($_POST['nombre_servicio']) : '';
-            $id_destino_servicio = isset($_POST['id_destino_servicio']) ? intval($_POST['id_destino_servicio']) : 0;
             $ciudad_servicio = isset($_POST['ciudad_servicio']) ? $conn->real_escape_string($_POST['ciudad_servicio']) : '';
             $descripcion_servicio = isset($_POST['descripcion_servicio']) ? $conn->real_escape_string($_POST['descripcion_servicio']) : '';
             $tipo_servicio = isset($_POST['tipo_servicio']) ? $conn->real_escape_string($_POST['tipo_servicio']) : '';
             $precio_servicio = isset($_POST['precio_servicio']) ? floatval($_POST['precio_servicio']) : 0;
-            $id_proveedor_servicio = isset($_POST['id_proveedor_servicio']) ? intval($_POST['id_proveedor_servicio']) : 0;
-            $conn->query("INSERT INTO servicios_adicionales (id_proveedor, id_destino, id_servicio, nombre, id_destino, ciudad, descripcion, tipo, precio, id_proveedor) VALUES ($id_nuevo, $id_destino, '$id_servicio', '$nombre_servicio', $id_destino_servicio, '$ciudad_servicio', '$descripcion_servicio', '$tipo_servicio', $precio_servicio, $id_proveedor_servicio)");
+            $conn->query("INSERT INTO servicios_adicionales (nombre, ciudad, descripcion, tipo, precio) VALUES ( '$nombre_servicio',  '$ciudad_servicio', '$descripcion_servicio', '$tipo_servicio', $precio_servicio)");
             break;
     }
 
@@ -84,12 +81,14 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Nuevo Proveedor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/nomadella/css/apartados.css">
+    <link rel="stylesheet" href="<?= BASE_URL . 'css/apartados.css' ?>">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .main-content {
@@ -98,6 +97,7 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
             min-height: 100vh;
             background: #FFF6F8;
         }
+
         .card-proveedor {
             background: #fff;
             border: 1px solid #6CE0B6;
@@ -109,6 +109,7 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
             position: relative;
             overflow: hidden;
         }
+
         .card-proveedor:before {
             content: "";
             position: absolute;
@@ -120,10 +121,12 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
             opacity: 0.18;
             z-index: 0;
         }
+
         .form-label {
             color: #750D37;
             font-weight: 500;
         }
+
         .btn-success {
             background: #3AB789 !important;
             border: none;
@@ -131,12 +134,14 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
             color: #fff !important;
             letter-spacing: 1px;
         }
+
         .btn-secondary {
             background: #5CC7ED !important;
             border: none;
             color: #1A001C !important;
             font-weight: bold;
         }
+
         .icon-circle {
             width: 60px;
             height: 60px;
@@ -150,12 +155,14 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
             color: #fff;
             box-shadow: 0 2px 8px #6CE0B633;
         }
+
         .breadcrumb-item a {
             color: #750D37;
             text-decoration: none;
         }
     </style>
 </head>
+
 <body>
     <?php include 'sidebar.php'; ?>
     <div class="main-content">
@@ -180,10 +187,10 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                     <label class="form-label">Tipo</label>
                     <select name="tipo" id="tipo-select" class="form-select" required>
                         <option value="">Seleccione tipo</option>
-                        <option value="alojamiento" <?= $tipo=='alojamiento'?'selected':'' ?>>Alojamiento</option>
-                        <option value="vuelo" <?= $tipo=='vuelo'?'selected':'' ?>>Vuelo</option>
-                        <option value="auto" <?= $tipo=='auto'?'selected':'' ?>>Auto</option>
-                        <option value="servicio" <?= $tipo=='servicio'?'selected':'' ?>>Servicio</option>
+                        <option value="alojamiento" <?= $tipo == 'alojamiento' ? 'selected' : '' ?>>Alojamiento</option>
+                        <option value="vuelo" <?= $tipo == 'vuelo' ? 'selected' : '' ?>>Vuelo</option>
+                        <option value="auto" <?= $tipo == 'auto' ? 'selected' : '' ?>>Auto</option>
+                        <option value="servicio" <?= $tipo == 'servicio' ? 'selected' : '' ?>>Servicio</option>
                     </select>
                 </div>
                 <div class="mb-3">
@@ -222,10 +229,6 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                         <input type="text" name="destino_vuelo" class="form-control" maxlength="100">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">ID Destino</label>
-                        <input type="number" name="id_destino_vuelo" class="form-control">
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Fecha Salida</label>
                         <input type="datetime-local" name="fecha_salida" class="form-control">
                     </div>
@@ -254,10 +257,6 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                         <input type="text" name="ubicacion_retiro" class="form-control" maxlength="150">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">ID Destino</label>
-                        <input type="number" name="id_destino_auto" class="form-control">
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Ubicación Entrega</label>
                         <input type="text" name="ubicacion_entrega" class="form-control" maxlength="150">
                     </div>
@@ -269,41 +268,17 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
                         <label class="form-label">Condiciones</label>
                         <textarea name="condiciones" class="form-control" rows="3" maxlength="255"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">ID Proveedor</label>
-                        <input type="number" name="id_proveedor_auto" class="form-control">
-                    </div>
                 </div>
 
                 <!-- Additional fields for servicio -->
                 <div id="fields-servicio" style="display:none;">
                     <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" name="nombre_servicio" class="form-control" maxlength="100">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">ID Destino</label>
-                        <input type="number" name="id_destino_servicio" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Ciudad</label>
-                        <input type="text" name="ciudad_servicio" class="form-control" maxlength="100">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Descripción</label>
-                        <textarea name="descripcion_servicio" class="form-control" rows="3" maxlength="255"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tipo</label>
+                        <label class="form-label">Tipo de servicio (Spa, Tour, etc)</label>
                         <input type="text" name="tipo_servicio" class="form-control" maxlength="50">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Precio</label>
                         <input type="number" step="0.01" name="precio_servicio" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">ID Proveedor</label>
-                        <input type="number" name="id_proveedor_servicio" class="form-control">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -349,77 +324,89 @@ $id_paquete = isset($_GET['id_paquete']) ? intval($_GET['id_paquete']) : '';
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    $('#input-destino').select2({
-        placeholder: 'Buscar o agregar destino',
-        ajax: {
-            url: 'buscar_destinos.php',
-            dataType: 'json',
-            delay: 250,
-            data: params => ({ term: params.term }),
-            processResults: data => ({
-                results: data.map(d => ({ id: d.id_destino, text: d.destino }))
-            }),
-            cache: true
-        },
-        language: {
-            noResults: function(params) {
-                if (params.term && params.term.length > 0) {
-                    return `<button type="button" class="btn btn-link p-0" id="agregar-destino-btn">Agregar "${params.term}" como nuevo destino</button>`;
+        $('#input-destino').select2({
+            placeholder: 'Buscar o agregar destino',
+            ajax: {
+                url: 'buscar_destinos.php',
+                dataType: 'json',
+                delay: 250,
+                data: params => ({
+                    term: params.term
+                }),
+                processResults: data => ({
+                    results: data.map(d => ({
+                        id: d.id_destino,
+                        text: d.destino
+                    }))
+                }),
+                cache: true
+            },
+            language: {
+                noResults: function(params) {
+                    if (params.term && params.term.length > 0) {
+                        return `<button type="button" class="btn btn-link p-0" id="agregar-destino-btn">Agregar "${params.term}" como nuevo destino</button>`;
+                    }
+                    return "No se encontraron resultados";
                 }
-                return "No se encontraron resultados";
-            }
-        },
-        escapeMarkup: function (markup) { return markup; }
-    });
-
-    // Agregar destino desde el botón en el dropdown
-    $(document).on('click', '#agregar-destino-btn', function(e) {
-        let term = $('.select2-search__field').val();
-        $.post('agregar_destino.php', { destino: term }, function(data) {
-            let newOption = new Option(data.destino, data.id_destino, true, true);
-            $('#input-destino').append(newOption).trigger('change');
-            $('.select2-results__options').empty();
-        }, 'json');
-    });
-
-    // Precargar destino si viene por GET
-    <?php if ($id_destino): ?>
-    $.get('buscar_destinos.php', {term: ''}, function(data) {
-        let found = data.find(d => d.id_destino == <?= $id_destino ?>);
-        if (found) {
-            let newOption = new Option(found.destino, found.id_destino, true, true);
-            $('#input-destino').append(newOption).trigger('change');
-        }
-    }, 'json');
-    <?php endif; ?>
-    </script>
-    <script>
-    $(document).ready(function() {
-        $('#tipo-select').change(function() {
-            var tipo = $(this).val();
-            // Hide all dynamic fields containers
-            $('#fields-alojamiento, #fields-vuelo, #fields-auto, #fields-servicio').hide();
-            if (tipo) {
-                $('#fields-' + tipo).show();
+            },
+            escapeMarkup: function(markup) {
+                return markup;
             }
         });
-        // Trigger change on page load to show fields if tipo is preselected
-        $('#tipo-select').trigger('change');
-    });
+
+        // Agregar destino desde el botón en el dropdown
+        $(document).on('click', '#agregar-destino-btn', function(e) {
+            let term = $('.select2-search__field').val();
+            $.post('agregar_destino.php', {
+                destino: term
+            }, function(data) {
+                let newOption = new Option(data.destino, data.id_destino, true, true);
+                $('#input-destino').append(newOption).trigger('change');
+                $('.select2-results__options').empty();
+            }, 'json');
+        });
+
+        // Precargar destino si viene por GET
+        <?php if ($id_destino): ?>
+            $.get('buscar_destinos.php', {
+                term: ''
+            }, function(data) {
+                let found = data.find(d => d.id_destino == <?= $id_destino ?>);
+                if (found) {
+                    let newOption = new Option(found.destino, found.id_destino, true, true);
+                    $('#input-destino').append(newOption).trigger('change');
+                }
+            }, 'json');
+        <?php endif; ?>
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#tipo-select').change(function() {
+                var tipo = $(this).val();
+                // Hide all dynamic fields containers
+                $('#fields-alojamiento, #fields-vuelo, #fields-auto, #fields-servicio').hide();
+                if (tipo) {
+                    $('#fields-' + tipo).show();
+                }
+            });
+            // Trigger change on page load to show fields if tipo is preselected
+            $('#tipo-select').trigger('change');
+        });
     </script>
 </body>
+
 </html>
-<?php 
+<?php
 
 if (isset($_SESSION['id_usuario'])) {
     registrar_bitacora(
         $pdo,
         $_SESSION['id_usuario'],
         'Crear proveedor',
-        "Proveedor creado: $nombre (Tipo: $tipo, ID Destino: $id_destino)" . 
-        (!empty($id_paquete) ? " asociado al paquete ID: $id_paquete" : "")
+        "Proveedor creado: $nombre (Tipo: $tipo, ID Destino: $id_destino)" .
+            (!empty($id_paquete) ? " asociado al paquete ID: $id_paquete" : "")
     );
 }
 
-$conn->close(); 
+$conn->close();
 ?>

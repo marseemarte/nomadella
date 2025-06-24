@@ -30,6 +30,7 @@ $movimientos_query = "
     LIMIT 50
 ";
 $movimientos = $conn->query($movimientos_query);
+
 ?>
 
 <!DOCTYPE html>
@@ -37,9 +38,10 @@ $movimientos = $conn->query($movimientos_query);
 <head>
     <meta charset="UTF-8">
     <title>Finanzas | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/nomadella/css/apartados.css">
+    <link rel="stylesheet" href="<?= BASE_URL . 'css/apartados.css' ?>">
     <style>
         .main-content { margin-left: 260px; padding: 40px 30px 30px 30px; min-height: 100vh; background: #FFF6F8; }
         .card-kpi { background: #fff; border: 1px solid #6CE0B6; border-radius: 18px; box-shadow: 0 4px 24px 0 rgba(117, 13, 55, 0.08); padding: 24px 18px 18px 18px; }

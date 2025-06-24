@@ -28,4 +28,14 @@ function registrar_bitacora($pdo, $id_usuario, $accion, $descripcion) {
         echo "Error al registrar en bitácora: " . $e->getMessage();
     }
 }
+if (session_status() === PHP_SESSION_NONE) session_start();
+//ruta para trabajar en local y hostear
+if (!defined('BASE_URL')) {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+    $host = $_SERVER['HTTP_HOST'];
+
+    $subcarpeta = '/nomadella';
+
+    define('BASE_URL', $protocol . $host . $subcarpeta . '/');
+}
 ?>

@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 21-06-2025 a las 22:51:39
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Servidor: 127.0.0.1:3306
+-- Tiempo de generación: 23-06-2025 a las 10:07:40
+-- Versión del servidor: 9.1.0
+-- Versión de PHP: 8.3.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,19 +27,23 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `alojamientos`
 --
 
-CREATE TABLE `alojamientos` (
-  `id_alojamiento` int(11) NOT NULL,
-  `nombre` varchar(200) DEFAULT NULL,
-  `direccion` varchar(200) DEFAULT NULL,
-  `ciudad` varchar(100) DEFAULT NULL,
-  `categoria` varchar(50) DEFAULT NULL,
-  `descripcion` text DEFAULT NULL,
-  `telefono` varchar(50) DEFAULT NULL,
-  `precio_dia` int(11) NOT NULL,
-  `email_contacto` varchar(150) DEFAULT NULL,
-  `id_proveedor` int(11) DEFAULT NULL,
-  `id_destino` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `alojamientos`;
+CREATE TABLE IF NOT EXISTS `alojamientos` (
+  `id_alojamiento` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `direccion` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ciudad` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `categoria` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `descripcion` text COLLATE utf8mb4_general_ci,
+  `telefono` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `precio_dia` int NOT NULL,
+  `email_contacto` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_proveedor` int DEFAULT NULL,
+  `id_destino` int NOT NULL,
+  PRIMARY KEY (`id_alojamiento`),
+  KEY `id_proveedor` (`id_proveedor`),
+  KEY `fk_aloj_destino` (`id_destino`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `alojamientos`
@@ -48,7 +52,9 @@ CREATE TABLE `alojamientos` (
 INSERT INTO `alojamientos` (`id_alojamiento`, `nombre`, `direccion`, `ciudad`, `categoria`, `descripcion`, `telefono`, `precio_dia`, `email_contacto`, `id_proveedor`, `id_destino`) VALUES
 (1, 'Hotel Los Andes', 'Av. Libertador 1234', 'El Calafate', '4 estrellas', 'Confort y vistas a los glaciares.', '2901-123456', 300, 'info@losandes.com', 1, 1),
 (2, 'EcoHotel Caribe', 'Calle Sol 432', 'Punta Cana', '5 estrellas', 'Todo incluido con actividades acuáticas.', '809-8765432', 650, 'reservas@ecocaribe.com', 2, 3),
-(3, 'Hostal Europa', 'Rue des Fleurs 21', 'París', '3 estrellas', 'Ideal para mochileros.', '+33 1 23456789', 270, 'contact@hostaleuropa.fr', 3, 4);
+(3, 'Hostal Europa', 'Rue des Fleurs 21', 'París', '3 estrellas', 'Ideal para mochileros.', '+33 1 23456789', 270, 'contact@hostaleuropa.fr', 3, 4),
+(8, 'sdasd', NULL, NULL, 'sdasd', NULL, NULL, 32, NULL, 43, 18),
+(9, 'Hotel Cuarto', NULL, NULL, '4 estrellas', NULL, NULL, 200, NULL, 44, 7);
 
 -- --------------------------------------------------------
 
@@ -56,17 +62,21 @@ INSERT INTO `alojamientos` (`id_alojamiento`, `nombre`, `direccion`, `ciudad`, `
 -- Estructura de tabla para la tabla `alquiler_autos`
 --
 
-CREATE TABLE `alquiler_autos` (
-  `id_alquiler` int(11) NOT NULL,
-  `proveedor` varchar(150) DEFAULT NULL,
-  `tipo_vehiculo` varchar(100) DEFAULT NULL,
-  `ubicacion_retiro` varchar(150) DEFAULT NULL,
-  `id_destino` int(11) NOT NULL,
-  `ubicacion_entrega` varchar(150) DEFAULT NULL,
+DROP TABLE IF EXISTS `alquiler_autos`;
+CREATE TABLE IF NOT EXISTS `alquiler_autos` (
+  `id_alquiler` int NOT NULL AUTO_INCREMENT,
+  `proveedor` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tipo_vehiculo` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ubicacion_retiro` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_destino` int NOT NULL,
+  `ubicacion_entrega` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `precio_por_dia` decimal(10,2) DEFAULT NULL,
-  `condiciones` text DEFAULT NULL,
-  `id_proveedor` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `condiciones` text COLLATE utf8mb4_general_ci,
+  `id_proveedor` int DEFAULT NULL,
+  PRIMARY KEY (`id_alquiler`),
+  KEY `id_proveedor` (`id_proveedor`),
+  KEY `fk_auto_destino` (`id_destino`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `alquiler_autos`
@@ -83,13 +93,16 @@ INSERT INTO `alquiler_autos` (`id_alquiler`, `proveedor`, `tipo_vehiculo`, `ubic
 -- Estructura de tabla para la tabla `bitacora_sistema`
 --
 
-CREATE TABLE `bitacora_sistema` (
-  `id_evento` int(11) NOT NULL,
-  `id_usuario` int(11) DEFAULT NULL,
-  `accion` varchar(200) DEFAULT NULL,
-  `descripcion` text DEFAULT NULL,
-  `fecha_hora` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `bitacora_sistema`;
+CREATE TABLE IF NOT EXISTS `bitacora_sistema` (
+  `id_evento` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int DEFAULT NULL,
+  `accion` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `descripcion` text COLLATE utf8mb4_general_ci,
+  `fecha_hora` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_evento`),
+  KEY `id_usuario` (`id_usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `bitacora_sistema`
@@ -98,7 +111,27 @@ CREATE TABLE `bitacora_sistema` (
 INSERT INTO `bitacora_sistema` (`id_evento`, `id_usuario`, `accion`, `descripcion`, `fecha_hora`) VALUES
 (1, 11, 'Inicio de sesión', 'El usuario 11 inició sesión', '2025-06-10 18:25:02'),
 (2, 12, 'Compra realizada', 'El usuario 12 realizó una orden', '2025-06-10 18:25:02'),
-(3, 13, 'Edición de perfil', 'El usuario 13 actualizó su email', '2025-06-10 18:25:02');
+(3, 13, 'Edición de perfil', 'El usuario 13 actualizó su email', '2025-06-10 18:25:02'),
+(84, 1, 'Alta cliente', 'El usuario 1 registró al cliente #15', '2024-07-10 13:15:00'),
+(85, 2, 'Baja cliente', 'El usuario 2 desactivó al cliente #12', '2024-07-12 17:25:00'),
+(86, 3, 'Modificación reserva', 'El usuario 3 modificó la reserva #21', '2024-07-13 12:45:00'),
+(87, 11, 'Alta paquete turístico', 'El usuario 11 publicó el paquete #3', '2024-07-15 19:30:00'),
+(88, 12, 'Alta proveedor', 'El usuario 12 registró al proveedor #14', '2024-07-17 15:00:00'),
+(89, 13, 'Baja paquete turístico', 'El usuario 13 desactivó el paquete #6', '2024-07-20 21:45:00'),
+(90, 14, 'Modificación proveedor', 'El usuario 14 actualizó los datos del proveedor #9', '2024-07-22 11:30:00'),
+(91, 15, 'Alta destino', 'El usuario 15 creó el destino #12', '2024-07-23 20:00:00'),
+(92, 16, 'Baja destino', 'El usuario 16 eliminó el destino #22', '2024-07-24 14:15:00'),
+(93, 17, 'Alta cliente', 'El usuario 17 registró al cliente #10', '2024-07-25 16:30:00'),
+(94, 18, 'Alta reserva', 'El usuario 18 creó la reserva #17', '2024-07-26 22:20:00'),
+(95, 19, 'Baja cliente', 'El usuario 19 desactivó al cliente #15', '2024-07-28 18:40:00'),
+(96, 20, 'Alta paquete turístico', 'El usuario 20 publicó el paquete #19', '2024-07-30 01:10:00'),
+(97, 21, 'Alta proveedor', 'El usuario 21 registró al proveedor #4', '2024-07-30 12:50:00'),
+(98, 22, 'Modificación reserva', 'El usuario 22 modificó la reserva #7', '2024-08-01 15:25:00'),
+(99, 23, 'Alta destino', 'El usuario 23 creó el destino #11', '2024-08-03 19:55:00'),
+(100, 24, 'Baja proveedor', 'El usuario 24 eliminó al proveedor #13', '2024-08-05 23:35:00'),
+(101, 25, 'Baja cliente', 'El usuario 25 desactivó al cliente #2', '2024-08-07 10:15:00'),
+(102, 26, 'Alta reserva', 'El usuario 26 creó la reserva #16', '2024-08-09 21:05:00'),
+(103, 44, 'Modificación paquete turístico', 'El usuario 44 actualizó el paquete #18', '2024-08-11 14:45:00');
 
 -- --------------------------------------------------------
 
@@ -106,12 +139,15 @@ INSERT INTO `bitacora_sistema` (`id_evento`, `id_usuario`, `accion`, `descripcio
 -- Estructura de tabla para la tabla `carritos`
 --
 
-CREATE TABLE `carritos` (
-  `id_carrito` int(11) NOT NULL,
-  `id_usuario` int(11) DEFAULT NULL,
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `estado` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `carritos`;
+CREATE TABLE IF NOT EXISTS `carritos` (
+  `id_carrito` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int DEFAULT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `estado` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id_carrito`),
+  KEY `id_usuario` (`id_usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `carritos`
@@ -139,7 +175,10 @@ INSERT INTO `carritos` (`id_carrito`, `id_usuario`, `fecha_creacion`, `estado`) 
 (19, 19, '2025-06-10 18:17:53', 'activo'),
 (20, 20, '2025-06-10 18:17:53', 'activo'),
 (26, 43, '2025-06-17 21:30:49', 'cerrado'),
-(27, 43, '2025-06-18 00:22:08', 'cerrado');
+(27, 43, '2025-06-18 00:22:08', 'cerrado'),
+(28, 43, '2025-06-23 02:18:21', 'activo'),
+(29, 53, '2025-06-23 06:56:15', 'cerrado'),
+(30, 53, '2025-06-23 07:00:03', 'cerrado');
 
 -- --------------------------------------------------------
 
@@ -147,15 +186,18 @@ INSERT INTO `carritos` (`id_carrito`, `id_usuario`, `fecha_creacion`, `estado`) 
 -- Estructura de tabla para la tabla `carrito_items`
 --
 
-CREATE TABLE `carrito_items` (
-  `id_item` int(11) NOT NULL,
-  `id_carrito` int(11) DEFAULT NULL,
-  `tipo_producto` varchar(50) DEFAULT NULL,
-  `id_producto` int(11) DEFAULT NULL,
-  `cantidad` int(11) DEFAULT NULL,
+DROP TABLE IF EXISTS `carrito_items`;
+CREATE TABLE IF NOT EXISTS `carrito_items` (
+  `id_item` int NOT NULL AUTO_INCREMENT,
+  `id_carrito` int DEFAULT NULL,
+  `tipo_producto` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_producto` int DEFAULT NULL,
+  `cantidad` int DEFAULT NULL,
   `precio_unitario` decimal(12,2) DEFAULT NULL,
-  `subtotal` decimal(12,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `subtotal` decimal(12,2) DEFAULT NULL,
+  PRIMARY KEY (`id_item`),
+  KEY `id_carrito` (`id_carrito`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `carrito_items`
@@ -183,7 +225,8 @@ INSERT INTO `carrito_items` (`id_item`, `id_carrito`, `tipo_producto`, `id_produ
 (19, 11, 'paquete_turistico', 2, 1, 1200.00, 1200.00),
 (20, 11, 'paquete_turistico', 3, 1, 1850.00, 1850.00),
 (21, 12, 'paquete_turistico', 1, 1, 950.00, 950.00),
-(22, 12, 'paquete_turistico', 2, 1, 1200.00, 1200.00);
+(22, 12, 'paquete_turistico', 2, 1, 1200.00, 1200.00),
+(33, 28, 'paquete_turistico', 1, 1, 3500.00, 3620.00);
 
 -- --------------------------------------------------------
 
@@ -191,14 +234,18 @@ INSERT INTO `carrito_items` (`id_item`, `id_carrito`, `tipo_producto`, `id_produ
 -- Estructura de tabla para la tabla `comentarios_paquetes`
 --
 
-CREATE TABLE `comentarios_paquetes` (
-  `id_comentario` int(11) NOT NULL,
-  `id_paquete` int(11) DEFAULT NULL,
-  `id_usuario` int(11) DEFAULT NULL,
-  `texto` text DEFAULT NULL,
-  `puntuacion` smallint(6) DEFAULT NULL,
-  `fecha` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `comentarios_paquetes`;
+CREATE TABLE IF NOT EXISTS `comentarios_paquetes` (
+  `id_comentario` int NOT NULL AUTO_INCREMENT,
+  `id_paquete` int DEFAULT NULL,
+  `id_usuario` int DEFAULT NULL,
+  `texto` text COLLATE utf8mb4_general_ci,
+  `puntuacion` smallint DEFAULT NULL,
+  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_comentario`),
+  KEY `id_paquete` (`id_paquete`),
+  KEY `id_usuario` (`id_usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `comentarios_paquetes`
@@ -218,24 +265,29 @@ INSERT INTO `comentarios_paquetes` (`id_comentario`, `id_paquete`, `id_usuario`,
 -- Estructura de tabla para la tabla `destinos`
 --
 
-CREATE TABLE `destinos` (
-  `id_destino` int(11) NOT NULL,
-  `destino` varchar(100) NOT NULL,
-  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `destinos`;
+CREATE TABLE IF NOT EXISTS `destinos` (
+  `id_destino` int NOT NULL AUTO_INCREMENT,
+  `destino` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `estado` varchar(11) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'activo',
+  PRIMARY KEY (`id_destino`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `destinos`
 --
 
-INSERT INTO `destinos` (`id_destino`, `destino`, `fecha_registro`) VALUES
-(1, 'Patagonia', '2025-06-21 05:28:06'),
-(2, 'Europa', '2025-06-21 05:28:06'),
-(3, 'Punta Cana', '2025-06-21 05:28:06'),
-(4, 'Paris', '2025-06-21 05:28:06'),
-(5, 'Francia', '2025-06-21 05:28:06'),
-(6, 'Turquia', '2025-06-21 05:28:06'),
-(7, 'China', '2025-06-21 05:28:06');
+INSERT INTO `destinos` (`id_destino`, `destino`, `fecha_registro`, `estado`) VALUES
+(1, 'Patagonia', '2025-06-22 19:27:45', 'activo'),
+(2, 'Europa', '2025-06-21 05:28:06', 'activo'),
+(3, 'Punta Cana', '2025-06-21 05:28:06', 'activo'),
+(4, 'París', '2025-06-23 04:38:37', 'activo'),
+(5, 'Francia', '2025-06-21 05:28:06', 'activo'),
+(6, 'Turquia', '2025-06-21 05:28:06', 'activo'),
+(7, 'China', '2025-06-21 05:28:06', 'activo'),
+(17, 'Santiago', '2025-06-23 04:38:19', 'activo'),
+(18, 'Buenos Aires', '2025-06-23 04:42:26', 'activo');
 
 -- --------------------------------------------------------
 
@@ -243,10 +295,12 @@ INSERT INTO `destinos` (`id_destino`, `destino`, `fecha_registro`) VALUES
 -- Estructura de tabla para la tabla `etiquetas`
 --
 
-CREATE TABLE `etiquetas` (
-  `id_etiqueta` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `etiquetas`;
+CREATE TABLE IF NOT EXISTS `etiquetas` (
+  `id_etiqueta` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id_etiqueta`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `etiquetas`
@@ -280,7 +334,8 @@ INSERT INTO `etiquetas` (`id_etiqueta`, `nombre`) VALUES
 (25, 'Festival'),
 (26, 'Business'),
 (32, 'Misterioso'),
-(33, 'Temático');
+(33, 'Temático'),
+(34, 'Family Friendly');
 
 -- --------------------------------------------------------
 
@@ -288,14 +343,17 @@ INSERT INTO `etiquetas` (`id_etiqueta`, `nombre`) VALUES
 -- Estructura de tabla para la tabla `notificaciones`
 --
 
-CREATE TABLE `notificaciones` (
-  `id` int(11) NOT NULL,
-  `id_usuario` int(11) NOT NULL,
-  `mensaje` text DEFAULT NULL,
-  `tipo` enum('confirmada','pendiente','cancelada') DEFAULT NULL,
-  `leido` tinyint(1) DEFAULT 0,
-  `fecha` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `notificaciones`;
+CREATE TABLE IF NOT EXISTS `notificaciones` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int NOT NULL,
+  `mensaje` text COLLATE utf8mb4_general_ci,
+  `tipo` enum('confirmada','pendiente','cancelada') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `leido` tinyint(1) DEFAULT '0',
+  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `id_usuario` (`id_usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `notificaciones`
@@ -350,8 +408,13 @@ INSERT INTO `notificaciones` (`id`, `id_usuario`, `mensaje`, `tipo`, `leido`, `f
 (46, 11, 'El estado de su reserva #17 ha cambiado a \'Confirmada\'. Por favor verifique los cambios en Mis Reservas.', 'confirmada', 0, '2025-06-17 05:27:32'),
 (47, 43, 'El estado de su reserva #15 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', 'pendiente', 1, '2025-06-17 22:17:07'),
 (48, 43, 'El estado de su reserva #19 ha cambiado a \'Confirmada\'. Por favor verifique los cambios en Mis Reservas.', 'confirmada', 1, '2025-06-18 00:31:39'),
-(49, 46, 'El estado de su reserva #22 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', 'pendiente', 0, '2025-06-21 20:46:08'),
-(50, 46, 'El estado de su reserva #22 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', 'pendiente', 0, '2025-06-21 20:46:17');
+(49, 46, 'El estado de su reserva #22 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', 'pendiente', 1, '2025-06-21 20:46:08'),
+(50, 46, 'El estado de su reserva #22 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', 'pendiente', 1, '2025-06-21 20:46:17'),
+(51, 46, 'Su reserva #22 ha sido cancelada por el administrador.', '', 1, '2025-06-22 19:55:47'),
+(52, 43, 'El estado de su reserva #19 ha cambiado a \'Confirmada\'. Por favor verifique los cambios en Mis Reservas.', '', 1, '2025-06-22 22:15:50'),
+(53, 43, 'El estado de su reserva #25 ha cambiado a \'Confirmada\'. Por favor verifique los cambios en Mis Reservas.', '', 1, '2025-06-23 05:08:46'),
+(54, 43, 'El estado de su reserva #25 ha cambiado a \'Pendiente\'. Por favor verifique los cambios en Mis Reservas.', '', 1, '2025-06-23 05:13:50'),
+(55, 43, 'El estado de su reserva #25 ha cambiado a \'Confirmada\'. Por favor verifique los cambios en Mis Reservas.', '', 1, '2025-06-23 05:13:56');
 
 -- --------------------------------------------------------
 
@@ -359,15 +422,18 @@ INSERT INTO `notificaciones` (`id`, `id_usuario`, `mensaje`, `tipo`, `leido`, `f
 -- Estructura de tabla para la tabla `ordenes`
 --
 
-CREATE TABLE `ordenes` (
-  `id_orden` int(11) NOT NULL,
-  `id_usuario` int(11) DEFAULT NULL,
-  `fecha_orden` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+DROP TABLE IF EXISTS `ordenes`;
+CREATE TABLE IF NOT EXISTS `ordenes` (
+  `id_orden` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int DEFAULT NULL,
+  `fecha_orden` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `total` decimal(12,2) DEFAULT NULL,
-  `estado` varchar(20) DEFAULT NULL,
-  `medio_pago` varchar(100) DEFAULT NULL,
-  `datos_facturacion` varchar(200) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `estado` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `medio_pago` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `datos_facturacion` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id_orden`),
+  KEY `id_usuario` (`id_usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `ordenes`
@@ -389,11 +455,13 @@ INSERT INTO `ordenes` (`id_orden`, `id_usuario`, `fecha_orden`, `total`, `estado
 (14, 43, '2025-06-13 21:49:39', 10410.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
 (15, 43, '2025-06-14 03:00:00', 6900.00, 'Pendiente', 'Tarjeta de Crédito', 'Datos de ejemplo'),
 (16, 46, '2025-06-20 03:00:00', 3510.00, 'Confirmada', 'Tarjeta de Crédito', 'Datos de ejemplo'),
-(17, 11, '2025-06-17 03:00:00', 0.00, 'Confirmada', NULL, NULL),
 (18, 43, '2025-06-17 21:31:26', 3510.00, 'Cancelada', 'Tarjeta de Crédito', 'Nombre: pepe\nDNI/CUIT: 64353655435\nDirección: 50'),
-(19, 43, '2025-06-17 03:00:00', 6900.00, 'Confirmada', 'Tarjeta de Crédito', 'Nombre: wsdad\nDNI/CUIT: 24324324343\nDirección: 50'),
-(20, 46, '2025-06-21 22:29:41', 0.00, 'Pendiente', NULL, NULL),
-(22, 46, '2025-06-22 01:19:14', 0.00, 'Pendiente', NULL, NULL);
+(19, 43, '2025-06-22 22:15:50', 6900.00, 'Confirmada', 'Tarjeta de Débito', 'Nombre: wsdad\r\nDNI/CUIT: 24324324343\r\nDirección: 50'),
+(20, 46, '2025-06-23 04:55:32', 3500.00, 'Pendiente', NULL, NULL),
+(23, 47, '2025-06-22 19:57:27', 6900.00, 'Pendiente', NULL, NULL),
+(24, 2, '2025-06-22 22:26:44', 3510.00, 'Pendiente', NULL, NULL),
+(25, 43, '2025-06-23 05:13:56', 3200.00, 'Confirmada', 'Tarjeta de Crédito', 'CUIT: 11-11111111-1'),
+(27, 53, '2025-06-23 07:00:03', 7150.00, 'Confirmada', 'Tarjeta de Crédito', 'Nombre: Santiago Fernandez\nDNI/CUIT: 11111111111\nDirección: 50');
 
 -- --------------------------------------------------------
 
@@ -401,15 +469,18 @@ INSERT INTO `ordenes` (`id_orden`, `id_usuario`, `fecha_orden`, `total`, `estado
 -- Estructura de tabla para la tabla `orden_items`
 --
 
-CREATE TABLE `orden_items` (
-  `id_item` int(11) NOT NULL,
-  `id_orden` int(11) DEFAULT NULL,
-  `tipo_producto` varchar(50) DEFAULT NULL,
-  `id_producto` int(11) DEFAULT NULL,
-  `cantidad` int(11) DEFAULT NULL,
+DROP TABLE IF EXISTS `orden_items`;
+CREATE TABLE IF NOT EXISTS `orden_items` (
+  `id_item` int NOT NULL AUTO_INCREMENT,
+  `id_orden` int DEFAULT NULL,
+  `tipo_producto` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_producto` int DEFAULT NULL,
+  `cantidad` int DEFAULT NULL,
   `precio_unitario` decimal(12,2) DEFAULT NULL,
-  `subtotal` decimal(12,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `subtotal` decimal(12,2) DEFAULT NULL,
+  PRIMARY KEY (`id_item`),
+  KEY `id_orden` (`id_orden`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `orden_items`
@@ -433,11 +504,14 @@ INSERT INTO `orden_items` (`id_item`, `id_orden`, `tipo_producto`, `id_producto`
 (17, 14, 'paquete_turistico', 1, 1, 3510.00, 3510.00),
 (18, 15, 'paquete_turistico', 2, 1, 6900.00, 6900.00),
 (19, 16, 'paquete_turistico', 1, 1, 3510.00, 3510.00),
-(20, 17, 'paquete_turistico', 2, 1, NULL, NULL),
 (21, 18, 'paquete_turistico', 1, 1, 3510.00, 3510.00),
-(22, 19, 'paquete_turistico', 2, 1, 6900.00, 6900.00),
 (23, 20, 'paquete_turistico', 32, 1, NULL, NULL),
-(24, 22, 'paquete_turistico', 1, 1, NULL, NULL);
+(26, 23, 'paquete_turistico', 2, 1, NULL, NULL),
+(27, 19, 'servicio_adicional', 2, 1, NULL, NULL),
+(28, 24, 'paquete_turistico', 1, 1, NULL, NULL),
+(29, 25, 'paquete_turistico', 1, 1, NULL, NULL),
+(32, 25, 'servicio_adicional', 1, 1, NULL, NULL),
+(34, 27, 'paquete_turistico', 2, 1, 6900.00, 7150.00);
 
 -- --------------------------------------------------------
 
@@ -445,28 +519,32 @@ INSERT INTO `orden_items` (`id_item`, `id_orden`, `tipo_producto`, `id_producto`
 -- Estructura de tabla para la tabla `paquetes_turisticos`
 --
 
-CREATE TABLE `paquetes_turisticos` (
-  `id_paquete` int(11) NOT NULL,
-  `nombre` varchar(200) DEFAULT NULL,
-  `descripcion` text DEFAULT NULL,
-  `id_destino` int(11) DEFAULT NULL,
+DROP TABLE IF EXISTS `paquetes_turisticos`;
+CREATE TABLE IF NOT EXISTS `paquetes_turisticos` (
+  `id_paquete` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `descripcion` text COLLATE utf8mb4_general_ci,
+  `id_destino` int DEFAULT NULL,
   `precio_base` decimal(12,2) DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
-  `cupo_disponible` int(11) DEFAULT NULL,
-  `destino` varchar(150) DEFAULT NULL,
-  `tipo_paquete` varchar(100) DEFAULT NULL,
-  `activo` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `cupo_disponible` int DEFAULT NULL,
+  `destino` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tipo_paquete` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `activo` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id_paquete`),
+  KEY `fk_paquete_destino` (`id_destino`)
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `paquetes_turisticos`
 --
 
 INSERT INTO `paquetes_turisticos` (`id_paquete`, `nombre`, `descripcion`, `id_destino`, `precio_base`, `fecha_inicio`, `fecha_fin`, `cupo_disponible`, `destino`, `tipo_paquete`, `activo`) VALUES
-(1, 'Aventura en Patagonia', 'Una semana de trekking, glaciares y naturaleza.', 1, 3510.00, '2025-12-09', '2025-12-21', 12, 'Patagonia', 'Aventura', 1),
-(2, 'Relax en el Caribe', 'Resort all-inclusive con actividades acuáticas.', 3, 6900.00, '2025-07-17', '2025-07-22', 27, 'Punta Cana', 'Playa', 1),
-(3, 'Turismo Cultural en Europa', 'Recorrido por las capitales europeas.', 2, 7040.00, '2025-09-05', '2025-09-20', 19, 'Europa', 'Cultural', 1);
+(1, 'Aventura en Patagonia', 'Una semana de trekking, glaciares y naturaleza.', 1, 3200.00, '2025-12-09', '2025-12-21', 12, 'Patagonia', 'Aventura', 1),
+(2, 'Relax en el Caribe', 'Resort all-inclusive con actividades acuáticas.', 3, 6900.00, '2025-07-17', '2025-07-22', 25, 'Punta Cana', 'Playa', 1),
+(3, 'Turismo Cultural en Europa', 'Recorrido por las capitales europeas.', 2, 7040.00, '2025-09-05', '2025-09-20', 19, 'Europa', 'Cultural', 1),
+(49, 'Misterio en Europa', 'Embarcate en un viaje temeroso por los escape room de Europa', 2, 4000.00, '2025-10-08', '2025-10-15', 20, 'Europa', 'Misterio\r\n', 1);
 
 -- --------------------------------------------------------
 
@@ -474,22 +552,27 @@ INSERT INTO `paquetes_turisticos` (`id_paquete`, `nombre`, `descripcion`, `id_de
 -- Estructura de tabla para la tabla `paquete_alojamientos`
 --
 
-CREATE TABLE `paquete_alojamientos` (
-  `id` int(11) NOT NULL,
-  `id_paquete` int(11) DEFAULT NULL,
-  `id_alojamiento` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `paquete_alojamientos`;
+CREATE TABLE IF NOT EXISTS `paquete_alojamientos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_paquete` int DEFAULT NULL,
+  `id_alojamiento` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_paquete_alojamiento` (`id_paquete`,`id_alojamiento`),
+  KEY `id_paquete` (`id_paquete`),
+  KEY `id_alojamiento` (`id_alojamiento`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `paquete_alojamientos`
 --
 
 INSERT INTO `paquete_alojamientos` (`id`, `id_paquete`, `id_alojamiento`) VALUES
-(20, 1, 1),
+(24, 1, 1),
 (2, 2, 2),
-(3, 3, 3),
 (4, 5, 3),
-(5, 6, 3);
+(5, 6, 3),
+(21, 48, 1);
 
 -- --------------------------------------------------------
 
@@ -497,11 +580,16 @@ INSERT INTO `paquete_alojamientos` (`id`, `id_paquete`, `id_alojamiento`) VALUES
 -- Estructura de tabla para la tabla `paquete_autos`
 --
 
-CREATE TABLE `paquete_autos` (
-  `id` int(11) NOT NULL,
-  `id_paquete` int(11) DEFAULT NULL,
-  `id_alquiler` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `paquete_autos`;
+CREATE TABLE IF NOT EXISTS `paquete_autos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_paquete` int DEFAULT NULL,
+  `id_alquiler` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_paquete_auto` (`id_paquete`,`id_alquiler`),
+  KEY `id_paquete` (`id_paquete`),
+  KEY `id_alquiler` (`id_alquiler`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `paquete_autos`
@@ -509,9 +597,11 @@ CREATE TABLE `paquete_autos` (
 
 INSERT INTO `paquete_autos` (`id`, `id_paquete`, `id_alquiler`) VALUES
 (2, 2, 2),
+(18, 3, 1),
 (3, 3, 3),
 (4, 5, 3),
-(5, 6, 3);
+(5, 6, 3),
+(19, 49, 1);
 
 -- --------------------------------------------------------
 
@@ -519,11 +609,15 @@ INSERT INTO `paquete_autos` (`id`, `id_paquete`, `id_alquiler`) VALUES
 -- Estructura de tabla para la tabla `paquete_etiquetas`
 --
 
-CREATE TABLE `paquete_etiquetas` (
-  `id` int(11) NOT NULL,
-  `id_paquete` int(11) NOT NULL,
-  `id_etiqueta` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `paquete_etiquetas`;
+CREATE TABLE IF NOT EXISTS `paquete_etiquetas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_paquete` int NOT NULL,
+  `id_etiqueta` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_paquete` (`id_paquete`),
+  KEY `id_etiqueta` (`id_etiqueta`)
+) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `paquete_etiquetas`
@@ -549,7 +643,23 @@ INSERT INTO `paquete_etiquetas` (`id`, `id_paquete`, `id_etiqueta`) VALUES
 (17, 3, 13),
 (18, 3, 19),
 (19, 3, 20),
-(20, 3, 22);
+(20, 3, 22),
+(126, 46, 9),
+(127, 46, 5),
+(128, 46, 4),
+(129, 46, 11),
+(130, 46, 6),
+(131, 46, 21),
+(132, 47, 1),
+(133, 47, 25),
+(134, 47, 14),
+(135, 48, 18),
+(136, 48, 19),
+(137, 48, 2),
+(138, 49, 34),
+(139, 49, 3),
+(140, 49, 32),
+(141, 49, 33);
 
 -- --------------------------------------------------------
 
@@ -557,22 +667,30 @@ INSERT INTO `paquete_etiquetas` (`id`, `id_paquete`, `id_etiqueta`) VALUES
 -- Estructura de tabla para la tabla `paquete_servicios`
 --
 
-CREATE TABLE `paquete_servicios` (
-  `id` int(11) NOT NULL,
-  `id_paquete` int(11) DEFAULT NULL,
-  `id_servicio` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `paquete_servicios`;
+CREATE TABLE IF NOT EXISTS `paquete_servicios` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_paquete` int DEFAULT NULL,
+  `id_servicio` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_paquete_servicio` (`id_paquete`,`id_servicio`),
+  KEY `id_paquete` (`id_paquete`),
+  KEY `id_servicio` (`id_servicio`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `paquete_servicios`
 --
 
 INSERT INTO `paquete_servicios` (`id`, `id_paquete`, `id_servicio`) VALUES
-(15, 1, 1),
+(20, 1, 1),
 (2, 2, 2),
+(17, 3, 2),
 (3, 3, 3),
 (4, 5, 2),
-(5, 6, 1);
+(5, 6, 1),
+(16, 48, 1),
+(21, 49, 2);
 
 -- --------------------------------------------------------
 
@@ -580,22 +698,27 @@ INSERT INTO `paquete_servicios` (`id`, `id_paquete`, `id_servicio`) VALUES
 -- Estructura de tabla para la tabla `paquete_vuelos`
 --
 
-CREATE TABLE `paquete_vuelos` (
-  `id` int(11) NOT NULL,
-  `id_paquete` int(11) DEFAULT NULL,
-  `id_vuelo` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `paquete_vuelos`;
+CREATE TABLE IF NOT EXISTS `paquete_vuelos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_paquete` int DEFAULT NULL,
+  `id_vuelo` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_paquete_vuelo` (`id_paquete`,`id_vuelo`),
+  KEY `id_paquete` (`id_paquete`),
+  KEY `id_vuelo` (`id_vuelo`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `paquete_vuelos`
 --
 
 INSERT INTO `paquete_vuelos` (`id`, `id_paquete`, `id_vuelo`) VALUES
-(20, 1, 1),
+(24, 1, 1),
 (2, 2, 2),
-(3, 3, 3),
 (4, 5, 3),
-(5, 6, 3);
+(5, 6, 3),
+(21, 48, 1);
 
 -- --------------------------------------------------------
 
@@ -603,15 +726,17 @@ INSERT INTO `paquete_vuelos` (`id`, `id_paquete`, `id_vuelo`) VALUES
 -- Estructura de tabla para la tabla `promociones`
 --
 
-CREATE TABLE `promociones` (
-  `id_promocion` int(11) NOT NULL,
-  `nombre` varchar(200) DEFAULT NULL,
-  `descripcion` text DEFAULT NULL,
+DROP TABLE IF EXISTS `promociones`;
+CREATE TABLE IF NOT EXISTS `promociones` (
+  `id_promocion` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `descripcion` text COLLATE utf8mb4_general_ci,
   `descuento_porcentaje` decimal(5,2) DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
-  `activo` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `activo` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id_promocion`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `promociones`
@@ -628,19 +753,22 @@ INSERT INTO `promociones` (`id_promocion`, `nombre`, `descripcion`, `descuento_p
 -- Estructura de tabla para la tabla `proveedores`
 --
 
-CREATE TABLE `proveedores` (
-  `id_proveedor` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `tipo` enum('alojamiento','vuelo','auto','servicio') NOT NULL,
-  `contacto` varchar(100) DEFAULT NULL,
-  `telefono` varchar(20) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `direccion` varchar(150) DEFAULT NULL,
-  `descripcion` text DEFAULT NULL,
-  `id_destino` int(11) DEFAULT NULL,
-  `estado` varchar(11) NOT NULL DEFAULT 'activo',
-  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `proveedores`;
+CREATE TABLE IF NOT EXISTS `proveedores` (
+  `id_proveedor` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `tipo` enum('alojamiento','vuelo','auto','servicio') COLLATE utf8mb4_general_ci NOT NULL,
+  `contacto` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `telefono` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `direccion` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `descripcion` text COLLATE utf8mb4_general_ci,
+  `id_destino` int DEFAULT NULL,
+  `estado` varchar(11) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'activo',
+  `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_proveedor`),
+  KEY `fk_prov_destino` (`id_destino`)
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `proveedores`
@@ -659,7 +787,9 @@ INSERT INTO `proveedores` (`id_proveedor`, `nombre`, `tipo`, `contacto`, `telefo
 (10, 'Glaciares Patagonia Excursiones', 'servicio', 'Jorge Quiroga', '2901-333444', 'info@glaciarespatagonia.com', 'El Calafate', 'Excursiones sobre hielo', NULL, 'activo', '2025-06-21 18:37:44'),
 (11, 'Caribe Spa & Wellness', 'servicio', 'Maria López', '809-555555', 'spa@caribewellness.com', 'Punta Cana', 'Masajes y tratamientos de relax', NULL, 'activo', '2025-06-21 18:37:44'),
 (12, 'Tour Europa Histórica', 'servicio', 'Giuseppe Moretti', '+33 1 44556677', 'tours@europahistorica.com', 'París', 'Tours guiados por museos y castillos', NULL, 'activo', '2025-06-21 18:37:44'),
-(33, 'dfdsf', 'servicio', 'dsfsdf', '2323', 'dfsd@asda', 'sdasd', 'asdad', 4, 'inactivo', '2025-06-21 18:42:01');
+(33, 'dfdsf', 'servicio', 'dsfsdf', '2323', 'dfsd@asda', 'sdasd', 'asdad', 4, 'inactivo', '2025-06-21 18:42:01'),
+(43, 'sdasd', 'alojamiento', 'asdasd', '32545', 'sddf@nrghrt', 'erger', 'etgerg', 18, 'inactivo', '2025-06-23 05:51:18'),
+(44, 'Hotel Cuarto', 'alojamiento', 'Oficina Central', '5555555', 'hotel@cuarto.com', 'Pekin', 'Alojamiento ideal para familias y parejas', 7, 'activo', '2025-06-23 06:04:30');
 
 -- --------------------------------------------------------
 
@@ -667,10 +797,12 @@ INSERT INTO `proveedores` (`id_proveedor`, `nombre`, `tipo`, `contacto`, `telefo
 -- Estructura de tabla para la tabla `rol`
 --
 
-CREATE TABLE `rol` (
-  `id_rol` int(11) NOT NULL,
-  `nombre_rol` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `rol`;
+CREATE TABLE IF NOT EXISTS `rol` (
+  `id_rol` int NOT NULL AUTO_INCREMENT,
+  `nombre_rol` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id_rol`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `rol`
@@ -687,16 +819,20 @@ INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
 -- Estructura de tabla para la tabla `servicios_adicionales`
 --
 
-CREATE TABLE `servicios_adicionales` (
-  `id_servicio` int(11) NOT NULL,
-  `nombre` varchar(200) DEFAULT NULL,
-  `id_destino` int(11) NOT NULL,
-  `ciudad` varchar(100) DEFAULT NULL,
-  `descripcion` text DEFAULT NULL,
-  `tipo` varchar(100) DEFAULT NULL,
+DROP TABLE IF EXISTS `servicios_adicionales`;
+CREATE TABLE IF NOT EXISTS `servicios_adicionales` (
+  `id_servicio` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_destino` int NOT NULL,
+  `ciudad` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `descripcion` text COLLATE utf8mb4_general_ci,
+  `tipo` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `precio` decimal(10,2) DEFAULT NULL,
-  `id_proveedor` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_proveedor` int DEFAULT NULL,
+  PRIMARY KEY (`id_servicio`),
+  KEY `id_proveedor` (`id_proveedor`),
+  KEY `fk_servicio_destino` (`id_destino`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `servicios_adicionales`
@@ -714,27 +850,31 @@ INSERT INTO `servicios_adicionales` (`id_servicio`, `nombre`, `id_destino`, `ciu
 -- Estructura de tabla para la tabla `usuarios`
 --
 
-CREATE TABLE `usuarios` (
-  `id_usuario` int(11) NOT NULL,
-  `nombre` varchar(100) DEFAULT NULL,
-  `apellido` varchar(100) DEFAULT NULL,
-  `email` varchar(200) DEFAULT NULL,
-  `contraseña` varchar(255) DEFAULT NULL,
-  `telefono` int(30) NOT NULL,
-  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `rol` int(11) DEFAULT 4,
-  `estado` varchar(20) DEFAULT 'activo'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `usuarios`;
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id_usuario` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `apellido` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `contraseña` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `telefono` int NOT NULL,
+  `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `rol` int DEFAULT '4',
+  `estado` varchar(20) COLLATE utf8mb4_general_ci DEFAULT 'activo',
+  PRIMARY KEY (`id_usuario`),
+  UNIQUE KEY `email` (`email`),
+  KEY `rol` (`rol`)
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `email`, `contraseña`, `telefono`, `fecha_registro`, `rol`, `estado`) VALUES
-(1, 'Super', 'Admin', 'super@admin.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 1, 'activo'),
+(1, 'Super', 'Admin', 'super@admin.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 222444, '2025-06-22 22:17:16', 1, 'activo'),
 (2, 'Ana', 'Admin', 'ana@admin.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 565665, '2025-06-21 04:55:07', 2, 'activo'),
-(3, 'Luis', 'Admin', 'luis@admin.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 2, 'activo'),
-(11, 'Cliente4', 'Apellido', 'cliente4@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
+(3, 'Luis', 'Admin', 'luis@admin.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-22 22:17:49', 2, 'activo'),
+(11, 'Cliente4', 'Apellido', 'cliente4@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-22 20:37:53', 3, 'activo'),
 (12, 'Cliente5', 'Apellido', 'cliente5@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
 (13, 'Cliente6', 'Apellido', 'cliente6@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
 (14, 'Cliente7', 'Apellido', 'cliente7@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
@@ -742,21 +882,26 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `email`, `contraseñ
 (16, 'Cliente9', 'Apellido', 'cliente9@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
 (17, 'Cliente10', 'Apellido', 'cliente10@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'inactivo'),
 (18, 'Cliente11', 'Apellido', 'cliente11@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-18 00:31:50', 3, 'inactivo'),
-(19, 'Cliente12', 'Apellido', 'cliente12@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 22222, '2025-06-21 17:31:12', 3, 'activo'),
-(20, 'Cliente13', 'Apellido', 'cliente13@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'activo'),
+(19, 'Cliente12', 'Apellido', 'cliente12@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 22222, '2025-06-23 05:28:31', 3, 'activo'),
+(20, 'Cliente13', 'Apellido', 'cliente13@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 2313, '2025-06-22 20:37:22', 3, 'activo'),
 (21, 'Cliente14', 'Apellido', 'cliente14@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:25:37', 3, 'activo'),
-(22, 'Cliente15', 'Apellido', 'cliente15@correo.com', '', 0, '2025-06-16 03:20:06', 3, 'activo'),
-(23, 'Cliente16', 'Apellido', 'cliente16@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(24, 'Cliente17', 'Apellido', 'cliente17@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(25, 'Cliente18', 'Apellido', 'cliente18@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(26, 'Cliente19', 'Apellido', 'cliente19@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(27, 'Cliente20', 'Apellido', 'cliente20@correo.com', '1234', 0, '2025-06-10 18:30:45', 3, 'activo'),
-(43, 'Marti', 'Plandolit', 'plandomartu1@gmail.com', '$2y$10$WgvIECr4srQwy8yWsOJ3runGshhLjg0b5BvCP2ydMz31cfhIrdl6C', 0, '2025-06-18 00:23:43', 1, 'inactivo'),
-(44, 'admin', 'nuevo', 'admin@3', '$2y$10$p.OnOR/Dd6dYimOSTIaIKuJ0rdzVtzJk51zfiNLQSYTcULQyKQtla', 123, '2025-06-16 03:02:56', 2, 'activo'),
-(45, 'cliente', 'comun', 'cliente@comun', '$2y$10$S4XOnhzysb.n9LT8TpFXCOeiLNNoyY7N3QXMvFs4G3nlLTAkCOdCG', 123456, '2025-06-16 03:02:56', 3, 'activo'),
-(46, 'usuario', 'normal', 'mplandolit1@gmail', '$2y$10$JQetC3.7rfnxsYF.06phye2J6RcdQ5KY3nilw1vJjtOk3t1CN1XPm', 2246558, '2025-06-16 03:02:56', 3, 'activo'),
-(47, 'usuario', 'tres', '1234@gmail.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-16 03:18:43', 3, 'activo'),
-(48, 'dvdsf', 'sdfsdf', 'sdfsdf@asdfas', '$2y$10$0kNrcXkgAG5knmXcKfo8Reb7b1Gv.3xq78h/mr//k0srrz.3lPN7y', 0, '2025-06-21 17:31:36', 3, 'activo');
+(22, 'Cliente15', 'Apellido', 'cliente15@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-23 03:40:17', 3, 'activo'),
+(23, 'Cliente16', 'Apellido', 'cliente16@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-23 03:40:17', 3, 'activo'),
+(24, 'Cliente17', 'Apellido', 'cliente17@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-23 03:40:17', 3, 'activo'),
+(25, 'Cliente18', 'Apellido', 'cliente18@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-23 03:40:17', 3, 'activo'),
+(26, 'Cliente19', 'Apellido', 'cliente19@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-23 03:40:17', 3, 'activo'),
+(27, 'Cliente20', 'Apellido', 'cliente20@correo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-23 03:40:17', 3, 'activo'),
+(43, 'Admin', 'tres', 'admin@tres.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 758496, '2025-06-23 03:42:12', 2, 'activo'),
+(44, 'Admin', 'Cuatro', 'admin@cuatro.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 123, '2025-06-23 03:42:48', 2, 'activo'),
+(45, 'Cliente21', 'Apellido', 'cliente@ejemplo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 123456, '2025-06-23 03:44:12', 3, 'activo'),
+(46, 'Cliente22', 'Apellido', 'Cliente22@ejemplo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 2246558, '2025-06-23 03:44:12', 3, 'activo'),
+(47, 'Cliente23', 'Apellido', 'Cliente23@ejemplo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-23 03:44:12', 3, 'activo'),
+(48, 'dvdsf', 'sdfsdf', 'sdfsdf@asdfas', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 0, '2025-06-23 03:40:17', 3, 'activo'),
+(49, 'ewefwe', 'wefwefwr', 'ewe@ada', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 2323333, '2025-06-23 03:40:17', 3, 'activo'),
+(50, 'Juan', 'Ejemplo', 'juan@ejemplo.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 1222333, '2025-06-23 03:40:17', 3, 'activo'),
+(51, 'Juan', 'Perez', 'juan@perez.com', '$2y$10$NUFtblMpEALJP.AkUVFUhuLl.myQz2NBlXelf1hbs6L7P/c2E8sgC', 2244113, '2025-06-23 03:40:17', 3, 'activo'),
+(52, 'Luciana', 'Pérez', 'luciana@ejemplo.com', '$2y$10$bRpOzPn0as3cMqq5B4.9Wu0QWgga./kisxkdKNPEHV7F3wCT0IxGy', 222222, '2025-06-23 08:19:03', 3, 'activo'),
+(53, 'Santiago', 'Fernandez', 'santiago@gmail.com', '$2y$10$8umrSSCjNYxHuU.3xzzKGuyPkx1TiCOLL1mok3qEZ8yZzBqQG0mI.', 0, '2025-06-23 06:48:19', 3, 'activo');
 
 -- --------------------------------------------------------
 
@@ -764,17 +909,20 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `email`, `contraseñ
 -- Estructura de tabla para la tabla `vuelos`
 --
 
-CREATE TABLE `vuelos` (
-  `id_vuelo` int(11) NOT NULL,
-  `codigo_vuelo` varchar(50) DEFAULT NULL,
-  `aerolinea` varchar(100) DEFAULT NULL,
-  `origen` varchar(100) DEFAULT NULL,
-  `destino` varchar(100) DEFAULT NULL,
-  `id_destino` int(11) NOT NULL,
+DROP TABLE IF EXISTS `vuelos`;
+CREATE TABLE IF NOT EXISTS `vuelos` (
+  `id_vuelo` int NOT NULL AUTO_INCREMENT,
+  `codigo_vuelo` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `aerolinea` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `origen` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `destino` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_destino` int NOT NULL,
   `fecha_salida` datetime NOT NULL,
   `fecha_llegada` datetime NOT NULL,
-  `precio_base` decimal(12,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `precio_base` decimal(12,2) DEFAULT NULL,
+  PRIMARY KEY (`id_vuelo`),
+  KEY `fk_vuelo_destino` (`id_destino`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `vuelos`
@@ -784,323 +932,6 @@ INSERT INTO `vuelos` (`id_vuelo`, `codigo_vuelo`, `aerolinea`, `origen`, `destin
 (1, 'AR1234', 'Aerolíneas Argentinas', 'Buenos Aires', 'El Calafate', 1, '2025-12-01 08:00:00', '2025-12-01 11:00:00', 350.00),
 (2, 'PC5678', 'LATAM', 'Buenos Aires', 'Punta Cana', 3, '2025-07-15 07:00:00', '2025-07-15 13:30:00', 750.00),
 (3, 'AF9876', 'Air France', 'Buenos Aires', 'París', 4, '2025-09-05 18:00:00', '2025-09-06 09:00:00', 1200.00);
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `alojamientos`
---
-ALTER TABLE `alojamientos`
-  ADD PRIMARY KEY (`id_alojamiento`),
-  ADD KEY `id_proveedor` (`id_proveedor`),
-  ADD KEY `fk_aloj_destino` (`id_destino`);
-
---
--- Indices de la tabla `alquiler_autos`
---
-ALTER TABLE `alquiler_autos`
-  ADD PRIMARY KEY (`id_alquiler`),
-  ADD KEY `id_proveedor` (`id_proveedor`),
-  ADD KEY `fk_auto_destino` (`id_destino`);
-
---
--- Indices de la tabla `bitacora_sistema`
---
-ALTER TABLE `bitacora_sistema`
-  ADD PRIMARY KEY (`id_evento`),
-  ADD KEY `id_usuario` (`id_usuario`);
-
---
--- Indices de la tabla `carritos`
---
-ALTER TABLE `carritos`
-  ADD PRIMARY KEY (`id_carrito`),
-  ADD KEY `id_usuario` (`id_usuario`);
-
---
--- Indices de la tabla `carrito_items`
---
-ALTER TABLE `carrito_items`
-  ADD PRIMARY KEY (`id_item`),
-  ADD KEY `id_carrito` (`id_carrito`);
-
---
--- Indices de la tabla `comentarios_paquetes`
---
-ALTER TABLE `comentarios_paquetes`
-  ADD PRIMARY KEY (`id_comentario`),
-  ADD KEY `id_paquete` (`id_paquete`),
-  ADD KEY `id_usuario` (`id_usuario`);
-
---
--- Indices de la tabla `destinos`
---
-ALTER TABLE `destinos`
-  ADD PRIMARY KEY (`id_destino`);
-
---
--- Indices de la tabla `etiquetas`
---
-ALTER TABLE `etiquetas`
-  ADD PRIMARY KEY (`id_etiqueta`);
-
---
--- Indices de la tabla `notificaciones`
---
-ALTER TABLE `notificaciones`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_usuario` (`id_usuario`);
-
---
--- Indices de la tabla `ordenes`
---
-ALTER TABLE `ordenes`
-  ADD PRIMARY KEY (`id_orden`),
-  ADD KEY `id_usuario` (`id_usuario`);
-
---
--- Indices de la tabla `orden_items`
---
-ALTER TABLE `orden_items`
-  ADD PRIMARY KEY (`id_item`),
-  ADD KEY `id_orden` (`id_orden`);
-
---
--- Indices de la tabla `paquetes_turisticos`
---
-ALTER TABLE `paquetes_turisticos`
-  ADD PRIMARY KEY (`id_paquete`),
-  ADD KEY `fk_paquete_destino` (`id_destino`);
-
---
--- Indices de la tabla `paquete_alojamientos`
---
-ALTER TABLE `paquete_alojamientos`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_paquete_alojamiento` (`id_paquete`,`id_alojamiento`),
-  ADD KEY `id_paquete` (`id_paquete`),
-  ADD KEY `id_alojamiento` (`id_alojamiento`);
-
---
--- Indices de la tabla `paquete_autos`
---
-ALTER TABLE `paquete_autos`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_paquete_auto` (`id_paquete`,`id_alquiler`),
-  ADD KEY `id_paquete` (`id_paquete`),
-  ADD KEY `id_alquiler` (`id_alquiler`);
-
---
--- Indices de la tabla `paquete_etiquetas`
---
-ALTER TABLE `paquete_etiquetas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_paquete` (`id_paquete`),
-  ADD KEY `id_etiqueta` (`id_etiqueta`);
-
---
--- Indices de la tabla `paquete_servicios`
---
-ALTER TABLE `paquete_servicios`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_paquete_servicio` (`id_paquete`,`id_servicio`),
-  ADD KEY `id_paquete` (`id_paquete`),
-  ADD KEY `id_servicio` (`id_servicio`);
-
---
--- Indices de la tabla `paquete_vuelos`
---
-ALTER TABLE `paquete_vuelos`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_paquete_vuelo` (`id_paquete`,`id_vuelo`),
-  ADD KEY `id_paquete` (`id_paquete`),
-  ADD KEY `id_vuelo` (`id_vuelo`);
-
---
--- Indices de la tabla `promociones`
---
-ALTER TABLE `promociones`
-  ADD PRIMARY KEY (`id_promocion`);
-
---
--- Indices de la tabla `proveedores`
---
-ALTER TABLE `proveedores`
-  ADD PRIMARY KEY (`id_proveedor`),
-  ADD KEY `fk_prov_destino` (`id_destino`);
-
---
--- Indices de la tabla `rol`
---
-ALTER TABLE `rol`
-  ADD PRIMARY KEY (`id_rol`);
-
---
--- Indices de la tabla `servicios_adicionales`
---
-ALTER TABLE `servicios_adicionales`
-  ADD PRIMARY KEY (`id_servicio`),
-  ADD KEY `id_proveedor` (`id_proveedor`),
-  ADD KEY `fk_servicio_destino` (`id_destino`);
-
---
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id_usuario`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `rol` (`rol`);
-
---
--- Indices de la tabla `vuelos`
---
-ALTER TABLE `vuelos`
-  ADD PRIMARY KEY (`id_vuelo`),
-  ADD KEY `fk_vuelo_destino` (`id_destino`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `alojamientos`
---
-ALTER TABLE `alojamientos`
-  MODIFY `id_alojamiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT de la tabla `alquiler_autos`
---
-ALTER TABLE `alquiler_autos`
-  MODIFY `id_alquiler` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de la tabla `bitacora_sistema`
---
-ALTER TABLE `bitacora_sistema`
-  MODIFY `id_evento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT de la tabla `carritos`
---
-ALTER TABLE `carritos`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
-
---
--- AUTO_INCREMENT de la tabla `carrito_items`
---
-ALTER TABLE `carrito_items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
-
---
--- AUTO_INCREMENT de la tabla `comentarios_paquetes`
---
-ALTER TABLE `comentarios_paquetes`
-  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT de la tabla `destinos`
---
-ALTER TABLE `destinos`
-  MODIFY `id_destino` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- AUTO_INCREMENT de la tabla `etiquetas`
---
-ALTER TABLE `etiquetas`
-  MODIFY `id_etiqueta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
-
---
--- AUTO_INCREMENT de la tabla `notificaciones`
---
-ALTER TABLE `notificaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
-
---
--- AUTO_INCREMENT de la tabla `ordenes`
---
-ALTER TABLE `ordenes`
-  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
-
---
--- AUTO_INCREMENT de la tabla `orden_items`
---
-ALTER TABLE `orden_items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
-
---
--- AUTO_INCREMENT de la tabla `paquetes_turisticos`
---
-ALTER TABLE `paquetes_turisticos`
-  MODIFY `id_paquete` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
-
---
--- AUTO_INCREMENT de la tabla `paquete_alojamientos`
---
-ALTER TABLE `paquete_alojamientos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
---
--- AUTO_INCREMENT de la tabla `paquete_autos`
---
-ALTER TABLE `paquete_autos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
--- AUTO_INCREMENT de la tabla `paquete_etiquetas`
---
-ALTER TABLE `paquete_etiquetas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
-
---
--- AUTO_INCREMENT de la tabla `paquete_servicios`
---
-ALTER TABLE `paquete_servicios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
---
--- AUTO_INCREMENT de la tabla `paquete_vuelos`
---
-ALTER TABLE `paquete_vuelos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
---
--- AUTO_INCREMENT de la tabla `promociones`
---
-ALTER TABLE `promociones`
-  MODIFY `id_promocion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT de la tabla `proveedores`
---
-ALTER TABLE `proveedores`
-  MODIFY `id_proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
-
---
--- AUTO_INCREMENT de la tabla `rol`
---
-ALTER TABLE `rol`
-  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT de la tabla `servicios_adicionales`
---
-ALTER TABLE `servicios_adicionales`
-  MODIFY `id_servicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
-
---
--- AUTO_INCREMENT de la tabla `vuelos`
---
-ALTER TABLE `vuelos`
-  MODIFY `id_vuelo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
@@ -1168,66 +999,6 @@ ALTER TABLE `orden_items`
 --
 ALTER TABLE `paquetes_turisticos`
   ADD CONSTRAINT `fk_paquete_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`);
-
---
--- Filtros para la tabla `paquete_alojamientos`
---
-ALTER TABLE `paquete_alojamientos`
-  ADD CONSTRAINT `paquete_alojamientos_ibfk_1` FOREIGN KEY (`id_paquete`) REFERENCES `paquetes_turisticos` (`id_paquete`),
-  ADD CONSTRAINT `paquete_alojamientos_ibfk_2` FOREIGN KEY (`id_alojamiento`) REFERENCES `alojamientos` (`id_alojamiento`);
-
---
--- Filtros para la tabla `paquete_autos`
---
-ALTER TABLE `paquete_autos`
-  ADD CONSTRAINT `paquete_autos_ibfk_1` FOREIGN KEY (`id_paquete`) REFERENCES `paquetes_turisticos` (`id_paquete`),
-  ADD CONSTRAINT `paquete_autos_ibfk_2` FOREIGN KEY (`id_alquiler`) REFERENCES `alquiler_autos` (`id_alquiler`);
-
---
--- Filtros para la tabla `paquete_etiquetas`
---
-ALTER TABLE `paquete_etiquetas`
-  ADD CONSTRAINT `paquete_etiquetas_ibfk_1` FOREIGN KEY (`id_paquete`) REFERENCES `paquetes_turisticos` (`id_paquete`),
-  ADD CONSTRAINT `paquete_etiquetas_ibfk_2` FOREIGN KEY (`id_etiqueta`) REFERENCES `etiquetas` (`id_etiqueta`);
-
---
--- Filtros para la tabla `paquete_servicios`
---
-ALTER TABLE `paquete_servicios`
-  ADD CONSTRAINT `paquete_servicios_ibfk_1` FOREIGN KEY (`id_paquete`) REFERENCES `paquetes_turisticos` (`id_paquete`),
-  ADD CONSTRAINT `paquete_servicios_ibfk_2` FOREIGN KEY (`id_servicio`) REFERENCES `servicios_adicionales` (`id_servicio`);
-
---
--- Filtros para la tabla `paquete_vuelos`
---
-ALTER TABLE `paquete_vuelos`
-  ADD CONSTRAINT `paquete_vuelos_ibfk_1` FOREIGN KEY (`id_paquete`) REFERENCES `paquetes_turisticos` (`id_paquete`),
-  ADD CONSTRAINT `paquete_vuelos_ibfk_2` FOREIGN KEY (`id_vuelo`) REFERENCES `vuelos` (`id_vuelo`);
-
---
--- Filtros para la tabla `proveedores`
---
-ALTER TABLE `proveedores`
-  ADD CONSTRAINT `fk_prov_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`);
-
---
--- Filtros para la tabla `servicios_adicionales`
---
-ALTER TABLE `servicios_adicionales`
-  ADD CONSTRAINT `fk_servicio_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`),
-  ADD CONSTRAINT `servicios_adicionales_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedores` (`id_proveedor`);
-
---
--- Filtros para la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD CONSTRAINT `rol` FOREIGN KEY (`rol`) REFERENCES `rol` (`id_rol`);
-
---
--- Filtros para la tabla `vuelos`
---
-ALTER TABLE `vuelos`
-  ADD CONSTRAINT `fk_vuelo_destino` FOREIGN KEY (`id_destino`) REFERENCES `destinos` (`id_destino`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

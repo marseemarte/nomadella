@@ -4,6 +4,16 @@ include './conexion.php'; // archivo de conexión PDO a tu base 'nomadella'
 //include './verificar_admin.php'; // archivo para verificar si el usuario es admin
 // Obtener paquetes
 $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETCH_ASSOC);
+if (session_status() === PHP_SESSION_NONE) session_start();
+//ruta para trabajar en local y hostear
+if (!defined('BASE_URL')) {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+    $host = $_SERVER['HTTP_HOST'];
+
+    $subcarpeta = '/nomadella';
+
+    define('BASE_URL', $protocol . $host . $subcarpeta . '/');
+}
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +24,7 @@ $paquetes = $pdo->query("SELECT * FROM paquetes_turisticos")->fetchAll(PDO::FETC
     <title>Paquetes Turísticos - Nomadella</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/nomadella/css/apartados.css">
+    <link rel="stylesheet" href="<?= BASE_URL . 'css/apartados.css' ?>">
 </head>
 
 <body>

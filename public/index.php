@@ -30,6 +30,57 @@ if (!isset($_SESSION['usuario_id'])) {
     </div>
 <?php endif; ?>
 
+<style>
+.hero-section {
+  padding: 20px;
+  text-align: center;
+}
+
+.hero-section h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.buscador-form {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  gap: 10px;
+}
+
+.buscador-form input[type="text"] {
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.buscador-form button {
+  background: #b84e6f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+@media (max-width: 576px) {
+  .hero-section h1 {
+    font-size: 1.8rem;
+  }
+  .buscador-form {
+    flex-direction: column;
+  }
+  .buscador-form input[type="text"],
+  .buscador-form button {
+    width: 100%;
+  }
+
+}
+</style>
+
 
   <h1>Descubrí tu próximo destino</h1>
   <form class="buscador-form" method="get" action="paquetes.php">
@@ -77,6 +128,23 @@ if (!isset($_SESSION['usuario_id'])) {
   </div>
 </section>
 
+<style>
+/* Responsive adjustments for swiper container */
+.swiper-container-wrapper {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 576px) {
+  .swiper-container-wrapper {
+    padding: 0 10px;
+  }
+  .swiper-slide {
+    min-width: 80% !important;
+  }
+}
+</style>
+
 
 
 <section class=" container justify-content-center text-center my-5 cta-section ">
@@ -84,6 +152,24 @@ if (!isset($_SESSION['usuario_id'])) {
   <h2>¡Reserva tu aventura hoy!</h2>
   <a href="./paquetes.php" class="btn btn-primary">Ver todos los paquetes</a>
 </section>
+
+<style>
+.cta-section h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 576px) {
+  .cta-section h2 {
+    font-size: 1.5rem;
+  }
+  .cta-section .btn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+}
+</style>
 
 <!-- Promociones -->
 <section class="container my-5">
@@ -98,6 +184,23 @@ if (!isset($_SESSION['usuario_id'])) {
     <a href="paquetes.php" class="btn" style="background: linear-gradient(90deg,#741d41 60%,#b84e6f 100%); border:none; color:white;">Ver paquetes recomendados</a>
   </div>
 </section>
+
+<style>
+#quiz-container, #result {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+@media (max-width: 576px) {
+  #quiz-container, #result {
+    padding: 15px;
+  }
+  #next-button {
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+}
+</style>
 
 <script>
 const questions = [

@@ -50,10 +50,16 @@ $comentarios = $pdo->query("
   ORDER BY c.fecha DESC
   LIMIT 7
 ")->fetchAll(PDO::FETCH_ASSOC);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,13 +67,14 @@ $comentarios = $pdo->query("
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="/nomadella/css/dashboard.css">
+  <link rel="stylesheet" href="<?= BASE_URL . 'css/dashboard.css' ?>">
 
 </head>
+
 <body>
 
   <?php include 'sidebar.php'; ?>
-  <div class="content">
+  <div class="main-content">
     <h2 class="mb-4">Dashboard - Visión General</h2>
 
     <div class="row g-4">
@@ -132,45 +139,38 @@ $comentarios = $pdo->query("
       </div>
     </div>
 
-    <div >
-      <div >
+    <div>
+      <div>
         <div class="card shadow-sm">
           <div class="card-header">Últimas Reservas</div>
           <div class="card-body">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Destino</th>
-                  <th>Fecha</th>
-                  <th>Monto</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php foreach ($reservas as $r): ?>
+            <div class="table-responsive"> <!-- ← este div es la clave -->
+              <table class="table table-striped">
+                <thead>
                   <tr>
-                    <td><?= !empty($r['cliente']) ? htmlspecialchars($r['cliente']) : 'no definido' ?></td>
-                    <td><?= !empty($r['destino']) ? htmlspecialchars($r['destino']) : 'no definido' ?></td>
-                    <td><?= !empty($r['fecha']) ? date('d/m/Y', strtotime($r['fecha'])) : 'no definido' ?></td>
-                    <td><?= isset($r['precio']) ? '$' . number_format($r['precio'], 2) : 'no definido' ?></td>
+                    <th>Cliente</th>
+                    <th>Destino</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
                   </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <?php foreach ($reservas as $r): ?>
+                    <tr>
+                      <td><?= !empty($r['cliente']) ? htmlspecialchars($r['cliente']) : 'no definido' ?></td>
+                      <td><?= !empty($r['destino']) ? htmlspecialchars($r['destino']) : 'no definido' ?></td>
+                      <td><?= !empty($r['fecha']) ? date('d/m/Y', strtotime($r['fecha'])) : 'no definido' ?></td>
+                      <td><?= isset($r['precio']) ? '$' . number_format($r['precio'], 2) : 'no definido' ?></td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div> <!-- cierre del div table-responsive -->
           </div>
         </div>
       </div>
 
-      <!-- <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header">Comentarios Recientes</div>
-          <ul class="list-group list-group-flush">
-            <?php foreach ($comentarios as $c): ?>
-              <li class="list-group-item"><strong><?= htmlspecialchars($c['nombre']) ?></strong>: "<?= htmlspecialchars($c['texto']) ?>"</li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-      </div> -->
+
     </div>
 
   </div>
@@ -193,12 +193,14 @@ $comentarios = $pdo->query("
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'top' }
+          legend: {
+            position: 'top'
+          }
         }
       }
     });
   </script>
 
 </body>
-</html>
 
+</html>

@@ -55,9 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Editar Proveedor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/nomadella/css/apartados.css">
+    <link rel="stylesheet" href="<?= BASE_URL . 'css/apartados.css' ?>">
     <style>
         .main-content {
             margin-left: 260px;

@@ -6,7 +6,7 @@ $current = basename($_SERVER['PHP_SELF']);
 $usuarios_activos = [
     'clientes.php',
     'editar_usuario.php',
-    'registro_empleado.php',
+    'registro_empleado.user.php',
     'usuarios_desactivados.php'
 ];
 
@@ -34,9 +34,13 @@ $destinos_activos = [
     'nuevo_destino.php',
     'editar_destino.php'
 ];
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 ?>
-<link rel="stylesheet" href="/nomadella/css/apartados.css">
+<link rel="stylesheet" href="css/apartados.css">
+<button id="toggleSidebar" class="btn d-md-none" style="position:fixed;top:10px;left:10px;z-index:1000;background:#b84e6f;color:white;">
+  <i class="bi bi-list" style="font-size: 1.5rem;"></i>
+</button>
 <div class="sidebar d-flex flex-column justify-content-between">
   <div>
     <div class="text-center mb-4">
@@ -90,3 +94,18 @@ $destinos_activos = [
     </div>
   </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.querySelector('.sidebar');
+
+    toggleBtn.addEventListener('click', function () {
+      sidebar.classList.toggle('show');
+    });
+  });
+  const mainContent = document.querySelector('.main-content');
+toggleBtn.addEventListener('click', function () {
+  sidebar.classList.toggle('show');
+  mainContent.classList.toggle('shifted');
+});
+</script>

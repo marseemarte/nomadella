@@ -123,3 +123,42 @@ body {
 .pagination .page-link:focus {
     box-shadow: none;
 }
+/* Sidebar estilo base */
+.sidebar {
+  width: 250px;
+  padding: 20px 0;
+  transition: transform 0.3s ease;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+}
+
+/* Contenido con espacio para el sidebar (en escritorio) */
+.main-content {
+  margin-left: 250px;
+  padding: 20px;
+  transition: margin-left 0.3s ease, transform 0.3s ease;
+}
+
+/* Estilos responsive para pantallas chicas */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0 !important; /* ocupa toda la pantalla en mobile */
+    transform: translateX(0);
+  }
+
+  .main-content.shifted {
+    transform: translateX(250px); /* si querés que el contenido se corra cuando aparece el menú */
+  }
+}
+

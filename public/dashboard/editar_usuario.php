@@ -41,9 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Editar Usuario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/nomadella/css/apartados.css">
+    <link rel="stylesheet" href="<?= BASE_URL . 'css/apartados.css' ?>">
     <style>
         .main-content { margin-left: 260px; padding: 40px 30px 30px 30px; min-height: 100vh; background: #FFF6F8; }
         .card-editar { background: #fff; border: 1px solid #6CE0B6; border-radius: 18px; box-shadow: 0 4px 24px 0 rgba(117, 13, 55, 0.08); padding: 32px 28px 24px 28px; max-width: 600px; margin: 0 auto; position: relative; overflow: hidden; }
