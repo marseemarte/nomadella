@@ -135,14 +135,12 @@ body {
   z-index: 999;
 }
 
-/* Contenido con espacio para el sidebar (en escritorio) */
 .main-content {
   margin-left: 250px;
   padding: 20px;
   transition: margin-left 0.3s ease, transform 0.3s ease;
 }
 
-/* Estilos responsive para pantallas chicas */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
@@ -153,12 +151,12 @@ body {
   }
 
   .main-content {
-    margin-left: 0 !important; /* ocupa toda la pantalla en mobile */
+    margin-left: 0 !important; 
     transform: translateX(0);
   }
 
   .main-content.shifted {
-    transform: translateX(250px); /* si querés que el contenido se corra cuando aparece el menú */
+    transform: translateX(250px);
   }
 }
 

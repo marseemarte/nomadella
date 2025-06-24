@@ -1,9 +1,7 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #FFF6F8;
-  /* Fondo general */
   color: #1A001C;
-  /* Letras en fondos claros */
 }
 
 .sidebar {
@@ -13,7 +11,6 @@ body {
   left: 0;
   width: 250px;
   background-color: #750D37;
-  /* Fondo de títulos */
   color: #FFF6F8;
   padding-top: 20px;
 }
@@ -28,7 +25,6 @@ body {
 
 .sidebar a:hover {
   background-color: rgb(99, 6, 43);
-  /* Botón funcionalidad clave */
 
 }
 
@@ -53,7 +49,6 @@ body {
 .btn-primary,
 .btn-success {
   background-color: #6CE0B6 !important;
-  /* Botón clave */
   border: none;
   color: #1A001C;
   font-weight: bold;
@@ -62,7 +57,6 @@ body {
 .btn-info,
 .btn-secondary {
   background-color: #5CC7ED !important;
-  /* Otros botones */
   border: none;
   color: #1A001C;
   font-weight: bold;
